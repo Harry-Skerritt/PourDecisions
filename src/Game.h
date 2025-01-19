@@ -4,6 +4,7 @@
 #include <SFML/Graphics.hpp>
 #include "Confetti.h"
 #include "AudioManager.h"
+#include "SpriteTransition.h"
 
 
 class Game
@@ -41,6 +42,7 @@ class Game
 		sf::Sprite optionsButton;
 		sf::Texture optionsTexture;
 		ConfettiManager confettiManager;
+		SpriteTransition spinwheelTransition;
 
 		//Main Game
 		bool in_game;

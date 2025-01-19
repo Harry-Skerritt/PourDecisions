@@ -1,6 +1,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include "SpriteTransition.h"
 
 //Add music credit - Zapsplat
 
@@ -92,6 +93,7 @@ bool Game::init()
 	htpButton.setScale(0.6f, 0.6f);
 	htpButton.setPosition(((window.getSize().x / 2) - (htpButton.getGlobalBounds().width/2) + htpButton.getGlobalBounds().width/2) + 25, 570);
 
+	spinwheelTransition.init(logoTexture, 0.5f); //Update the texture, 0.5s transition
 
 	//Main Game
 	in_game = false;
@@ -114,6 +116,8 @@ void Game::update(float dt)
 	
 	if(!in_main_menu && in_game)
 	{
+		spinwheelTransition.update(dt);
+
 		//In Main Game
 		if (is_menu_music_playing) {
 			audioManager.stopMusic();
@@ -138,7 +142,12 @@ void Game::render()
 
 	if (!in_main_menu && in_game) 
 	{
-		std::cout << "Main Game Started" << std::endl;
+		spinwheelTransition.render(window);
+		if (spinwheelTransition.isComplete()) {
+			//Transitioned to the main game
+			std::cout << "Main Game Started" << std::endl;
+		}
+		
 	}
 	
 }
