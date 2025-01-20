@@ -18,9 +18,16 @@ FetchContent_MakeAvailable(SFML)    # Makes sure SFML and its dependencies are a
 
 #---- File management & .exe creation ----#
 
-set(SOURCE_FILES src/main.cpp src/Game.cpp src/Game.h "src/Confetti.h" "src/Confetti.cpp" "src/AudioManager.h" "src/AudioManager.cpp" "src/SpriteTransition.h" "src/SpriteTransition.cpp")  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
+set(SOURCE_FILES src/main.cpp src/Game.cpp src/Game.h "src/Utils/InputField.h" "src/Utils/InputField.cpp")  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
+add_subdirectory("src/Managers")
+add_subdirectory("src/VisualAddons")
+add_subdirectory("src/Utils")
+
 add_executable(PourDecisions ${SOURCE_FILES})  # Names the application and tells compiler which source files to use
 
+target_link_libraries(PourDecisions PRIVATE Managers)
+target_link_libraries(PourDecisions PRIVATE VisualAddons)
+target_link_libraries(PourDecisions PRIVATE Utils)
 target_link_libraries(PourDecisions PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application
 target_compile_features(PourDecisions PRIVATE cxx_std_20)  # Defines which standard of C++ the compiler should use
 

@@ -2,9 +2,11 @@
 #define GAME_H
 
 #include <SFML/Graphics.hpp>
-#include "Confetti.h"
-#include "AudioManager.h"
-#include "SpriteTransition.h"
+#include "VisualAddons/Confetti.h"
+#include "Managers/AudioManager.h"
+#include "VisualAddons/SpriteTransition.h"
+#include "VisualAddons/GradientText.h"
+#include "Utils/InputField.h"
 
 
 class Game
@@ -18,6 +20,7 @@ class Game
 		void render();
 		void mouseClicked(sf::Event event);
 		void keyPressed(sf::Event event);
+		void textEntered(sf::Event event);
 
 		void setBackgroundGradient(sf::RenderWindow& window);
 
@@ -25,6 +28,7 @@ class Game
 	private:
 		sf::RenderWindow& window;
 		AudioManager& audioManager = AudioManager::getInstance();
+		sf::Font righteousFont;
 
 
 		//Main Menu
@@ -42,7 +46,16 @@ class Game
 		sf::Sprite optionsButton;
 		sf::Texture optionsTexture;
 		ConfettiManager confettiManager;
+		sf::Texture transitionTexture;
 		SpriteTransition spinwheelTransition;
+		InputField playerNameEntry;
+
+		//Player Setup
+		bool player_setup;
+		GradientText playerSetupTitle;
+		sf::Sprite addPlayerButton;
+		sf::Texture addPlayerTexture;
+		
 
 		//Main Game
 		bool in_game;

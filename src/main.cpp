@@ -42,6 +42,10 @@ int main()
                 game.mouseClicked(event);
             }
 
+            if (event.type == sf::Event::TextEntered) {
+                game.textEntered(event);
+            }
+
         }
 
 

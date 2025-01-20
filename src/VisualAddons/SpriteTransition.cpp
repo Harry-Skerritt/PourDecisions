@@ -45,8 +45,8 @@ void SpriteTransition::update(float deltaTime) {
     sprite.setRotation(progress * 360.0f);  // Rotate over time
 
     // Transition the sprite's color to black after it grows
-    if (progress >= 1.0f) {
-        sprite.setColor(sf::Color(0, 0, 0));  // Turn the sprite black
+    if (progress >= 2.0f) {
+        sprite.setColor(sf::Color::Transparent);  // Turn the sprite transparent
     }
 }
 
