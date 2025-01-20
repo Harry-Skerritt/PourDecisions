@@ -51,6 +51,8 @@ private:
 	DropdownMenu resolutionMenu;
 
 	//Audio
+	sf::Text musicLabel;
+	sf::Text sfxLabel;
 	VolumeSlider musicSlider;
 	VolumeSlider sfxSlider;
 

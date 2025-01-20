@@ -67,6 +67,8 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 	audioText.setPosition(audioHolder.getPosition().x + audioHolder.getSize().x / 2,
 		audioHolder.getPosition().y + 40);
 
+	//Custom file
+
 	//Graphics
 	//Fullscreen
 	fullscreenLabel.setFont(font);
@@ -109,30 +111,53 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 	resolutionMenu.setSelectedItem("1080x720");
 
 	//Audio
-	musicSlider.setSize(300.f, 20.f);
-	musicSlider.setPosition(100.f, 100.f);
+	//Music
+	musicLabel.setFont(font);
+	musicLabel.setString("Music");
+	musicLabel.setCharacterSize(40);
+
+	sf::FloatRect ml_textBounds = musicLabel.getLocalBounds();
+	musicLabel.setOrigin(ml_textBounds.left + ml_textBounds.width / 2, ml_textBounds.top + ml_textBounds.height / 2);
+	musicLabel.setPosition(audioHolder.getPosition().x + 110,
+		audioHolder.getPosition().y + 100);
+
+	int slider_x = audioHolder.getPosition().x + audioHolder.getLocalBounds().width; //RHS of holder
+	musicSlider.setSize(200.f, 15.f);
+	musicSlider.setPosition(slider_x - 230, audioHolder.getPosition().y + 90.f);
 	musicSlider.setHandleColor(pd_pink);
 	musicSlider.setTrackColor(sf::Color(100, 9, 136, 255));
 	musicSlider.setValue(musicVol);
 
-	// Set the callback to print the slider value when it changes
+	// Callback from slider
 	musicSlider.setOnValueChangedCallback([](float value) {
 		std::cout << "Music Slider Value: " << value << std::endl;
 		AudioManager::getInstance().setMusicVolume(value);
 		});
 
-	sfxSlider.setSize(300.f, 20.f);
-	sfxSlider.setPosition(100.f, 200.f);
+	//SFX
+	sfxLabel.setFont(font);
+	sfxLabel.setString("Sound FX");
+	sfxLabel.setCharacterSize(35);
+
+	sf::FloatRect sl_textBounds = sfxLabel.getLocalBounds();
+	sfxLabel.setOrigin(sl_textBounds.left + sl_textBounds.width / 2, sl_textBounds.top + sl_textBounds.height / 2);
+	sfxLabel.setPosition(audioHolder.getPosition().x + 100,
+		audioHolder.getPosition().y + 170);
+
+	sfxSlider.setSize(200.f, 15.f);
+	sfxSlider.setPosition(slider_x - 230, audioHolder.getPosition().y + 160.f);
 	sfxSlider.setHandleColor(pd_pink);
 	sfxSlider.setTrackColor(sf::Color(100, 9, 136, 255));
 	sfxSlider.setValue(sfxVol);
 
-	// Set the callback to print the slider value when it changes
+	// Callback from slider
 	sfxSlider.setOnValueChangedCallback([](float value) {
 		std::cout << "SoundFx Slider Value: " << value << std::endl;
 		//AudioManager::getInstance().setMusicVolume(value); //Set the sfx volume globally
 		});
 	
+
+	//Custom File
 
 	//Back Button
 	if (!backButtonTexture.loadFromFile("../Data/Assets/Buttons/backButton.png"))
@@ -148,7 +173,7 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 void OptionsScreen::handleMouse(sf::Event event)
 {
 	fullscreenCheckbox.handleMouseInput(sf::Mouse::getPosition(window), true);	   //Add a popup saying the app will restart and then do the full screen
-	resolutionMenu.handleEvent(event, sf::Mouse::getPosition(window));		   //Add a popup saying the app will restart and then do the resolution change
+	resolutionMenu.handleEvent(event, sf::Mouse::getPosition(window));		       //Add a popup saying the app will restart and then do the resolution change
 
 	//Click
 	sf::Vector2i click = sf::Mouse::getPosition(window);
@@ -169,9 +194,6 @@ void OptionsScreen::handleMouse(sf::Event event)
 		
 		
 	}
-	else {
-		//musicSlider.handleMouseInput(sf::Mouse::getPosition(window), false);
-	}
 }
 
 void OptionsScreen::draw(sf::RenderWindow& window)
@@ -179,7 +201,7 @@ void OptionsScreen::draw(sf::RenderWindow& window)
 	GradientBackground::setBackgroundGradient(window);
 	//Background
 	window.draw(optionsTitle);
-	window.draw(backButton); //Add handler
+	window.draw(backButton);
 
 	//Holders
 	window.draw(graphicsHolder);
@@ -197,8 +219,10 @@ void OptionsScreen::draw(sf::RenderWindow& window)
 	window.draw(resolutionMenu); //<- Add functionality
 	
 	//Audio
+	window.draw(musicLabel);
 	window.draw(musicSlider);
-	window.draw(sfxSlider);
+	window.draw(sfxLabel);
+	window.draw(sfxSlider); // <- Add functionality
 	
 	
 }
