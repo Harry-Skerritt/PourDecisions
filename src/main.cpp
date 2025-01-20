@@ -4,7 +4,7 @@
 
 int main()
 {
-    const std::string VERSION_NO = "beta-0.1.2";
+    const std::string VERSION_NO = "beta-0.1.4";
     const sf::String WINDOW_TITLE = "Pour Decisions - " + VERSION_NO;
     //Creates the window
     sf::RenderWindow window(sf::VideoMode({1080u, 720u}), WINDOW_TITLE);

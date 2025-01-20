@@ -27,6 +27,22 @@ bool Game::init()
 		std::cout << "Righteous Font did not load" << std::endl;
 	}
 
+	//Button Backs
+	if (!buttonRectTexture.loadFromFile("../Data/Assets/Buttons/rectButtonBack.png"))
+	{
+		std::cout << "Rect Button Did not load" << std::endl;;
+	}
+
+	if (!buttonCircleTexture.loadFromFile("../Data/Assets/Buttons/circleButtonBack.png"))
+	{
+		std::cout << "Circle Button Did not load" << std::endl;;
+	}
+
+	if (!buttonThinRectTexture.loadFromFile("../Data/Assets/Buttons/thinRectButtonBack.png"))
+	{
+		std::cout << "Thin Rect Button Did not load" << std::endl;;
+	}
+
 	//Main Menu
 	in_main_menu = true; //Main Menu State
 	is_menu_music_playing = false;
@@ -56,30 +72,27 @@ bool Game::init()
 	logoSprite.setPosition(((window.getSize().x / 2) - (logoSprite.getGlobalBounds().width / 2)), 10);
 
 	//Play Button
-	if (!playTexture.loadFromFile("../Data/Assets/Buttons/playButton.png"))
-	{
-		std::cout << "Play Button Did not load" << std::endl;;
-	}
-	playButton.setTexture(playTexture);
-	playButton.setScale(0.6f, 0.6f);
+	playButton.setBackgroundImage(buttonRectTexture);
+	playButton.setBackgroundScale(0.6f, 0.6f);
+	playButton.setText("PLAY", righteousFont, 60);
+	playButton.setTextColor(buttonNormalColour);
+	playButton.setHoverColor(buttonHoverColour);
 	playButton.setPosition(((window.getSize().x / 2) - (playButton.getGlobalBounds().width / 2)), 450);
 
 	//Options Button
-	if (!optionsTexture.loadFromFile("../Data/Assets/Buttons/optionsButton.png"))
-	{
-		std::cout << "Option Button Did not load" << std::endl;;
-	}
-	optionsButton.setTexture(optionsTexture);
-	optionsButton.setScale(0.6f, 0.6f);
-	optionsButton.setPosition(((window.getSize().x / 2) - (optionsButton.getGlobalBounds().width/2) - optionsButton.getGlobalBounds().width/2) - 25, 570);
+	optionButton.setBackgroundImage(buttonThinRectTexture);
+	optionButton.setBackgroundScale(0.6f, 0.6f);
+	optionButton.setText("OPTIONS", righteousFont, 40);
+	optionButton.setTextColor(buttonNormalColour);
+	optionButton.setHoverColor(buttonHoverColour);
+	optionButton.setPosition(((window.getSize().x / 2) - (optionButton.getGlobalBounds().width/2) - optionButton.getGlobalBounds().width/2) - 25, 570);
 
 	//HTP Button
-	if (!htpTexture.loadFromFile("../Data/Assets/Buttons/htpButton.png"))
-	{
-		std::cout << "HTP Button Did not load" << std::endl;;
-	}
-	htpButton.setTexture(htpTexture);
-	htpButton.setScale(0.6f, 0.6f);
+	htpButton.setBackgroundImage(buttonThinRectTexture);
+	htpButton.setBackgroundScale(0.6f, 0.6f);
+	htpButton.setText("HOW TO PLAY", righteousFont, 40);
+	htpButton.setTextColor(buttonNormalColour);
+	htpButton.setHoverColor(buttonHoverColour);
 	htpButton.setPosition(((window.getSize().x / 2) - (htpButton.getGlobalBounds().width/2) + htpButton.getGlobalBounds().width/2) + 25, 570);
 
 
@@ -114,11 +127,11 @@ bool Game::init()
 	playerNameEntry.setBorder(4.0f, sf::Color::Black);
 
 	//Add Player Button
-	if (!addPlayerTexture.loadFromFile("../Data/Assets/Buttons/addPlayerButton.png")) {
-		std::cout << "Add Player Texture did not load" << std::endl;
-	}
-	addPlayerButton.setTexture(addPlayerTexture);
-	addPlayerButton.setScale(0.6f, 0.6f);
+	addPlayerButton.setBackgroundImage(buttonCircleTexture);
+	addPlayerButton.setBackgroundScale(0.6f, 0.6f);
+	addPlayerButton.setText("+", righteousFont, 40);
+	addPlayerButton.setTextColor(buttonNormalColour);
+	addPlayerButton.setHoverColor(buttonHoverColour);
 	addPlayerButton.setPosition(playerNameEntry.getPosition().x + playerNameEntry.getGlobalBounds().width + 20, 150);
 	
 	audioManager.setMusicVolume(musicVolume);
@@ -132,9 +145,9 @@ bool Game::init()
 
 void Game::update(float dt)
 {
-	//Set Volume
-	//audioManager.setMusicVolume(musicVolume); //75.0 Default
-	//audioManager.setSoundEffectVolume(sfxVolume); -> Make this a global function
+	//Button Hover Handling
+	sf::Vector2i click = sf::Mouse::getPosition(window);
+	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
 
 	if (in_main_menu) {
 		//In The Main Menu
@@ -142,7 +155,10 @@ void Game::update(float dt)
 			audioManager.playMusic("menuMusic", true);
 			is_menu_music_playing = true;
 		}
-		
+
+		playButton.handleHover(windowClickPos);
+		optionButton.handleHover(windowClickPos);
+		htpButton.handleHover(windowClickPos);
 		confettiManager.update(window);
 	}
 
@@ -156,6 +172,7 @@ void Game::update(float dt)
 	{
 		//In Player Setup
 		spinwheelTransition.update(dt);
+		addPlayerButton.handleHover(windowClickPos);
 		confettiManager.update(window);
 	}
 	
@@ -180,9 +197,9 @@ void Game::render()
 		GradientBackground::setBackgroundGradient(window);
 		confettiManager.draw(window);
 		window.draw(logoSprite);
-		window.draw(playButton);
-		window.draw(optionsButton);
-		window.draw(htpButton);
+		playButton.draw(window);
+		optionButton.draw(window);
+		htpButton.draw(window);
 	}
 
 	if (!in_main_menu && in_options)
@@ -201,7 +218,7 @@ void Game::render()
 			confettiManager.draw(window);
 			window.draw(playerSetupTitle);
 			playerNameEntry.draw(window);
-			window.draw(addPlayerButton);
+			addPlayerButton.draw(window);
 		}
 		
 	}
@@ -246,7 +263,7 @@ void Game::mouseClicked(sf::Event event)
 	{
 		if (in_main_menu) {
 			//Main Menu Buttons
-			if (playButton.getGlobalBounds().contains(windowClickPos)) {
+			if (playButton.isClicked(windowClickPos)) {
 				//Play Button Clicked
 				audioManager.playSoundEffect("playSF");
 				std::cout << "Play Button Clicked" << std::endl;
@@ -254,7 +271,7 @@ void Game::mouseClicked(sf::Event event)
 				player_setup = true; //Go into player setup state
 			}
 
-			if (optionsButton.getGlobalBounds().contains(windowClickPos)) {
+			if (optionButton.isClicked(windowClickPos)) {
 				//Options Button Clicked
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "Options Button Clicked" << std::endl;
@@ -262,7 +279,7 @@ void Game::mouseClicked(sf::Event event)
 				in_options = true; //Move to the options screen
 			}
 
-			if (htpButton.getGlobalBounds().contains(windowClickPos)) {
+			if (htpButton.isClicked(windowClickPos)) {
 				//HTP Button Clicked
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "HTP Button Clicked" << std::endl;

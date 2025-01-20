@@ -9,6 +9,7 @@
 #include "VisualAddons/GradientText.h"
 #include "Utils/Widgets/InputField.h"
 #include "Screens/OptionsScreen.h"
+#include "Utils/Widgets/Button.h"
 
 
 class Game
@@ -30,6 +31,13 @@ class Game
 		float getMusicVolume();
 		float getSFXVolume();
 
+		//Button
+		sf::Color buttonHoverColour = sf::Color(13, 58, 109, 255); //sf::Color(170, 170, 170, 255);
+		sf::Color buttonNormalColour = sf::Color::White;
+
+		sf::Texture buttonRectTexture;
+		sf::Texture buttonCircleTexture;
+		sf::Texture buttonThinRectTexture;
 
 	private:
 		sf::RenderWindow& window;
@@ -39,21 +47,18 @@ class Game
 		float musicVolume = 0.0f;//75.0f;
 		float sfxVolume = 100.0f;
 
-
+	
 		//Main Menu
 		bool in_main_menu;
 		bool is_menu_music_playing;
 		sf::Sprite logoSprite;
 		sf::Texture logoTexture;
 
-		sf::Sprite playButton;
-		sf::Texture playTexture;
+		Button playButton;
+		Button optionButton;
+		Button htpButton;
 
-		sf::Sprite htpButton;
-		sf::Texture htpTexture;
-
-		sf::Sprite optionsButton;
-		sf::Texture optionsTexture;
+		
 		ConfettiManager confettiManager;
 		sf::Texture transitionTexture;
 		SpriteTransition spinwheelTransition;
@@ -66,8 +71,7 @@ class Game
 		//Player Setup
 		bool player_setup;
 		GradientText playerSetupTitle;
-		sf::Sprite addPlayerButton;
-		sf::Texture addPlayerTexture;
+		Button addPlayerButton;
 		
 
 		//Main Game

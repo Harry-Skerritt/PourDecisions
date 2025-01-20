@@ -160,12 +160,11 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 	//Custom File
 
 	//Back Button
-	if (!backButtonTexture.loadFromFile("../Data/Assets/Buttons/backButton.png"))
-	{
-		std::cout << "Back Button Did not load properly - Options" << std::endl;
-	}
-	backButton.setTexture(backButtonTexture);
-	backButton.setScale(0.6f, 0.6f);
+	backButton.setBackgroundImage(m_game->buttonCircleTexture);
+	backButton.setBackgroundScale(0.6f, 0.6f);
+	backButton.setText(">", font, 40);
+	backButton.setTextColor(m_game->buttonNormalColour);
+	backButton.setHoverColor(m_game->buttonHoverColour);
 	backButton.setPosition((window.getSize().x - backButton.getGlobalBounds().width) - 20, 20);
 	
 }
@@ -179,11 +178,13 @@ void OptionsScreen::handleMouse(sf::Event event)
 	sf::Vector2i click = sf::Mouse::getPosition(window);
 	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
 
+	backButton.handleHover(windowClickPos); //<- Needs fixing
+
 	musicSlider.handleMouseInput(sf::Mouse::getPosition(window), true);
 	sfxSlider.handleMouseInput(sf::Mouse::getPosition(window), true);
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		if (backButton.getGlobalBounds().contains(windowClickPos)) {
+		if (backButton.isClicked(windowClickPos)) {
 			//Back button clicked
 			AudioManager::getInstance().playSoundEffect("buttonClick");
 			std::cout << "Back button clicked" << std::endl;
@@ -201,7 +202,7 @@ void OptionsScreen::draw(sf::RenderWindow& window)
 	GradientBackground::setBackgroundGradient(window);
 	//Background
 	window.draw(optionsTitle);
-	window.draw(backButton);
+	backButton.draw(window);
 
 	//Holders
 	window.draw(graphicsHolder);

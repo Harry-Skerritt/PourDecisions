@@ -5,10 +5,10 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include "../VisualAddons/GradientText.h"
-//#include "../Utils/RoundedRectangle.h" // <- Fix
 #include "../Utils/Widgets/VolumeSlider.h"
 #include "../Utils/Widgets/CheckBox.h"
 #include "../Utils/Widgets/DropdownMenu.h"
+#include "../Utils/Widgets/Button.h"
 
 class Game;
 
@@ -62,8 +62,7 @@ private:
 	sf::RectangleShape customFileHolder;
 
 	//Buttons
-	sf::Sprite backButton;
-	sf::Texture backButtonTexture;
+	Button backButton;
 };
 
 #endif // OPTIONSSCREEN_H
