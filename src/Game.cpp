@@ -2,46 +2,22 @@
 #include "Game.h"
 #include <iostream>
 #include "VisualAddons/SpriteTransition.h"
+#include "Utils/GradientBackground.h"
 
 //Add music credit - Zapsplat
 
 Game::Game(sf::RenderWindow& game_window)
-	: window(game_window)
+	: window(game_window), optionsScreen(window, righteousFont)
 {
+	optionsScreen.setGameInstance(this);
 	srand(time(NULL));
+
 }
 
 Game::~Game()
 {
 
 }
-
-void Game::setBackgroundGradient(sf::RenderWindow& window) 
-{
-	sf::VertexArray background(sf::Quads, 4);
-
-	//Gradient Colours
-	sf::Color topColour(42, 3, 60, 255);
-	sf::Color btmColour(254, 0, 190, 255);
-
-	for (int i = 0; i < 4; i++) {
-		background[0].position = sf::Vector2f(0, 0);
-		background[1].position = sf::Vector2f(window.getSize().x, 0);
-		background[2].position = sf::Vector2f(window.getSize().x, window.getSize().y);
-		background[3].position = sf::Vector2f(0, window.getSize().y);
-
-		float factor = background[i].position.y / window.getSize().y;
-
-		background[i].color = sf::Color(
-			static_cast<sf::Uint8>((1.0f - factor) * topColour.r + factor * btmColour.r),
-			static_cast<sf::Uint8>((1.0f - factor) * topColour.g + factor * btmColour.g),
-			static_cast<sf::Uint8>((1.0f - factor) * topColour.b + factor * btmColour.b)
-		);
-	}
-
-	window.draw(background);
-}
-
 bool Game::init()
 //Move Buttons to a class which uses a background image and text easier for overlays and handling allowing for cleaner code
 {
@@ -113,6 +89,11 @@ bool Game::init()
 	}
 	spinwheelTransition.init(transitionTexture, 0.3f); //Update the texture, 0.3s transition
 
+	//Options Screen
+	in_options = false;
+	optionsScreen.initialise(musicVolume, sfxVolume);
+	
+
 	//Player Setup State
 	player_setup = false; 
 
@@ -121,10 +102,8 @@ bool Game::init()
 	playerSetupTitle.setString("PLAYER SETUP");
 	playerSetupTitle.setCharacterSize(80);
 	playerSetupTitle.setGradientColors(sf::Color(251, 0, 188, 255), sf::Color(0, 238, 255, 255));
-
-	sf::FloatRect localBounds = playerSetupTitle.getLocalBounds();
-	playerSetupTitle.setOrigin(localBounds.width / 2, localBounds.height / 2);
 	playerSetupTitle.setPosition(((window.getSize().x / 2) - (playerSetupTitle.getGlobalBounds().width / 2)), 60);
+
 
 	//Text Entry
 	playerNameEntry.setFont(righteousFont);
@@ -142,6 +121,7 @@ bool Game::init()
 	addPlayerButton.setScale(0.6f, 0.6f);
 	addPlayerButton.setPosition(playerNameEntry.getPosition().x + playerNameEntry.getGlobalBounds().width + 20, 150);
 	
+	audioManager.setMusicVolume(musicVolume);
 
 
 	//Main Game
@@ -152,15 +132,24 @@ bool Game::init()
 
 void Game::update(float dt)
 {
+	//Set Volume
+	//audioManager.setMusicVolume(musicVolume); //75.0 Default
+	//audioManager.setSoundEffectVolume(sfxVolume); -> Make this a global function
+
 	if (in_main_menu) {
 		//In The Main Menu
 		if (!is_menu_music_playing) {
 			audioManager.playMusic("menuMusic", true);
-			audioManager.setMusicVolume(0.0f); //75.0 Default
 			is_menu_music_playing = true;
 		}
 		
 		confettiManager.update(window);
+	}
+
+	if(!in_main_menu && in_options)
+	{
+		//In Options Menu
+
 	}
 
 	if (!in_main_menu && player_setup)
@@ -188,12 +177,18 @@ void Game::render()
 
 	if (in_main_menu) {
 		//In THe Main Menu
-		setBackgroundGradient(window);
+		GradientBackground::setBackgroundGradient(window);
 		confettiManager.draw(window);
 		window.draw(logoSprite);
 		window.draw(playButton);
 		window.draw(optionsButton);
 		window.draw(htpButton);
+	}
+
+	if (!in_main_menu && in_options)
+	{
+		//In Options Screen
+		optionsScreen.draw(window);
 	}
 
 	if (!in_main_menu && player_setup)
@@ -202,9 +197,7 @@ void Game::render()
 		spinwheelTransition.render(window);
 		if (spinwheelTransition.isComplete()) {
 			//Transitioned to player setup
-			//Fix the delay with black screen - Done?
-			
-			setBackgroundGradient(window);
+			GradientBackground::setBackgroundGradient(window);
 			confettiManager.draw(window);
 			window.draw(playerSetupTitle);
 			playerNameEntry.draw(window);
@@ -221,12 +214,34 @@ void Game::render()
 	
 }
 
+void Game::backToMainMenu(int pageID)
+{
+	std::cout << "Back to main menu" << std::endl;
+	if (pageID == 0)
+	{
+		//Coming from Options
+		in_options = false;
+		in_main_menu = true;
+	}//1 - HTP
+	//2 - Main Game
+
+}
+
+float Game::getMusicVolume() {
+	return musicVolume;
+}
+
+float Game::getSFXVolume() {
+	return sfxVolume;
+}
+
 void Game::mouseClicked(sf::Event event)
 {
 	//get the click position
 	sf::Vector2i click = sf::Mouse::getPosition(window);
 	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
-	
+
+
 	if (event.mouseButton.button == sf::Mouse::Left)  //Left Click
 	{
 		if (in_main_menu) {
@@ -243,6 +258,8 @@ void Game::mouseClicked(sf::Event event)
 				//Options Button Clicked
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "Options Button Clicked" << std::endl;
+				in_main_menu = false;
+				in_options = true; //Move to the options screen
 			}
 
 			if (htpButton.getGlobalBounds().contains(windowClickPos)) {
@@ -250,6 +267,11 @@ void Game::mouseClicked(sf::Event event)
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "HTP Button Clicked" << std::endl;
 			}
+		}
+		else if (!in_main_menu && in_options)
+		{
+			//In Options
+			optionsScreen.handleMouse(event);
 		}
 		else if (player_setup) {
 			//In Player Setup
@@ -270,6 +292,11 @@ void Game::mouseClicked(sf::Event event)
 
 	}
 
+
+}
+
+void Game::mouseDragged(sf::Event event)
+{
 
 }
 

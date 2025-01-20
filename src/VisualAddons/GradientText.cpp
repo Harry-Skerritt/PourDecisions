@@ -32,12 +32,33 @@ void GradientText::setPosition(float x, float y) {
 }
 
 sf::FloatRect GradientText::getGlobalBounds() const {
-    return text.getGlobalBounds();
+    sf::FloatRect bounds = getLocalBounds();
+    sf::Vector2f position = getPosition() - getOrigin();
+    return sf::FloatRect(position.x, position.y, bounds.width, bounds.height);
 }
 
 sf::FloatRect GradientText::getLocalBounds() const {
-    return text.getLocalBounds();
+    // Calculate bounds based on vertices if they exist
+    if (vertices.getVertexCount() == 0) {
+        return text.getLocalBounds();
+    }
+
+    float left = std::numeric_limits<float>::max();
+    float top = std::numeric_limits<float>::max();
+    float right = std::numeric_limits<float>::lowest();
+    float bottom = std::numeric_limits<float>::lowest();
+
+    for (std::size_t i = 0; i < vertices.getVertexCount(); ++i) {
+        const sf::Vector2f& pos = vertices[i].position;
+        left = std::min(left, pos.x);
+        top = std::min(top, pos.y);
+        right = std::max(right, pos.x);
+        bottom = std::max(bottom, pos.y);
+    }
+
+    return sf::FloatRect(0, 0, right - left, bottom - top);
 }
+
 
 void GradientText::updateGradient() {
     const sf::String& str = text.getString();
@@ -47,15 +68,21 @@ void GradientText::updateGradient() {
     unsigned int characterSize = text.getCharacterSize();
     vertices.clear();
 
-    sf::Vector2f position = getPosition();
+    sf::Vector2f originOffset = getOrigin(); // Account for origin
     float xOffset = 0.0f;
+
+    // Calculate the full height of the font to adjust vertical centering
+    float fontAscent = font->getGlyph('A', characterSize, false).bounds.top;
+    float fontDescent = font->getGlyph('g', characterSize, false).bounds.top +
+        font->getGlyph('g', characterSize, false).bounds.height;
+    float verticalOffset = -fontAscent; // Align text vertically
 
     for (std::size_t i = 0; i < str.getSize(); ++i) {
         sf::Uint32 character = str[i];
         const sf::Glyph& glyph = font->getGlyph(character, characterSize, false);
 
-        float left = xOffset + glyph.bounds.left;
-        float top = glyph.bounds.top;
+        float left = xOffset + glyph.bounds.left - originOffset.x;
+        float top = glyph.bounds.top + verticalOffset - originOffset.y;
         float right = left + glyph.bounds.width;
         float bottom = top + glyph.bounds.height;
 
@@ -66,13 +93,13 @@ void GradientText::updateGradient() {
             static_cast<float>(glyph.textureRect.height)
         );
 
-        vertices.append(sf::Vertex(sf::Vector2f(left, top) + position, topColor, sf::Vector2f(uv.left, uv.top)));
-        vertices.append(sf::Vertex(sf::Vector2f(right, top) + position, topColor, sf::Vector2f(uv.left + uv.width, uv.top)));
-        vertices.append(sf::Vertex(sf::Vector2f(left, bottom) + position, bottomColor, sf::Vector2f(uv.left, uv.top + uv.height)));
+        vertices.append(sf::Vertex(sf::Vector2f(left, top), topColor, sf::Vector2f(uv.left, uv.top)));
+        vertices.append(sf::Vertex(sf::Vector2f(right, top), topColor, sf::Vector2f(uv.left + uv.width, uv.top)));
+        vertices.append(sf::Vertex(sf::Vector2f(left, bottom), bottomColor, sf::Vector2f(uv.left, uv.top + uv.height)));
 
-        vertices.append(sf::Vertex(sf::Vector2f(right, top) + position, topColor, sf::Vector2f(uv.left + uv.width, uv.top)));
-        vertices.append(sf::Vertex(sf::Vector2f(right, bottom) + position, bottomColor, sf::Vector2f(uv.left + uv.width, uv.top + uv.height)));
-        vertices.append(sf::Vertex(sf::Vector2f(left, bottom) + position, bottomColor, sf::Vector2f(uv.left, uv.top + uv.height)));
+        vertices.append(sf::Vertex(sf::Vector2f(right, top), topColor, sf::Vector2f(uv.left + uv.width, uv.top)));
+        vertices.append(sf::Vertex(sf::Vector2f(right, bottom), bottomColor, sf::Vector2f(uv.left + uv.width, uv.top + uv.height)));
+        vertices.append(sf::Vertex(sf::Vector2f(left, bottom), bottomColor, sf::Vector2f(uv.left, uv.top + uv.height)));
 
         xOffset += glyph.advance;
     }

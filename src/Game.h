@@ -1,18 +1,20 @@
 #ifndef GAME_H
 #define GAME_H
 
+#pragma once
 #include <SFML/Graphics.hpp>
 #include "VisualAddons/Confetti.h"
 #include "Managers/AudioManager.h"
 #include "VisualAddons/SpriteTransition.h"
 #include "VisualAddons/GradientText.h"
-#include "Utils/InputField.h"
+#include "Utils/Widgets/InputField.h"
+#include "Screens/OptionsScreen.h"
 
 
 class Game
 {
 	public:
-		Game(sf::RenderWindow& winbdow);
+		Game(sf::RenderWindow& window);
 		~Game();
 
 		bool init();
@@ -21,14 +23,21 @@ class Game
 		void mouseClicked(sf::Event event);
 		void keyPressed(sf::Event event);
 		void textEntered(sf::Event event);
+		void mouseDragged(sf::Event event);
 
-		void setBackgroundGradient(sf::RenderWindow& window);
+		void backToMainMenu(int pageID); //0 - Options, 1 - HTP, 2 - Game
+
+		float getMusicVolume();
+		float getSFXVolume();
 
 
 	private:
 		sf::RenderWindow& window;
 		AudioManager& audioManager = AudioManager::getInstance();
 		sf::Font righteousFont;
+
+		float musicVolume = 0.0f;//75.0f;
+		float sfxVolume = 100.0f;
 
 
 		//Main Menu
@@ -49,6 +58,10 @@ class Game
 		sf::Texture transitionTexture;
 		SpriteTransition spinwheelTransition;
 		InputField playerNameEntry;
+
+		//Options Screen
+		bool in_options;
+		OptionsScreen optionsScreen;
 
 		//Player Setup
 		bool player_setup;

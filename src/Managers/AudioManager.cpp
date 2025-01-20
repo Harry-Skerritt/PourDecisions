@@ -67,9 +67,16 @@ void AudioManager::stopMusic() {
 
 // Set music volume
 void AudioManager::setMusicVolume(float volume) {
+    musicVolume = volume;
     for (auto& [name, music] : musicMap) {
-        music->setVolume(volume);
+        music->setVolume(musicVolume);
     }
+    
+}
+
+// Get music volume
+float AudioManager::getMusicVolume() {
+    return musicVolume;
 }
 
 

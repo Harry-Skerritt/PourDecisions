@@ -4,9 +4,18 @@
 
 int main()
 {
+    const std::string VERSION_NO = "beta-0.1.2";
+    const sf::String WINDOW_TITLE = "Pour Decisions - " + VERSION_NO;
     //Creates the window
-    sf::RenderWindow window(sf::VideoMode({1080u, 720u}), "Pour Decisions");
+    sf::RenderWindow window(sf::VideoMode({1080u, 720u}), WINDOW_TITLE);
     window.setFramerateLimit(60);
+
+    auto image = sf::Image{};
+    if (!image.loadFromFile("../Data/Assets/Favicon.png")) {
+        std::cout << "App Icon did not load" << std::endl;
+    }
+
+    window.setIcon(image.getSize().x, image.getSize().y, image.getPixelsPtr());
 
     //Starts clock
     sf::Clock clock;
@@ -32,6 +41,7 @@ int main()
         //'process inputs' element of the game loop
         while (window.pollEvent(event))
         {
+
             // "close requested" event: we close the window
             if (event.type == sf::Event::Closed)
             {
@@ -44,6 +54,10 @@ int main()
 
             if (event.type == sf::Event::TextEntered) {
                 game.textEntered(event);
+            }
+            
+            if (event.type == sf::Event::MouseMoved) {
+                game.mouseDragged(event);
             }
 
         }

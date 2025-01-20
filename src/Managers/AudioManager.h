@@ -21,6 +21,8 @@ public:
     void stopMusic();
     void setMusicVolume(float volume);
 
+    float getMusicVolume();
+
 
     // Control sound effects
     void playSoundEffect(const std::string& name, float volume = 100.0f);
@@ -30,6 +32,8 @@ public:
 private:
     AudioManager() = default;
     ~AudioManager() = default;
+
+    float musicVolume = 50.0f;
 
     // Prevent copy/move constructors
     AudioManager(const AudioManager&) = delete;
