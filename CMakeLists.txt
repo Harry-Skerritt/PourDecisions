@@ -36,6 +36,7 @@ target_link_libraries(PourDecisions PRIVATE sfml-graphics sfml-window sfml-syste
 target_compile_features(PourDecisions PRIVATE cxx_std_20)  # Defines which standard of C++ the compiler should use
 
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Data/)  # Copies data from source directory to build directory (so the executable can access it)
+file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Cards/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Cards/)  # Copies data from source directory to build directory (so the executable can access it)
 
 if(WIN32)
     add_custom_command(
