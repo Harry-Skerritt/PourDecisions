@@ -169,22 +169,20 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 	
 }
 
-void OptionsScreen::handleMouse(sf::Event event)
+void OptionsScreen::update(float dt, sf::Vector2f& windowClick) {
+	backButton.handleHover(windowClick);
+}
+
+void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 {
 	fullscreenCheckbox.handleMouseInput(sf::Mouse::getPosition(window), true);	   //Add a popup saying the app will restart and then do the full screen
 	resolutionMenu.handleEvent(event, sf::Mouse::getPosition(window));		       //Add a popup saying the app will restart and then do the resolution change
-
-	//Click
-	sf::Vector2i click = sf::Mouse::getPosition(window);
-	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
-
-	backButton.handleHover(windowClickPos); //<- Needs fixing
 
 	musicSlider.handleMouseInput(sf::Mouse::getPosition(window), true);
 	sfxSlider.handleMouseInput(sf::Mouse::getPosition(window), true);
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		if (backButton.isClicked(windowClickPos)) {
+		if (backButton.isClicked(windowClick)) {
 			//Back button clicked
 			AudioManager::getInstance().playSoundEffect("buttonClick");
 			std::cout << "Back button clicked" << std::endl;

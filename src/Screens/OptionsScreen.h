@@ -21,7 +21,9 @@ public:
 
 	void initialise(float& musicVol, float& sfxVol);
 
-	void handleMouse(sf::Event event);
+	void update(float dt, sf::Vector2f& windowClick);
+
+	void handleMouse(sf::Event event, sf::Vector2f& windowClick);
 
 	void draw(sf::RenderWindow& window);
 

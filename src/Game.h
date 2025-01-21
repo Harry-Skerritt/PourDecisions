@@ -3,13 +3,17 @@
 
 #pragma once
 #include <SFML/Graphics.hpp>
-#include "VisualAddons/Confetti.h"
 #include "Managers/AudioManager.h"
+
+#include "VisualAddons/Confetti.h"
 #include "VisualAddons/SpriteTransition.h"
 #include "VisualAddons/GradientText.h"
+
 #include "Utils/Widgets/InputField.h"
-#include "Screens/OptionsScreen.h"
 #include "Utils/Widgets/Button.h"
+
+#include "Screens/OptionsScreen.h"
+#include "Screens/PlayerSetup.h"
 
 
 class Game
@@ -43,6 +47,7 @@ class Game
 		sf::RenderWindow& window;
 		AudioManager& audioManager = AudioManager::getInstance();
 		sf::Font righteousFont;
+		sf::Vector2f windowClickPos;
 
 		float musicVolume = 0.0f;//75.0f;
 		float sfxVolume = 100.0f;
@@ -62,16 +67,14 @@ class Game
 		ConfettiManager confettiManager;
 		sf::Texture transitionTexture;
 		SpriteTransition spinwheelTransition;
-		InputField playerNameEntry;
 
 		//Options Screen
 		bool in_options;
 		OptionsScreen optionsScreen;
 
 		//Player Setup
-		bool player_setup;
-		GradientText playerSetupTitle;
-		Button addPlayerButton;
+		bool in_player_setup;
+		PlayerSetup playerSetup;
 		
 
 		//Main Game

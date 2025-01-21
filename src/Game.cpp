@@ -7,9 +7,11 @@
 //Add music credit - Zapsplat
 
 Game::Game(sf::RenderWindow& game_window)
-	: window(game_window), optionsScreen(window, righteousFont)
+	: window(game_window), optionsScreen(window, righteousFont),
+	playerSetup(window, righteousFont)
 {
 	optionsScreen.setGameInstance(this);
+	playerSetup.setGameInstance(this);
 	srand(time(NULL));
 
 }
@@ -108,31 +110,9 @@ bool Game::init()
 	
 
 	//Player Setup State
-	player_setup = false; 
-
-	//Title
-	playerSetupTitle.setFont(righteousFont);
-	playerSetupTitle.setString("PLAYER SETUP");
-	playerSetupTitle.setCharacterSize(80);
-	playerSetupTitle.setGradientColors(sf::Color(251, 0, 188, 255), sf::Color(0, 238, 255, 255));
-	playerSetupTitle.setPosition(((window.getSize().x / 2) - (playerSetupTitle.getGlobalBounds().width / 2)), 60);
-
-
-	//Text Entry
-	playerNameEntry.setFont(righteousFont);
-	playerNameEntry.setSize(400, 60);
-	playerNameEntry.setBackgroundColour(sf::Color(66, 66, 66, 255));
-	playerNameEntry.setPlaceholder("Enter Player Name");
-	playerNameEntry.setPosition(((window.getSize().x / 2) - (playerNameEntry.getGlobalBounds().width / 2)), 150);
-	playerNameEntry.setBorder(4.0f, sf::Color::Black);
-
-	//Add Player Button
-	addPlayerButton.setBackgroundImage(buttonCircleTexture);
-	addPlayerButton.setBackgroundScale(0.6f, 0.6f);
-	addPlayerButton.setText("+", righteousFont, 40);
-	addPlayerButton.setTextColor(buttonNormalColour);
-	addPlayerButton.setHoverColor(buttonHoverColour);
-	addPlayerButton.setPosition(playerNameEntry.getPosition().x + playerNameEntry.getGlobalBounds().width + 20, 150);
+	in_player_setup = false;
+	playerSetup.initialise();
+	
 	
 	audioManager.setMusicVolume(musicVolume);
 
@@ -146,8 +126,8 @@ bool Game::init()
 void Game::update(float dt)
 {
 	//Button Hover Handling
-	sf::Vector2i click = sf::Mouse::getPosition(window);
-	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
+	//sf::Vector2i click = sf::Mouse::getPosition(window);
+	//sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
 
 	if (in_main_menu) {
 		//In The Main Menu
@@ -165,14 +145,15 @@ void Game::update(float dt)
 	if(!in_main_menu && in_options)
 	{
 		//In Options Menu
+		optionsScreen.update(dt, windowClickPos);
 
 	}
 
-	if (!in_main_menu && player_setup)
+	if (!in_main_menu && in_player_setup)
 	{
 		//In Player Setup
 		spinwheelTransition.update(dt);
-		addPlayerButton.handleHover(windowClickPos);
+		playerSetup.update(dt, windowClickPos);
 		confettiManager.update(window);
 	}
 	
@@ -193,7 +174,7 @@ void Game::render()
 {
 
 	if (in_main_menu) {
-		//In THe Main Menu
+		//In THe Main Menu - Move to own class soon
 		GradientBackground::setBackgroundGradient(window);
 		confettiManager.draw(window);
 		window.draw(logoSprite);
@@ -208,17 +189,13 @@ void Game::render()
 		optionsScreen.draw(window);
 	}
 
-	if (!in_main_menu && player_setup)
+	if (!in_main_menu && in_player_setup)
 	{
 		//In Player Setup -> Music should keep playing
 		spinwheelTransition.render(window);
 		if (spinwheelTransition.isComplete()) {
 			//Transitioned to player setup
-			GradientBackground::setBackgroundGradient(window);
-			confettiManager.draw(window);
-			window.draw(playerSetupTitle);
-			playerNameEntry.draw(window);
-			addPlayerButton.draw(window);
+			playerSetup.draw(window, confettiManager);
 		}
 		
 	}
@@ -239,8 +216,15 @@ void Game::backToMainMenu(int pageID)
 		//Coming from Options
 		in_options = false;
 		in_main_menu = true;
-	}//1 - HTP
-	//2 - Main Game
+	}
+	//1 - HTP
+	else if (pageID == 2)
+	{
+		//Coming from Setup
+		in_player_setup = false;
+		in_main_menu = true;
+	}
+	//3 - Main Game
 
 }
 
@@ -256,7 +240,7 @@ void Game::mouseClicked(sf::Event event)
 {
 	//get the click position
 	sf::Vector2i click = sf::Mouse::getPosition(window);
-	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
+	windowClickPos = window.mapPixelToCoords(click);
 
 
 	if (event.mouseButton.button == sf::Mouse::Left)  //Left Click
@@ -268,7 +252,7 @@ void Game::mouseClicked(sf::Event event)
 				audioManager.playSoundEffect("playSF");
 				std::cout << "Play Button Clicked" << std::endl;
 				in_main_menu = false;
-				player_setup = true; //Go into player setup state
+				in_player_setup = true; //Go into player setup state
 			}
 
 			if (optionButton.isClicked(windowClickPos)) {
@@ -290,20 +274,9 @@ void Game::mouseClicked(sf::Event event)
 			//In Options
 			optionsScreen.handleMouse(event);
 		}
-		else if (player_setup) {
+		else if (in_player_setup) {
 			//In Player Setup
-			if (addPlayerButton.getGlobalBounds().contains(windowClickPos)) {
-				if (playerNameEntry.isEmpty()) {
-					audioManager.playSoundEffect("wrongSF");
-				}
-				else {
-					audioManager.playSoundEffect("addPlayerSF");
-				}
-				
-				std::cout << "Add Player Clicked" << std::endl;
-				//Handle adding the player
-				playerNameEntry.resetField(); //Reset for next name
-			}
+			playerSetup.handleMouse(event, windowClickPos);
 		}
 		
 
@@ -319,10 +292,10 @@ void Game::mouseDragged(sf::Event event)
 
 void Game::textEntered(sf::Event event)
 {
-	if (player_setup)
+	if (in_player_setup)
 	{
 		//In Player Setup State
-		playerNameEntry.handleInput(event);
+		playerSetup.handleTextEntry(event);
 	}
 }
 
