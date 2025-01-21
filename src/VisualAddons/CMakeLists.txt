@@ -6,8 +6,6 @@ project(VisualAddons)
 set(SOURCE_FILES
     Confetti.h
     Confetti.cpp
-    GradientText.h
-    GradientText.cpp
     SpriteTransition.h
     SpriteTransition.cpp
 )

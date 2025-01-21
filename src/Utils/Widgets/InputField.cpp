@@ -53,7 +53,7 @@ void InputField::setPosition(float x, float y) {
 
 void InputField::setBorder(float thickness, sf::Color colour) {
 	borderThickness = thickness;
-	borderColour = borderColour;
+	borderColour = colour;
 	background.setOutlineThickness(thickness);
 	background.setOutlineColor(borderColour);
 }
@@ -79,25 +79,30 @@ bool InputField::isEmpty() {
 	}
 }
 
-void InputField::handleInput(sf::Event event) {
-	if (event.text.unicode == 8) {
-		//Backspace
-		if (input_text.getSize() != 0) {
-			input_text.erase(input_text.getSize() - 1, 1); //Removes last character
+void InputField::handleInput(sf::Event event, bool inputAllowed) {
+	if (inputAllowed) {
+		if (event.text.unicode == 8) {
+			//Backspace
+			if (input_text.getSize() != 0) {
+				input_text.erase(input_text.getSize() - 1, 1); //Removes last character
+				output.setColor(textColour);
+				output.setString(input_text);
+			}
+			else {
+				//The string is empty 
+				resetField();
+			}
+		}
+		else {
+			input_text += static_cast<char>(event.text.unicode); //Ammend the latest character
 			output.setColor(textColour);
 			output.setString(input_text);
 		}
-		else {
-			//The string is empty 
-			resetField();
-		}
-		
 	}
-	else {
-		input_text += static_cast<char>(event.text.unicode); //Ammend the latest character
-		output.setColor(textColour);
-		output.setString(input_text);
-	}
+}
+
+std::string InputField::getCurrentValue() {
+	return input_text;
 }
 
 void InputField::resetField(bool usePlaceholder) {

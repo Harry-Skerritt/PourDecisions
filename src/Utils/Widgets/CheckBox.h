@@ -17,6 +17,9 @@ public:
     // Getter
     bool isChecked() const;
 
+    // Setter
+    void setChecked(bool checked);
+
     // Handle mouse input
     void handleMouseInput(const sf::Vector2i& mousePos, bool mousePressed);
 

@@ -1,6 +1,7 @@
 #include "OptionsScreen.h"
 #include "../Utils/GradientBackground.h"
 #include "../Managers/AudioManager.h"
+#include "../Utils/CustomMessageBox.h"
 #include "../Game.h"
 #include <iostream>
 
@@ -12,10 +13,13 @@ void OptionsScreen::setGameInstance(Game* game) {
 	m_game = game;  // Set the Game pointer
 }
 
-void OptionsScreen::initialise(float& musicVol, float& sfxVol)
+void OptionsScreen::initialise(float& musicVol, float& sfxVol, bool fs, std::string res)
 {
 	musicVol = AudioManager::getInstance().getMusicVolume();
+	std::cout << "Gotten Music Vol: " << musicVol << std::endl;
 	sfxVol = 100.0f; //Needs the global set functionality
+	fullscreen = fs;
+	resolution = res;
 
 	//Title
 	optionsTitle.setFont(font);
@@ -85,6 +89,7 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 	fullscreenCheckbox.setPosition(checkBox_x - 60, graphicsHolder.getPosition().y + 90);
 	fullscreenCheckbox.setFillColor(sf::Color(66, 126, 137, 255), sf::Color(250, 0, 188, 255));
 	fullscreenCheckbox.setBorderColor(sf::Color(11, 80, 92, 255));
+	fullscreenCheckbox.setChecked(fullscreen);
 	fullscreenCheckbox.setOnStateChangedCallback([](bool checked) {
 			std::cout << "Checkbox is now " << (checked ? "checked" : "unchecked") << std::endl;
 			AudioManager::getInstance().playSoundEffect("buttonClick");
@@ -108,7 +113,7 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol)
 	};
 	resolutionMenu.initialize(checkBox_x - 162, graphicsHolder.getPosition().y + 150, 150, 40, resolutions, font);
 	resolutionMenu.setColors(sf::Color(66, 126, 137, 255), sf::Color::White, sf::Color::Cyan, pd_pink, sf::Color(11, 80, 92, 255));
-	resolutionMenu.setSelectedItem("1080x720");
+	resolutionMenu.setSelectedItem(resolution);
 
 	//Audio
 	//Music
@@ -185,10 +190,50 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 		if (backButton.isClicked(windowClick)) {
 			//Back button clicked
 			AudioManager::getInstance().playSoundEffect("buttonClick");
-			std::cout << "Back button clicked" << std::endl;
-			if (m_game) {
-				m_game->backToMainMenu(0); //Back to main menu
+
+			bool fs_changed = false;
+			bool res_changed = false;
+
+			//Check if full screen has changed
+			if (fullscreenCheckbox.isChecked() != fullscreen) {
+				//If its not the same as when it was called then its changed
+				fs_changed = true;
 			}
+
+			if (resolutionMenu.getSelectedItem() != resolution) {
+				//If its not the same as when it was called then its changed
+				res_changed = true;
+			}
+
+			if (res_changed || fs_changed) {
+				//If any of the graphics settings have changed call a popup
+				CustomMessageBox restartWarning("Pour Decisions", "To change graphics settings, the game will restart", 1);
+				MessageBoxButton result = restartWarning.showMessageBox(); //Show the message box
+				if (result == MessageBoxButton::Ok) {
+					std::cout << "OK button clicked" << std::endl;
+					//Want to restart
+					//Do the restart
+					//Set the new options?
+					std::cout << "Back button clicked" << std::endl;
+					if (m_game) {
+						m_game->backToMainMenu(0); //Back to main menu
+					}
+				}
+				else if (result == MessageBoxButton::Cancel) {
+					std::cout << "Cancel button clicked" << std::endl;
+					//Do not want to restart
+					//Should return to the options
+				}
+			}
+			else {
+				//No changes have happened
+				std::cout << "Back button clicked" << std::endl;
+				if (m_game) {
+					m_game->backToMainMenu(0); //Back to main menu
+				}
+			}
+
+			
 		}
 		
 		

@@ -7,10 +7,10 @@
 
 #include "VisualAddons/Confetti.h"
 #include "VisualAddons/SpriteTransition.h"
-#include "VisualAddons/GradientText.h"
 
 #include "Utils/Widgets/InputField.h"
 #include "Utils/Widgets/Button.h"
+#include "Utils/GradientText.h"
 
 #include "Screens/OptionsScreen.h"
 #include "Screens/PlayerSetup.h"
@@ -35,6 +35,14 @@ class Game
 		float getMusicVolume();
 		float getSFXVolume();
 
+		int getMaxPlayers();
+		int getPlayerThreshold();
+		int getCurrentPlayers();
+		void setCurrentPlayers(int players);
+
+		void addPlayer(std::string name);
+		int getSizeOfPlayerArray();
+
 		//Button
 		sf::Color buttonHoverColour = sf::Color(13, 58, 109, 255); //sf::Color(170, 170, 170, 255);
 		sf::Color buttonNormalColour = sf::Color::White;
@@ -44,10 +52,21 @@ class Game
 		sf::Texture buttonThinRectTexture;
 
 	private:
+		//Window Options
+		//Need to be set properly somewhere
+		bool fullscreen = false;
+		std::string resolution = "1080x720"; 
+
+		
 		sf::RenderWindow& window;
 		AudioManager& audioManager = AudioManager::getInstance();
 		sf::Font righteousFont;
-		sf::Vector2f windowClickPos;
+
+		const int MAX_PLAYERS = 8;
+		int currentPlayers;
+		const int ALLOWED_THRESHOLD = 3;
+		std::vector<std::string> playerNames;
+
 
 		float musicVolume = 0.0f;//75.0f;
 		float sfxVolume = 100.0f;

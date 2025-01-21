@@ -1,10 +1,13 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/GpuPreference.hpp>
 #include <iostream>
 #include "Game.h"
 
+#define SFML_DEFINE_DISCRETE_GPU_PREFERENCE //Use discrete gpu if available
+
 int main()
 {
-    const std::string VERSION_NO = "beta-0.1.4";
+    const std::string VERSION_NO = "beta-0.1.6";
     const sf::String WINDOW_TITLE = "Pour Decisions - " + VERSION_NO;
     //Creates the window
     sf::RenderWindow window(sf::VideoMode({1080u, 720u}), WINDOW_TITLE);
@@ -67,7 +70,6 @@ int main()
         game.update(dt);
 
         window.clear(sf::Color::Black);
-        //game.setBackgroundGradient(window); //Draw the background gradient -> only for the home screen - add this functionality later
 
         //'render' element of the game loop
         game.render();

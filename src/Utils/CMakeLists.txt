@@ -8,7 +8,9 @@ set(SOURCE_FILES
     GradientBackground.cpp
     RoundedRectangle.h
     RoundedRectangle.cpp
-)
+    GradientText.h
+    GradientText.cpp
+   "CustomMessageBox.h" "CustomMessageBox.cpp")
 
 # Add a library or an object file for the options menu (if it's a separate module)
 # You can choose to create a static library or simply compile as part of the executable.

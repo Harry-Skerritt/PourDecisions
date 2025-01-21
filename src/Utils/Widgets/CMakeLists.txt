@@ -10,7 +10,7 @@ set(SOURCE_FILES
     CheckBox.cpp
     InputField.h
     InputField.cpp
- "DropdownMenu.h" "DropdownMenu.cpp" "Button.h" "Button.cpp")
+ "DropdownMenu.h" "DropdownMenu.cpp" "Button.h" "Button.cpp" "TextGrid.h" "TextGrid.cpp")
 
 # Add a library or an object file for the options menu (if it's a separate module)
 # You can choose to create a static library or simply compile as part of the executable.

@@ -26,7 +26,9 @@ public:
 
 	bool isEmpty();
 
-	void handleInput(sf::Event event);
+	std::string getCurrentValue();
+
+	void handleInput(sf::Event event, bool inputAllowed = true);
 	void resetField(bool usePlaceholder = true);
 	void draw(sf::RenderWindow& window);
 

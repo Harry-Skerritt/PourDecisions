@@ -19,6 +19,9 @@ public:
     // Check if the transition is complete
     bool isComplete() const;
 
+    // Reset transition
+    void reset();
+
 private:
     sf::Sprite sprite;
     float duration;           // Total time for the transition

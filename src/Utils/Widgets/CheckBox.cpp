@@ -46,6 +46,10 @@ bool Checkbox::isChecked() const {
     return m_checked;
 }
 
+void Checkbox::setChecked(bool checked) {
+    m_checked = checked;
+}
+
 void Checkbox::handleMouseInput(const sf::Vector2i& mousePos, bool mousePressed) {
     // Toggle the checkbox when clicked
     if (m_box.getGlobalBounds().contains(static_cast<sf::Vector2f>(mousePos)) && mousePressed) {

@@ -4,11 +4,13 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
-#include "../VisualAddons/GradientText.h"
+#include "../Utils/GradientText.h"
 #include "../Utils/Widgets/VolumeSlider.h"
 #include "../Utils/Widgets/CheckBox.h"
 #include "../Utils/Widgets/DropdownMenu.h"
 #include "../Utils/Widgets/Button.h"
+
+#include <string>
 
 class Game;
 
@@ -19,7 +21,7 @@ public:
 
 	void setGameInstance(Game* game);
 
-	void initialise(float& musicVol, float& sfxVol);
+	void initialise(float& musicVol, float& sfxVol, bool fs, std::string res);
 
 	void update(float dt, sf::Vector2f& windowClick);
 
@@ -35,6 +37,8 @@ private:
 
 	float musicVol;
 	float sfxVol;
+	bool fullscreen;
+	std::string resolution;
 
 	sf::Color gradientColour_1 = sf::Color(3, 58, 60, 255);
 	sf::Color gradientColour_2 = sf::Color(0, 215, 253, 255);

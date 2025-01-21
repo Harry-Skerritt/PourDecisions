@@ -15,11 +15,12 @@ Game::Game(sf::RenderWindow& game_window)
 	srand(time(NULL));
 
 }
-
 Game::~Game()
 {
 
 }
+
+//Main Game Funcs
 bool Game::init()
 //Move Buttons to a class which uses a background image and text easier for overlays and handling allowing for cleaner code
 {
@@ -45,13 +46,22 @@ bool Game::init()
 		std::cout << "Thin Rect Button Did not load" << std::endl;;
 	}
 
-	//Main Menu
-	in_main_menu = true; //Main Menu State
-	is_menu_music_playing = false;
+	//Transition Texture
+	if (!transitionTexture.loadFromFile("../Data/Assets/spinwheel.png"))
+	{
+		std::cout << "Spinwheel Transition did no load" << std::endl;;
+	}
 
+	//Player Names
+	playerNames.reserve(MAX_PLAYERS); //Reserve space for max number of players
+
+	//Audio Loading
 	//Music
 	audioManager.loadMusic("menuMusic", "../Data/Audio/Music/menu_music.mp3");
 
+	audioManager.loadMusic("mainMusic", "../Data/Audio/Music/game_music.mp3");
+
+	//SFX
 	//Play Button Sound Effect
 	audioManager.loadSoundEffect("playSF", "../Data/Audio/SFX/playButtonClick.wav");
 
@@ -63,6 +73,15 @@ bool Game::init()
 
 	//Wrong SFX
 	audioManager.loadSoundEffect("wrongSF", "../Data/Audio/SFX/wrongAction.wav");
+
+	audioManager.setMusicVolume(musicVolume);
+
+	//Other Vars
+	currentPlayers = 0;
+
+	//Main Menu
+	in_main_menu = true; //Main Menu State
+	is_menu_music_playing = false;
 
 	//Logo
 	if (!logoTexture.loadFromFile("../Data/Assets/gameLogo.png"))
@@ -97,16 +116,14 @@ bool Game::init()
 	htpButton.setHoverColor(buttonHoverColour);
 	htpButton.setPosition(((window.getSize().x / 2) - (htpButton.getGlobalBounds().width/2) + htpButton.getGlobalBounds().width/2) + 25, 570);
 
+	
+	//Transition
+	spinwheelTransition.init(transitionTexture, 0.3f); //0.3s transition
 
-	if (!transitionTexture.loadFromFile("../Data/Assets/spinwheel.png"))
-	{
-		std::cout << "Spinwheel Transition did no load" << std::endl;;
-	}
-	spinwheelTransition.init(transitionTexture, 0.3f); //Update the texture, 0.3s transition
 
 	//Options Screen
 	in_options = false;
-	optionsScreen.initialise(musicVolume, sfxVolume);
+	optionsScreen.initialise(musicVolume, sfxVolume, fullscreen, resolution);
 	
 
 	//Player Setup State
@@ -114,7 +131,6 @@ bool Game::init()
 	playerSetup.initialise();
 	
 	
-	audioManager.setMusicVolume(musicVolume);
 
 
 	//Main Game
@@ -126,8 +142,8 @@ bool Game::init()
 void Game::update(float dt)
 {
 	//Button Hover Handling
-	//sf::Vector2i click = sf::Mouse::getPosition(window);
-	//sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
+	sf::Vector2i click = sf::Mouse::getPosition(window);
+    sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
 
 	if (in_main_menu) {
 		//In The Main Menu
@@ -208,6 +224,8 @@ void Game::render()
 	
 }
 
+
+//Callbacks
 void Game::backToMainMenu(int pageID)
 {
 	std::cout << "Back to main menu" << std::endl;
@@ -223,11 +241,13 @@ void Game::backToMainMenu(int pageID)
 		//Coming from Setup
 		in_player_setup = false;
 		in_main_menu = true;
+		spinwheelTransition.reset();
 	}
 	//3 - Main Game
 
 }
 
+//Getters / Setters
 float Game::getMusicVolume() {
 	return musicVolume;
 }
@@ -236,11 +256,39 @@ float Game::getSFXVolume() {
 	return sfxVolume;
 }
 
+int Game::getMaxPlayers() {
+	return MAX_PLAYERS;
+}
+
+int Game::getPlayerThreshold() {
+	return ALLOWED_THRESHOLD;
+}
+
+int Game::getCurrentPlayers() {
+	return currentPlayers;
+}
+
+void Game::setCurrentPlayers(int players) {
+	currentPlayers = players;
+}
+
+
+//Player Array
+void Game::addPlayer(std::string name) {
+	playerNames.push_back(name); //Insert the player name into the last position
+}
+
+int Game::getSizeOfPlayerArray() {
+	return playerNames.size();
+}
+
+//Event Handling
+
 void Game::mouseClicked(sf::Event event)
 {
 	//get the click position
 	sf::Vector2i click = sf::Mouse::getPosition(window);
-	windowClickPos = window.mapPixelToCoords(click);
+	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
 
 
 	if (event.mouseButton.button == sf::Mouse::Left)  //Left Click
@@ -272,7 +320,7 @@ void Game::mouseClicked(sf::Event event)
 		else if (!in_main_menu && in_options)
 		{
 			//In Options
-			optionsScreen.handleMouse(event);
+			optionsScreen.handleMouse(event, windowClickPos);
 		}
 		else if (in_player_setup) {
 			//In Player Setup

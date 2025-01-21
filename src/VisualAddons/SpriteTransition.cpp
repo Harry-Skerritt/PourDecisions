@@ -20,7 +20,7 @@ void SpriteTransition::init(const sf::Texture& texture, float durationIn)
     
 
     // Set the sprite's initial position to the center of the window
-    sprite.setPosition(540, 360);  // Assuming a 1080x720 window
+    sprite.setPosition(540, 360);  //Make dynamic as currently hardcoded for 1080x720
 }
 
 void SpriteTransition::update(float deltaTime) {
@@ -58,4 +58,18 @@ void SpriteTransition::render(sf::RenderWindow& window) {
 
 bool SpriteTransition::isComplete() const {
     return transitionComplete;
+}
+
+void SpriteTransition::reset() {
+    elapsedTime = 0;
+    transitionComplete = false;
+
+    // Restore the initial scale
+    sprite.setScale(0.1f, 0.1f);  // Start small
+
+    // Restore the initial rotation
+    sprite.setRotation(0.0f);  // Reset rotation
+
+    // Restore the initial color to fully visible
+    sprite.setColor(sf::Color::White);  // Reset to default visible state
 }
