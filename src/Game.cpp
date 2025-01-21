@@ -24,6 +24,21 @@ Game::~Game()
 bool Game::init()
 //Move Buttons to a class which uses a background image and text easier for overlays and handling allowing for cleaner code
 {
+	settingsParser.loadInSettings("../Data/settings.json");
+	resolution = settingsParser.getResolution();
+	fullscreen = settingsParser.getFullscreen();
+	musicVolume = settingsParser.getMusicVol();
+	sfxVolume = settingsParser.getSfxVol();
+	nsfwEnabled = settingsParser.getNSFW();
+	winPoints = settingsParser.getWinPoints();
+
+	std::cout << "Resolution:" << resolution << std::endl;
+	std::cout << "Fullscreen:" << fullscreen << std::endl;
+	std::cout << "Music Vol:" << musicVolume << std::endl;
+	std::cout << "SFX Vol:" << sfxVolume << std::endl;
+	std::cout << "NSFW:" << nsfwEnabled << std::endl;
+	std::cout << "Points:" << winPoints << std::endl;
+
 	//Fonts
 	if (!righteousFont.loadFromFile("../Data/Fonts/Righteous-Regular.ttf"))
 	{

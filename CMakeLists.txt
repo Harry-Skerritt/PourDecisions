@@ -6,7 +6,6 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 option(BUILD_SHARED_LIBS "Build shared libraries" OFF)
 
 #---- Fetch SFML, only works if you have git installed on your machine ----#
-
 include(FetchContent)   # Allows fetching content remotely at configure time
 FetchContent_Declare(   # Fetches SFML from github and puts it in the build directory
     SFML
@@ -16,6 +15,7 @@ FetchContent_Declare(   # Fetches SFML from github and puts it in the build dire
 
 FetchContent_MakeAvailable(SFML)    # Makes sure SFML and its dependencies are avaiable for the project
 
+
 #---- File management & .exe creation ----#
 
 set(SOURCE_FILES src/main.cpp src/Game.cpp src/Game.h)  # Sets variable SOURCE_FILES to hold names & locations of files that need to be compiled into the application
@@ -24,19 +24,29 @@ add_subdirectory("src/VisualAddons")
 add_subdirectory("src/Utils")
 add_subdirectory("src/Screens")
 add_subdirectory("src/Utils/Widgets")
+add_subdirectory("src/Utils/JSON")
+
 
 add_executable(PourDecisions ${SOURCE_FILES})  # Names the application and tells compiler which source files to use
 
+
+#Link Custom Libs
 target_link_libraries(PourDecisions PRIVATE Managers)
 target_link_libraries(PourDecisions PRIVATE VisualAddons)
 target_link_libraries(PourDecisions PRIVATE Utils)
 target_link_libraries(PourDecisions PRIVATE Screens)
 target_link_libraries(PourDecisions PRIVATE Widgets)
+target_link_libraries(PourDecisions PRIVATE JSON)
+
+# Link SFML
 target_link_libraries(PourDecisions PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application
 target_compile_features(PourDecisions PRIVATE cxx_std_20)  # Defines which standard of C++ the compiler should use
 
+include_directories(${CMAKE_SOURCE_DIR}/externals/json)
+
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Data/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Data/)  # Copies data from source directory to build directory (so the executable can access it)
 file(COPY ${CMAKE_CURRENT_SOURCE_DIR}/Cards/ DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/Cards/)  # Copies data from source directory to build directory (so the executable can access it)
+
 
 if(WIN32)
     add_custom_command(

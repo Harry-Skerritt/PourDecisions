@@ -158,10 +158,8 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 			increasePlayerCount();
 			std::string currentPlayerName = playerNameEntry.getCurrentValue(); 
 			currentPlayerDisplay.setText(currentPlayers - 1, currentPlayerName); // Add the name to the display
-			//Other Code
 		}
 		std::cout << "Add Player Clicked" << std::endl;
-		//Handle adding the player
 		playerNameEntry.resetField(); //Reset for next name
 	}
 
@@ -185,6 +183,21 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 			//At least the allowed number of players
 			AudioManager::getInstance().playSoundEffect("buttonClick");
 			//Put the players names into an array in the order they were clicked
+			for (int i = 0; i < (currentPlayers); i++) {
+				//Loop through every player and add their name to the array
+				m_game->addPlayer(currentPlayerDisplay.getText(i)); 
+			}
+
+			if (m_game->getSizeOfPlayerArray() == currentPlayers) {
+				std::cout << "All players added successfully" << std::endl; // DEBUG
+				std::cout << "Players in array: " << std::to_string(m_game->getSizeOfPlayerArray()) << std::endl; // DEBUG
+			}
+			else { 
+				std::cout << "Error in adding players" << std::endl; // DEBUG
+				std::cout << "Players in array: " << std::to_string(m_game->getSizeOfPlayerArray()) << std::endl; // DEBUG
+				std::cout << "Players added: " << currentPlayers << std::endl; // DEBUG
+			}
+
 			m_game->setCurrentPlayers(currentPlayers); //Set the amount of players
 			//Change screen
 		}

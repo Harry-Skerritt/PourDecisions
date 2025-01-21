@@ -15,6 +15,7 @@
 #include "Screens/OptionsScreen.h"
 #include "Screens/PlayerSetup.h"
 
+#include "Utils/JSON/SettingsParser.h"
 
 class Game
 {
@@ -52,24 +53,37 @@ class Game
 		sf::Texture buttonThinRectTexture;
 
 	private:
-		//Window Options
-		//Need to be set properly somewhere
-		bool fullscreen = false;
-		std::string resolution = "1080x720"; 
+		//Settings from file
+		SettingsParser settingsParser;
+
+		//Graphics
+		std::string resolution;
+		bool fullscreen;
+
+		//Audio 
+		float musicVolume;
+		float sfxVolume;
+
+		//Game Stuff
+		bool nsfwEnabled;
+		int winPoints;
 
 		
+		//Main
 		sf::RenderWindow& window;
 		AudioManager& audioManager = AudioManager::getInstance();
 		sf::Font righteousFont;
 
+		//Players & Points
 		const int MAX_PLAYERS = 8;
 		int currentPlayers;
 		const int ALLOWED_THRESHOLD = 3;
+		
 		std::vector<std::string> playerNames;
+		std::vector<int> playerPoints;
 
 
-		float musicVolume = 0.0f;//75.0f;
-		float sfxVolume = 100.0f;
+		
 
 	
 		//Main Menu
