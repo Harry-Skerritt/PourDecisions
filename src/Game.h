@@ -31,7 +31,7 @@ class Game
 
 		bool init();
 		void update(float dt);
-		void render();
+		void render(float dt);
 		void mouseClicked(sf::Event event);
 		void keyPressed(sf::Event event);
 		void textEntered(sf::Event event);
@@ -73,6 +73,8 @@ class Game
 		const sf::Vector2f BASE_RESOLUTION = sf::Vector2f(1080.0f, 720.0f);
 
 		Card cardTest; //Test
+
+		bool showCard = false;
 
 		//Graphics
 		std::string resolution;

@@ -38,6 +38,8 @@ public:
 
 	void draw(sf::RenderWindow& window);
 
+	void setAlpha(sf::Uint8 alpha);
+
 private:
 	sf::RectangleShape buttonBackground;
 	sf::Text buttonText;

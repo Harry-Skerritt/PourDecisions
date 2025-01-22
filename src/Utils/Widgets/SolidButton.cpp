@@ -85,3 +85,17 @@ void SolidButton::draw(sf::RenderWindow& window) {
 	window.draw(buttonBackground);
 	window.draw(buttonText);
 }
+
+void SolidButton::setAlpha(sf::Uint8 alpha) {
+	sf::Color bgColor = buttonBackground.getFillColor();
+	bgColor.a = alpha;
+	buttonBackground.setFillColor(bgColor);
+
+	sf::Color borderColor = buttonBackground.getOutlineColor();
+	borderColor.a = alpha;
+	buttonBackground.setOutlineColor(borderColor);
+
+	sf::Color textColor = buttonText.getFillColor();
+	textColor.a = alpha;
+	buttonText.setFillColor(textColor);
+}

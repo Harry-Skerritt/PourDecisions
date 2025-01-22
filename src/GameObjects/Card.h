@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <vector>
+#include <cmath>
 
 class Card {
 public:
@@ -14,9 +16,7 @@ public:
 
 	void initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondaryFont, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window);
 
-	void setSize(float x, float y);
 	void setPosition(float x, float y);
-	void setOrigin(float x, float y);
 
 	void update(float dt, sf::Vector2f clickPos);
 
@@ -26,7 +26,24 @@ public:
 	sf::Vector2f getPosition() const;
 
 
-	void draw(sf::RenderWindow& window);
+	void showCard(sf::RenderWindow& window, float dt);
+
+	void hideCard(sf::RenderWindow& window, float dt);
+
+	void drawFadeComponents(
+		sf::RenderWindow& window,
+		sf::RectangleShape& screenDarken,
+		sf::RectangleShape& cardBackground,
+		sf::RectangleShape& cardHeader,
+		sf::Text& cardTitle,
+		sf::Text& cardMessage,
+		sf::Sprite& cardMotif,
+		SolidButton& forfeitButton,
+		SolidButton& passButton,
+		float deltaTime,
+		float fadeSpeed,
+		bool fadeIn // true for fade in, false for fade out
+	);
 
 private:
 	sf::RectangleShape cardBackground;
@@ -53,8 +70,6 @@ private:
 
 	//Helper function
 	void wrapText(sf::Text& text, float maxWidth);
-
-
 };
 
 #endif

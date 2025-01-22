@@ -1,4 +1,5 @@
 #include "Card.h"
+#include "../Managers/AudioManager.h"
 
 
 Card::Card() {};
@@ -70,6 +71,7 @@ void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondary
 	passButton.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) + 10,
 		cardBackground.getSize().y - 30);
 
+
 }
 
 void Card::setPosition(float x, float y) {
@@ -93,12 +95,110 @@ sf::Vector2f Card::getPosition() const {
 	return cardBackground.getPosition();
 }
 
-void Card::draw(sf::RenderWindow& window) {
+void Card::showCard(sf::RenderWindow& window, float dt) {
+	drawFadeComponents(
+		window,
+		screenDarken,
+		cardBackground,
+		cardHeader,
+		cardTitle,
+		cardMessage,
+		cardMotif,
+		forfeitButton,
+		passButton,
+		dt,        // Delta time
+		1.5f,       // Fade speed (normalized, 0.5 = 2 seconds for full fade)
+		true
+	);
+	
+}
+
+void Card::hideCard(sf::RenderWindow& window, float dt) {
+	drawFadeComponents(
+		window,
+		screenDarken,
+		cardBackground,
+		cardHeader,
+		cardTitle,
+		cardMessage,
+		cardMotif,
+		forfeitButton,
+		passButton,
+		dt,        // Delta time
+		1.5f,       // Fade speed (normalized, 0.5 = 2 seconds for full fade)
+		false
+	);
+}
+
+void Card::drawFadeComponents(
+	sf::RenderWindow& window,
+	sf::RectangleShape& screenDarken,
+	sf::RectangleShape& cardBackground,
+	sf::RectangleShape& cardHeader,
+	sf::Text& cardTitle,
+	sf::Text& cardMessage,
+	sf::Sprite& cardMotif,
+	SolidButton& forfeitButton,
+	SolidButton& passButton,
+	float deltaTime,
+	float fadeSpeed,
+	bool fadeIn // true for fade in, false for fade out
+)
+{
+	static float fadeProgress = fadeIn ? 0.0f : 1.0f;
+
+	// Update fade progress
+	fadeProgress += (fadeIn ? fadeSpeed : -fadeSpeed) * deltaTime;
+	fadeProgress = std::clamp(fadeProgress, 0.0f, 1.0f);
+
+	// Calculate alpha values
+	sf::Uint8 alpha = static_cast<sf::Uint8>(fadeProgress * 255);
+	sf::Uint8 darkenAlpha = static_cast<sf::Uint8>(fadeProgress * 179); // screenDarken max alpha is 179
+
+	// Set screenDarken alpha
+	sf::Color darkenColor = screenDarken.getFillColor();
+	darkenColor.a = darkenAlpha;
+	screenDarken.setFillColor(darkenColor);
+
+	// Set alpha for all other components
+	sf::Color backgroundColor = cardBackground.getFillColor();
+	backgroundColor.a = alpha;
+	cardBackground.setFillColor(backgroundColor);
+
+	sf::Color backgroundBorderColor = cardBackground.getOutlineColor();
+	backgroundBorderColor.a = alpha;
+	cardBackground.setOutlineColor(backgroundBorderColor);
+
+	sf::Color headerColor = cardHeader.getFillColor();
+	headerColor.a = alpha;
+	cardHeader.setFillColor(headerColor);
+
+	sf::Color headerBorderColor = cardBackground.getOutlineColor();
+	headerBorderColor.a = alpha;
+	cardHeader.setOutlineColor(headerBorderColor);
+
+	sf::Color titleColor = cardTitle.getFillColor();
+	titleColor.a = alpha;
+	cardTitle.setFillColor(titleColor);
+
+	sf::Color messageColor = cardMessage.getFillColor();
+	messageColor.a = alpha;
+	cardMessage.setFillColor(messageColor);
+
+	sf::Color motifColor = cardMotif.getColor();
+	motifColor.a = alpha;
+	cardMotif.setColor(motifColor);
+
+	// Update button alpha
+	forfeitButton.setAlpha(alpha);
+	passButton.setAlpha(alpha);
+
+	// Draw everything
 	window.draw(screenDarken);
 	window.draw(cardBackground);
 	window.draw(cardHeader);
-	window.draw(cardTitle);
 	window.draw(cardMotif);
+	window.draw(cardTitle);
 	window.draw(cardMessage);
 	forfeitButton.draw(window);
 	passButton.draw(window);

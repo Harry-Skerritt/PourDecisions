@@ -89,7 +89,7 @@ int main()
             game.update(dt);
 
             window.clear(sf::Color::Black);
-            game.render();
+            game.render(dt);
             window.display();
 
             // Check if the game requests a restart (e.g., due to settings change)

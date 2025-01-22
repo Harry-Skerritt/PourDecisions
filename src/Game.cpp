@@ -93,6 +93,9 @@ bool Game::init()
 	//Wrong SFX
 	audioManager.loadSoundEffect("wrongSF", "../Data/Audio/SFX/wrongAction.wav");
 
+	//Card Select SFX
+	audioManager.loadSoundEffect("cardPick", "../Data/Audio/SFX/cardSelect.wav");
+
 	audioManager.setMusicVolume(musicVolume);
 
 	//Other Vars
@@ -168,7 +171,7 @@ bool Game::init()
 
 	//Test Card
 	sf::Color colourTest = sf::Color(0, 168, 64);
-	std::string textTest = "What’s the most embarrassing thing you’ve ever done?";
+	std::string textTest = "What's the most embarrassing thing you've ever done?";
 	std::cout << "PC SX: " << scaleX << std::endl;
 	cardTest.initialise(colourTest, righteousFont, ryeFont, "TRUTH", textTest, "../Data/Assets/Motifs/truthMotif.png", scaleX, window);
 	
@@ -226,7 +229,7 @@ void Game::update(float dt)
 	
 }
 
-void Game::render()
+void Game::render(float dt)
 {
 
 	if (in_main_menu) {
@@ -238,7 +241,15 @@ void Game::render()
 		optionButton.draw(window);
 		htpButton.draw(window);
 		quitButton.draw(window);
-		cardTest.draw(window);
+
+		if (showCard) {
+			cardTest.showCard(window, dt);
+			
+		}
+		else {
+			cardTest.hideCard(window, dt);
+			audioManager.playSoundEffect("cardPick");
+		}
 	}
 
 	if (!in_main_menu && in_options)
@@ -430,6 +441,10 @@ void Game::keyPressed(sf::Event event)
 		if (event.key.code == sf::Keyboard::Enter) {
 			playerSetup.handleEnter(event);
 		}
+	}
+
+	if (event.key.code == sf::Keyboard::C) {
+		showCard = !showCard;
 	}
 	
 }
