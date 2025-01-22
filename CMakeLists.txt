@@ -25,6 +25,7 @@ add_subdirectory("src/Utils")
 add_subdirectory("src/Screens")
 add_subdirectory("src/Utils/Widgets")
 add_subdirectory("src/Utils/JSON")
+add_subdirectory("src/GameObjects")
 
 
 add_executable(PourDecisions ${SOURCE_FILES})  # Names the application and tells compiler which source files to use
@@ -37,6 +38,7 @@ target_link_libraries(PourDecisions PRIVATE Utils)
 target_link_libraries(PourDecisions PRIVATE Screens)
 target_link_libraries(PourDecisions PRIVATE Widgets)
 target_link_libraries(PourDecisions PRIVATE JSON)
+target_link_libraries(PourDecisions PRIVATE GameObjects)
 
 # Link SFML
 target_link_libraries(PourDecisions PRIVATE sfml-graphics sfml-window sfml-system sfml-network sfml-audio) # Links the SFML libraries we need to our application

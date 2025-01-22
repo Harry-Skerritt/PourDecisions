@@ -13,10 +13,10 @@ void OptionsScreen::setGameInstance(Game* game) {
 	m_game = game;  // Set the Game pointer
 }
 
-void OptionsScreen::initialise(float& musicVol, float& sfxVol, bool fs, std::string res)
+void OptionsScreen::initialise(float& musicVolIn, float& sfxVolIn, bool fs, std::string res)
 {
-	musicVol = musicVol;
-	sfxVol = sfxVol;
+	musicVol = musicVolIn;
+	sfxVol = sfxVolIn;
 	fullscreen = fs;
 	resolution = res;
 
@@ -244,12 +244,15 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 
 						//Split res
 						int resX, resY;
-						splitResolution(resolutionMenu.getSelectedItem(), resX, resY);
+						resolution = resolutionMenu.getSelectedItem();
+						splitResolution(resolution, resX, resY);
 
-
+					
 						// Modify graphisc settings
 						settings.setResolution(resX, resY);
-						settings.setFullscreen(fullscreenCheckbox.isChecked());
+
+						fullscreen = fullscreenCheckbox.isChecked();
+						settings.setFullscreen(fullscreen);
 
 						// Modify audio settings
 						musicVol = AudioManager::getInstance().getMusicVolume();

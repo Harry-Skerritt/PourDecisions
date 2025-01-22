@@ -4,7 +4,7 @@ SpriteTransition::SpriteTransition() {
     
 }
 
-void SpriteTransition::init(const sf::Texture& texture, float durationIn)
+void SpriteTransition::init(const sf::Texture& texture, float durationIn, sf::RenderWindow& window)
 {
     sprite.setTexture(texture);
     duration = durationIn;
@@ -20,7 +20,8 @@ void SpriteTransition::init(const sf::Texture& texture, float durationIn)
     
 
     // Set the sprite's initial position to the center of the window
-    sprite.setPosition(540, 360);  //Make dynamic as currently hardcoded for 1080x720
+    
+    sprite.setPosition(window.getSize().x / 2, window.getSize().y / 2);  //Make dynamic as currently hardcoded for 1080x720
 }
 
 void SpriteTransition::update(float deltaTime) {

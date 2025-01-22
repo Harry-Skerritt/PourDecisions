@@ -8,7 +8,7 @@ public:
     // Constructor
     SpriteTransition();
 
-    void init(const sf::Texture& texture, float durationIn);
+    void init(const sf::Texture& texture, float durationIn, sf::RenderWindow& window);
 
     // Update the sprite's state (called every frame)
     void update(float deltaTime);

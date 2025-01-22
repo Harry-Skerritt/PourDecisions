@@ -9,9 +9,6 @@
 
 int main()
 {
-    const std::string VERSION_NO = "beta-0.2.0";
-    const sf::String BASE_WINDOW_TITLE = "Pour Decisions - " + VERSION_NO;
-
     while (true) { // Loop to allow restarting the game
         // Load settings (resolution, fullscreen, etc.)
         Settings settings = Settings::fromFile("../Data/settings.json");
@@ -31,6 +28,10 @@ int main()
         // Convert substrings to integers
         width = std::stoi(widthStr);
         height = std::stoi(heightStr);
+
+        const std::string VERSION_NO = "beta-0.2.0";
+        const std::string RES = std::to_string(width) + "x" + std::to_string(height);
+        const sf::String BASE_WINDOW_TITLE = "Pour Decisions - " + VERSION_NO + " - " + RES;
 
 
         sf::VideoMode videoMode(width, height);
@@ -80,12 +81,6 @@ int main()
 
                 if (event.type == sf::Event::KeyPressed) {
                     game.keyPressed(event);
-
-                    // Add logic to trigger a restart (e.g., if a specific key is pressed)
-                    if (event.key.code == sf::Keyboard::R) { // Optional: a key to trigger restart for testing
-                        restartRequested = true;
-                        window.close();
-                    }
                 }
             }
 

@@ -1,4 +1,5 @@
 #include "InputField.h"
+#include <iostream>
 
 
 InputField::InputField() {};
@@ -93,7 +94,8 @@ void InputField::handleInput(sf::Event event, bool inputAllowed) {
 				resetField();
 			}
 		}
-		else {
+		else if(event.text.unicode != 13) {
+			//Not the enter key
 			input_text += static_cast<char>(event.text.unicode); //Ammend the latest character
 			output.setColor(textColour);
 			output.setString(input_text);

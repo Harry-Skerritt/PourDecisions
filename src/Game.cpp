@@ -24,6 +24,12 @@ Game::~Game()
 //Main Game Funcs
 bool Game::init()
 {
+	scaleX = static_cast<float>(window.getSize().x) / BASE_RESOLUTION.x;
+	std::cout << "S SX: " << scaleX << std::endl;
+	
+	scaleY = static_cast<float>(window.getSize().y) / BASE_RESOLUTION.y;
+	std::cout << "S SY: " << scaleY << std::endl;
+
 	//Load Settings
 	loadSettings("../Data/Settings.json");
 
@@ -31,6 +37,16 @@ bool Game::init()
 	if (!righteousFont.loadFromFile("../Data/Fonts/Righteous-Regular.ttf"))
 	{
 		std::cout << "Righteous Font did not load" << std::endl;
+	}
+
+	if (!ryeFont.loadFromFile("../Data/Fonts/Rye-Regular.ttf"))
+	{
+		std::cout << "Rye Font did not load" << std::endl;
+	}
+
+	if (!lcdFont.loadFromFile("../Data/Fonts/LCD14.otf"))
+	{
+		std::cout << "LCD Font did not load" << std::endl;
 	}
 
 	//Button Backs
@@ -92,7 +108,10 @@ bool Game::init()
 		std::cout << "Logo Did not load" << std::endl;;
 	}
 	logoSprite.setTexture(logoTexture);
-	logoSprite.setScale(0.3f, 0.3f);
+
+	
+
+	logoSprite.setScale(scaleX * 0.3f, scaleX * 0.3f);
 	logoSprite.setPosition(((window.getSize().x / 2) - (logoSprite.getGlobalBounds().width / 2)), 10);
 
 	//Play Button
@@ -101,7 +120,7 @@ bool Game::init()
 	playButton.setText("PLAY", righteousFont, 60);
 	playButton.setTextColor(buttonNormalColour);
 	playButton.setHoverColor(buttonHoverColour);
-	playButton.setPosition(((window.getSize().x / 2) - (playButton.getGlobalBounds().width / 2)), 450);
+	playButton.setPosition(((window.getSize().x / 2) - (playButton.getGlobalBounds().width / 2)), window.getSize().y - 270);
 
 	//Options Button
 	optionButton.setBackgroundImage(buttonThinRectTexture);
@@ -109,7 +128,7 @@ bool Game::init()
 	optionButton.setText("OPTIONS", righteousFont, 40);
 	optionButton.setTextColor(buttonNormalColour);
 	optionButton.setHoverColor(buttonHoverColour);
-	optionButton.setPosition(((window.getSize().x / 2) - (optionButton.getGlobalBounds().width/2) - optionButton.getGlobalBounds().width/2) - 25, 570);
+	optionButton.setPosition(((window.getSize().x / 2) - (optionButton.getGlobalBounds().width/2) - optionButton.getGlobalBounds().width/2) - 25, window.getSize().y - 150);
 
 	//HTP Button
 	htpButton.setBackgroundImage(buttonThinRectTexture);
@@ -117,11 +136,19 @@ bool Game::init()
 	htpButton.setText("HOW TO PLAY", righteousFont, 40);
 	htpButton.setTextColor(buttonNormalColour);
 	htpButton.setHoverColor(buttonHoverColour);
-	htpButton.setPosition(((window.getSize().x / 2) - (htpButton.getGlobalBounds().width/2) + htpButton.getGlobalBounds().width/2) + 25, 570);
+	htpButton.setPosition(((window.getSize().x / 2) - (htpButton.getGlobalBounds().width/2) + htpButton.getGlobalBounds().width/2) + 25, window.getSize().y - 150);
+
+	//Quit Button
+	quitButton.setBackgroundImage(buttonCircleTexture);
+	quitButton.setBackgroundScale(scaleX * 0.4f, scaleX * 0.4f);
+	quitButton.setText("X", righteousFont, window.getSize().y * 0.0416f);
+	quitButton.setTextColor(buttonNormalColour);
+	quitButton.setHoverColor(buttonHoverColour);
+	quitButton.setPosition(window.getSize().x - quitButton.getGlobalBounds().width - 25, 25);
 
 	
 	//Transition
-	spinwheelTransition.init(transitionTexture, 0.3f); //0.3s transition
+	spinwheelTransition.init(transitionTexture, 0.3f, window); //0.3s transition
 
 
 	//Options Screen
@@ -139,6 +166,13 @@ bool Game::init()
 	//Main Game
 	in_game = false;
 
+	//Test Card
+	sf::Color colourTest = sf::Color(0, 168, 64);
+	std::string textTest = "What’s the most embarrassing thing you’ve ever done?";
+	std::cout << "PC SX: " << scaleX << std::endl;
+	cardTest.initialise(colourTest, righteousFont, ryeFont, "TRUTH", textTest, "../Data/Assets/Motifs/truthMotif.png", scaleX, window);
+	
+
 	return true;
 }
 
@@ -147,6 +181,8 @@ void Game::update(float dt)
 	//Button Hover Handling
 	sf::Vector2i click = sf::Mouse::getPosition(window);
     sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
+
+	cardTest.update(dt, windowClickPos);
 
 	if (in_main_menu) {
 		//In The Main Menu
@@ -158,6 +194,7 @@ void Game::update(float dt)
 		playButton.handleHover(windowClickPos);
 		optionButton.handleHover(windowClickPos);
 		htpButton.handleHover(windowClickPos);
+		quitButton.handleHover(windowClickPos);
 		confettiManager.update(window);
 	}
 
@@ -200,6 +237,8 @@ void Game::render()
 		playButton.draw(window);
 		optionButton.draw(window);
 		htpButton.draw(window);
+		quitButton.draw(window);
+		cardTest.draw(window);
 	}
 
 	if (!in_main_menu && in_options)
@@ -350,6 +389,10 @@ void Game::mouseClicked(sf::Event event)
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "HTP Button Clicked" << std::endl;
 			}
+
+			if (quitButton.isClicked(windowClickPos)) {
+				window.close();
+			}
 		}
 		else if (!in_main_menu && in_options)
 		{
@@ -383,6 +426,11 @@ void Game::textEntered(sf::Event event)
 
 void Game::keyPressed(sf::Event event)
 {
+	if (in_player_setup) {
+		if (event.key.code == sf::Keyboard::Enter) {
+			playerSetup.handleEnter(event);
+		}
+	}
 	
 }
 

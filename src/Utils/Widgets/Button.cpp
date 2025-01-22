@@ -78,6 +78,10 @@ sf::Vector2f Button::getPosition() const {
 	return backgroundSprite.getPosition();
 }
 
+void Button::setOrigin(float x, float y) {
+	backgroundSprite.setOrigin(x, y);
+}
+
 void Button::draw(sf::RenderWindow& window) {
 	window.draw(backgroundSprite);
 	window.draw(buttonText);

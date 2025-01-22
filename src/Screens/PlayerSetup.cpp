@@ -33,19 +33,21 @@ void PlayerSetup::initialise()
 
 	//Text Entry
 	playerNameEntry.setFont(font);
-	playerNameEntry.setSize(400, 60);
-	playerNameEntry.setBackgroundColour(blueColour);
+	playerNameEntry.setSize(window.getSize().x * 0.37f, window.getSize().y * 0.08f);
+	playerNameEntry.setCharacterSize(window.getSize().y * 0.041f);
+	playerNameEntry.setBackgroundColour(purpleColour);
 	playerNameEntry.setPlaceholder("Enter Player Name");
 	playerNameEntry.setPosition(((window.getSize().x / 2) - (playerNameEntry.getGlobalBounds().width / 2)), 150);
-	playerNameEntry.setBorder(4.0f, pinkBorder);
+	//playerNameEntry.setBorder(4.0f, pinkBorder);
 
 	//Add Player Button
 	addPlayerButton.setBackgroundImage(m_game->buttonCircleTexture);
-	addPlayerButton.setBackgroundScale(0.6f, 0.6f);
-	addPlayerButton.setText("+", font, 40);
+	addPlayerButton.setBackgroundScale(m_game->scaleX * 0.4f, m_game->scaleX * 0.4f);
+	addPlayerButton.setText("+", font, window.getSize().y * 0.055f);
 	addPlayerButton.setTextColor(m_game->buttonNormalColour);
 	addPlayerButton.setHoverColor(m_game->buttonHoverColour);
-	addPlayerButton.setPosition(playerNameEntry.getPosition().x + playerNameEntry.getGlobalBounds().width + 20, 150);
+	addPlayerButton.setOrigin(addPlayerButton.getGlobalBounds().width / 2, addPlayerButton.getGlobalBounds().height / 2);
+	addPlayerButton.setPosition(playerNameEntry.getPosition().x + playerNameEntry.getGlobalBounds().width + 20, playerNameEntry.getPosition().y);
 
 	//Back Button
 	backButton.setBackgroundImage(m_game->buttonRectTexture);
@@ -67,44 +69,44 @@ void PlayerSetup::initialise()
 	//Player Count
 	playerCountLabel.setFont(font);
 	playerCountLabel.setString("Player Count:");
-	playerCountLabel.setCharacterSize(30);
+	playerCountLabel.setCharacterSize(window.getSize().x * 0.027f);
 	playerCountLabel.setFillColor(sf::Color::White);
 	playerCountLabel.setPosition((window.getSize().x - playerCountLabel.getGlobalBounds().width) - 50, (window.getSize().y / 2) - (playerCountLabel.getGlobalBounds().height / 2));
 
 	maxPlayerCount.setFont(font);
 	std::string maxPlayerString = "/" + std::to_string(maxPlayers);
 	maxPlayerCount.setString(maxPlayerString);
-	maxPlayerCount.setCharacterSize(50);
+	maxPlayerCount.setCharacterSize(window.getSize().x * 0.047f);
 	if (currentPlayers < allowedThreshold) {
 		maxPlayerCount.setFillColor(disallowedPlayerColour); 
 	}
 	else {
 		maxPlayerCount.setFillColor(allowedPlayerColour);
 	}
-	maxPlayerCount.setPosition((playerCountLabel.getPosition().x + playerCountLabel.getGlobalBounds().width) - maxPlayerCount.getGlobalBounds().width*2, playerCountLabel.getPosition().y + 30);
+	maxPlayerCount.setPosition((playerCountLabel.getPosition().x + playerCountLabel.getGlobalBounds().width) - maxPlayerCount.getGlobalBounds().width*2, playerCountLabel.getPosition().y + window.getSize().y * 0.041f);
 	
 	currentPlayerCount.setFont(font);
 	std::string currentPlayerString = std::to_string(currentPlayers);
 	currentPlayerCount.setString(currentPlayerString);
-	currentPlayerCount.setCharacterSize(50);
+	currentPlayerCount.setCharacterSize(window.getSize().x * 0.047f);
 	if (currentPlayers < allowedThreshold) {
 		currentPlayerCount.setFillColor(disallowedPlayerColour);
 	}
 	else {
 		currentPlayerCount.setFillColor(allowedPlayerColour);
 	}
-	currentPlayerCount.setPosition(maxPlayerCount.getPosition().x - maxPlayerCount.getGlobalBounds().width + 20, playerCountLabel.getPosition().y + 30);
+	currentPlayerCount.setPosition(maxPlayerCount.getPosition().x - maxPlayerCount.getGlobalBounds().width + window.getSize().x * 0.018f, playerCountLabel.getPosition().y + window.getSize().y * 0.041f);
 
 	//Player Display
-	currentPlayerDisplay.setSize(400, 400);
+	currentPlayerDisplay.setSize(window.getSize().x * 0.37f, window.getSize().x * 0.37f);
 	currentPlayerDisplay.setPosition((window.getSize().x / 2 - currentPlayerDisplay.getGlobalBounds().width / 2), 
 		(playerNameEntry.getPosition().y + playerNameEntry.getGlobalBounds().height) + 40);
-	currentPlayerDisplay.setBackgroundColor(blueColour);
+	currentPlayerDisplay.setBackgroundColor(purpleColour);
 	currentPlayerDisplay.setTextColor(sf::Color::White);
 	currentPlayerDisplay.setTextHoverColor(disallowedPlayerColour);
-	currentPlayerDisplay.initialize(8, font, 40, true);
+	currentPlayerDisplay.initialize(8, font, window.getSize().x * 0.037f, true);
 	currentPlayerDisplay.setHeader("Current Player");
-	currentPlayerDisplay.setBorder(4.f, pinkBorder);
+	//currentPlayerDisplay.setBorder(4.f, pinkBorder);
 	currentPlayerDisplay.setClickCallback([this]() {
 		increasePlayerCount(-1);
 		AudioManager::getInstance().playSoundEffect("addPlayerSF");
@@ -146,22 +148,6 @@ void PlayerSetup::update(float dt, sf::Vector2f& windowClick) {
 // Handles mouse
 void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 	currentPlayerDisplay.handleClick(windowClick); //Handle current player click
-
-	//Handle Add Player Button
-	if (addPlayerButton.isClicked(windowClick)) {
-		if (playerNameEntry.isEmpty() || currentPlayers == maxPlayers) {
-			//Nothing in the field, or max number of players reached
-			AudioManager::getInstance().playSoundEffect("wrongSF");
-		}
-		else {
-			AudioManager::getInstance().playSoundEffect("addPlayerSF");
-			increasePlayerCount();
-			std::string currentPlayerName = playerNameEntry.getCurrentValue(); 
-			currentPlayerDisplay.setText(currentPlayers - 1, currentPlayerName); // Add the name to the display
-		}
-		std::cout << "Add Player Clicked" << std::endl;
-		playerNameEntry.resetField(); //Reset for next name
-	}
 
 	//Handle Back Button
 	if (backButton.isClicked(windowClick)) {
@@ -213,6 +199,22 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 	}
 }
 
+void PlayerSetup::handleEnter(sf::Event event) {
+	//Handle Add Player function
+	if (playerNameEntry.isEmpty() || currentPlayers == maxPlayers) {
+		//Nothing in the field, or max number of players reached
+		AudioManager::getInstance().playSoundEffect("wrongSF");
+	}
+	else {
+		AudioManager::getInstance().playSoundEffect("addPlayerSF");
+		increasePlayerCount();
+		std::string currentPlayerName = playerNameEntry.getCurrentValue();
+		currentPlayerDisplay.setText(currentPlayers - 1, currentPlayerName); // Add the name to the display
+	}
+	std::cout << "Add Player: " << playerNameEntry.getCurrentValue() << std::endl;
+	playerNameEntry.resetField(); //Reset for next name
+}
+
 // Handles text entry
 void PlayerSetup::handleTextEntry(sf::Event event) {
 	playerNameEntry.handleInput(event, inputAllowed);
@@ -227,7 +229,7 @@ void PlayerSetup::draw(sf::RenderWindow& window, ConfettiManager& confetti)
 
 	//Player Entry
 	playerNameEntry.draw(window);
-	addPlayerButton.draw(window);
+	//addPlayerButton.draw(window);
 	backButton.draw(window);
 	nextButton.draw(window);
 	

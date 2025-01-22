@@ -27,6 +27,8 @@ public:
 
 	void handleMouse(sf::Event event, sf::Vector2f windowClick);
 
+	void handleEnter(sf::Event event);
+
 	void handleTextEntry(sf::Event event);
 
 	void draw(sf::RenderWindow& window, ConfettiManager& confetti);
@@ -40,9 +42,9 @@ private:
 	int allowedThreshold;
 	bool inputAllowed;
 
-	sf::Color allowedPlayerColour = sf::Color(127, 194, 2, 255);
-	sf::Color disallowedPlayerColour = sf::Color(194, 2, 2, 255);
-	sf::Color blueColour = sf::Color(1, 123, 222, 255);
+	sf::Color allowedPlayerColour = sf::Color(76, 233, 16, 255);
+	sf::Color disallowedPlayerColour = sf::Color(255, 1, 67, 255);
+	sf::Color purpleColour = sf::Color(44, 3, 60, 255);
 	sf::Color pinkBorder = sf::Color(164, 26, 162, 255);
 
 	Game* m_game;

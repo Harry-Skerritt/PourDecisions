@@ -1,19 +1,20 @@
-#ifndef BUTTON_H
-#define BUTTON_H
+#ifndef SOLIDBUTTON_H
+#define SOLIDBUTTON_H
 #pragma once
 
 #include <SFML/Graphics.hpp>
 #include <string>
 
-class Button {
+
+class SolidButton {
 public:
-	Button();
-	~Button();
+	SolidButton();
+	~SolidButton();
 
-	void setBackgroundImage(const sf::Texture& texture);
+	void setBackgroundColor(const sf::Color& color, float x, float y);
 
-	void setBackgroundScale(float x, float y);
-	void setBackgroundScale(sf::Vector2f size);
+	void setBorder(sf::Color& color, float thickness);
+
 
 	void setText(const std::string& text, const sf::Font& font, unsigned int characterSize);
 
@@ -31,14 +32,14 @@ public:
 	sf::FloatRect getGlobalBounds() const;
 	sf::FloatRect getLocalBounds() const;
 
-	sf::Vector2f getPosition() const;
-
 	void setOrigin(float x, float y);
+
+	sf::Vector2f getPosition() const;
 
 	void draw(sf::RenderWindow& window);
 
 private:
-	sf::Sprite backgroundSprite;
+	sf::RectangleShape buttonBackground;
 	sf::Text buttonText;
 	sf::FloatRect bounds;
 
@@ -46,4 +47,4 @@ private:
 	sf::Color hoverColor;
 };
 
-#endif
+#endif //SOLIDBUTTON_H
