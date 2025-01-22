@@ -22,22 +22,9 @@ Game::~Game()
 
 //Main Game Funcs
 bool Game::init()
-//Move Buttons to a class which uses a background image and text easier for overlays and handling allowing for cleaner code
 {
-	settingsParser.loadInSettings("../Data/settings.json");
-	resolution = settingsParser.getResolution();
-	fullscreen = settingsParser.getFullscreen();
-	musicVolume = settingsParser.getMusicVol();
-	sfxVolume = settingsParser.getSfxVol();
-	nsfwEnabled = settingsParser.getNSFW();
-	winPoints = settingsParser.getWinPoints();
-
-	std::cout << "Resolution:" << resolution << std::endl;
-	std::cout << "Fullscreen:" << fullscreen << std::endl;
-	std::cout << "Music Vol:" << musicVolume << std::endl;
-	std::cout << "SFX Vol:" << sfxVolume << std::endl;
-	std::cout << "NSFW:" << nsfwEnabled << std::endl;
-	std::cout << "Points:" << winPoints << std::endl;
+	//Load Settings
+	loadSettings("../Data/Settings.json");
 
 	//Fonts
 	if (!righteousFont.loadFromFile("../Data/Fonts/Righteous-Regular.ttf"))
@@ -295,6 +282,37 @@ void Game::addPlayer(std::string name) {
 
 int Game::getSizeOfPlayerArray() {
 	return playerNames.size();
+}
+
+// Settings
+bool Game::loadSettings(std::string fileLoc) {
+	try {
+		//Parse JSON
+		Settings settings = Settings::fromFile(fileLoc);
+
+		//Print the values
+		std::cout << "Resolution: " << settings.getResolution() << "\n";
+		std::cout << "Fullscreen: " << settings.getFullscreen() << "\n";
+		std::cout << "Music Volume: " << settings.getMusicVolume() << "\n";
+		std::cout << "SFX Volume: " << settings.getSFXVolume() << "\n";
+		std::cout << "NSFW Enabled: " << settings.getNSFWEnabled() << "\n";
+		std::cout << "Win Points: " << settings.getWinPoints() << "\n";
+
+		//Get the values
+		resolution = settings.getResolution();
+		fullscreen = settings.getFullscreen();
+		musicVolume = settings.getMusicVolume();
+		sfxVolume = settings.getSFXVolume();
+		nsfwEnabled = settings.getNSFWEnabled();
+		winPoints = settings.getWinPoints();
+
+	}
+	catch (const std::exception& ex) {
+		std::cerr << "Error parsing Settings JSON: " << ex.what() << "\n";
+		return 1;
+	}
+
+	return 0;
 }
 
 //Event Handling

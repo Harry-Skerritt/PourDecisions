@@ -15,7 +15,11 @@
 #include "Screens/OptionsScreen.h"
 #include "Screens/PlayerSetup.h"
 
-#include "Utils/JSON/SettingsParser.h"
+//Settings
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include "Utils/JSON/Settings.h"
 
 class Game
 {
@@ -54,7 +58,7 @@ class Game
 
 	private:
 		//Settings from file
-		SettingsParser settingsParser;
+		bool loadSettings(std::string fileLoc);;
 
 		//Graphics
 		std::string resolution;

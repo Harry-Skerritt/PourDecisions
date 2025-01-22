@@ -15,9 +15,8 @@ void OptionsScreen::setGameInstance(Game* game) {
 
 void OptionsScreen::initialise(float& musicVol, float& sfxVol, bool fs, std::string res)
 {
-	musicVol = AudioManager::getInstance().getMusicVolume();
-	std::cout << "Gotten Music Vol: " << musicVol << std::endl;
-	sfxVol = 100.0f; //Needs the global set functionality
+	musicVol = musicVol;
+	sfxVol = sfxVol;
 	fullscreen = fs;
 	resolution = res;
 
@@ -137,6 +136,7 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol, bool fs, std::str
 	musicSlider.setOnValueChangedCallback([](float value) {
 		std::cout << "Music Slider Value: " << value << std::endl;
 		AudioManager::getInstance().setMusicVolume(value);
+
 		});
 
 	//SFX
@@ -171,26 +171,50 @@ void OptionsScreen::initialise(float& musicVol, float& sfxVol, bool fs, std::str
 	backButton.setTextColor(m_game->buttonNormalColour);
 	backButton.setHoverColor(m_game->buttonHoverColour);
 	backButton.setPosition((window.getSize().x - backButton.getGlobalBounds().width) - 20, 20);
+
+	saveButton.setBackgroundImage(m_game->buttonThinRectTexture);
+	saveButton.setBackgroundScale(0.3f, 0.6f);
+	saveButton.setText("SAVE", font, 40);
+	saveButton.setTextColor(m_game->buttonNormalColour);
+	saveButton.setHoverColor(m_game->buttonHoverColour);
+	saveButton.setPosition((backButton.getPosition().x - saveButton.getGlobalBounds().width) - 20, 20);
 	
 }
 
 void OptionsScreen::update(float dt, sf::Vector2f& windowClick) {
 	backButton.handleHover(windowClick);
+	saveButton.handleHover(windowClick);
+}
+
+void OptionsScreen::splitResolution(const std::string& resolution, int& width, int& height) {
+	size_t xPos = resolution.find('x');
+	if (xPos == std::string::npos) {
+		throw std::invalid_argument("Invalid resolution format. Expected format: 'widthxheight'");
+	}
+
+	// Extract the width and height as substrings
+	std::string widthStr = resolution.substr(0, xPos);
+	std::string heightStr = resolution.substr(xPos + 1);
+
+	// Convert substrings to integers
+	width = std::stoi(widthStr);
+	height = std::stoi(heightStr);
 }
 
 void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 {
-	fullscreenCheckbox.handleMouseInput(sf::Mouse::getPosition(window), true);	   //Add a popup saying the app will restart and then do the full screen
-	resolutionMenu.handleEvent(event, sf::Mouse::getPosition(window));		       //Add a popup saying the app will restart and then do the resolution change
+	fullscreenCheckbox.handleMouseInput(sf::Mouse::getPosition(window), true);	  
+	resolutionMenu.handleEvent(event, sf::Mouse::getPosition(window));		       
 
 	musicSlider.handleMouseInput(sf::Mouse::getPosition(window), true);
 	sfxSlider.handleMouseInput(sf::Mouse::getPosition(window), true);
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-		if (backButton.isClicked(windowClick)) {
-			//Back button clicked
+		if (saveButton.isClicked(windowClick)) {
+			//Save Button Clicked
 			AudioManager::getInstance().playSoundEffect("buttonClick");
 
+			//Check is graphics have changed
 			bool fs_changed = false;
 			bool res_changed = false;
 
@@ -205,38 +229,120 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 				res_changed = true;
 			}
 
-			if (res_changed || fs_changed) {
-				//If any of the graphics settings have changed call a popup
+			if (fs_changed || res_changed) {
+				//Graphic settings have changed.
+
+				//Create a popup about restart
 				CustomMessageBox restartWarning("Pour Decisions", "To change graphics settings, the game will restart", 1);
 				MessageBoxButton result = restartWarning.showMessageBox(); //Show the message box
+
 				if (result == MessageBoxButton::Ok) {
 					std::cout << "OK button clicked" << std::endl;
-					//Want to restart
-					//Do the restart
-					//Set the new options?
-					std::cout << "Back button clicked" << std::endl;
+					//Okay with restart -> So save all settings and restart
+					try {
+						Settings settings = Settings::fromFile(settingLoc);
+
+						//Split res
+						int resX, resY;
+						splitResolution(resolutionMenu.getSelectedItem(), resX, resY);
+
+
+						// Modify graphisc settings
+						settings.setResolution(resX, resY);
+						settings.setFullscreen(fullscreenCheckbox.isChecked());
+
+						// Modify audio settings
+						musicVol = AudioManager::getInstance().getMusicVolume();
+						if (musicVol < 0) {
+							musicVol = 0;
+						}
+						settings.setMusicVolume(musicVol);
+
+						//sfxVol = AudioManager::getInstance().getSFXVolume(); //Update the stored sfx value which needs a global func
+						if (sfxVol < 0) {
+							sfxVol = 0;
+						}
+						settings.setSFXVolume(sfxVol);
+
+						// Modify game settings
+						settings.setNSFWEnabled(false); //Needs to be added
+						settings.setWinPoints(20);		//Needs to be added
+
+						// Save the updated settings back to the file
+						settings.saveToFile(settingLoc);
+
+						std::cout << "Settings updated and saved successfully.\n";
+					}
+					catch (const std::exception& e) {
+						std::cerr << "Error: " << e.what() << "\n";
+					}
+
+				}
+				else if (result == MessageBoxButton::Cancel) {
+					std::cout << "Cancel button clicked" << std::endl;
+					//Do not want to restart -> Do nothing
+				}
+
+			}
+			else {
+				//Graphics settings havent changed
+				//Update Audio and game settings
+				try {
+					Settings settings = Settings::fromFile(settingLoc);
+
+					// Modify audio settings
+					musicVol = AudioManager::getInstance().getMusicVolume();
+					settings.setMusicVolume(musicVol);
+
+					//sfxVol = AudioManager::getInstance().getSFXVolume(); //Update the stored sfx value which needs a global func
+					settings.setSFXVolume(sfxVol);
+
+					// Modify game settings
+					settings.setNSFWEnabled(false); //Needs to be added
+					settings.setWinPoints(20);		//Needs to be added
+
+					// Save the updated settings back to the file
+					settings.saveToFile(settingLoc);
+
+					std::cout << "Settings updated and saved successfully.\n";
+				}
+				catch (const std::exception& e) {
+					std::cerr << "Error: " << e.what() << "\n";
+				}
+			}
+
+		}
+		if (backButton.isClicked(windowClick)) {
+			//Back button clicked
+			std::cout << "Back button clicked" << std::endl;
+			AudioManager::getInstance().playSoundEffect("buttonClick");
+
+			if (resolutionMenu.getSelectedItem() != resolution || fullscreenCheckbox.isChecked() != fullscreen
+				|| AudioManager::getInstance().getMusicVolume() != musicVol) //Add sfx, nsfw and points 
+			{
+				//Some settings have changed
+				CustomMessageBox restartWarning("Pour Decisions", "Changes will not be saved!", 1);
+				MessageBoxButton result = restartWarning.showMessageBox(); //Show the message box
+
+				if (result == MessageBoxButton::Ok) {
+					std::cout << "OK button clicked" << std::endl;
+
+					//Do not care about saving changes to go back
 					if (m_game) {
 						m_game->backToMainMenu(0); //Back to main menu
 					}
 				}
 				else if (result == MessageBoxButton::Cancel) {
-					std::cout << "Cancel button clicked" << std::endl;
-					//Do not want to restart
-					//Should return to the options
+					//Want to save so do nothing
 				}
 			}
 			else {
-				//No changes have happened
-				std::cout << "Back button clicked" << std::endl;
+				//No settings have changed so go back
 				if (m_game) {
 					m_game->backToMainMenu(0); //Back to main menu
 				}
 			}
-
-			
 		}
-		
-		
 	}
 }
 
@@ -246,6 +352,7 @@ void OptionsScreen::draw(sf::RenderWindow& window)
 	//Background
 	window.draw(optionsTitle);
 	backButton.draw(window);
+	saveButton.draw(window);
 
 	//Holders
 	window.draw(graphicsHolder);

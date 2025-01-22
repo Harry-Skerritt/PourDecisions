@@ -74,6 +74,10 @@ sf::FloatRect Button::getLocalBounds() const {
 	return backgroundSprite.getLocalBounds();
 }
 
+sf::Vector2f Button::getPosition() const {
+	return backgroundSprite.getPosition();
+}
+
 void Button::draw(sf::RenderWindow& window) {
 	window.draw(backgroundSprite);
 	window.draw(buttonText);

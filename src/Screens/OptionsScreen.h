@@ -9,6 +9,7 @@
 #include "../Utils/Widgets/CheckBox.h"
 #include "../Utils/Widgets/DropdownMenu.h"
 #include "../Utils/Widgets/Button.h"
+#include "../Utils/JSON/Settings.h"
 
 #include <string>
 
@@ -34,6 +35,7 @@ private:
 	sf::Font& font;
 
 	Game* m_game;
+	std::string settingLoc = "../Data/Settings.json";
 
 	float musicVol;
 	float sfxVol;
@@ -69,6 +71,10 @@ private:
 
 	//Buttons
 	Button backButton;
+	Button saveButton;
+
+	//Helper function
+	void splitResolution(const std::string& resolution, int& width, int& height);
 };
 
 #endif // OPTIONSSCREEN_H

@@ -4,9 +4,9 @@ project(JSON)
 
 # Set the source files for the options menu
 set(SOURCE_FILES
-	SettingsParser.h
-	SettingsParser.cpp
- "JsonParser.h" "JsonParser.cpp")
+	Settings.h
+	Settings.cpp
+  )
 
 # Add a library or an object file for the options menu (if it's a separate module)
 # You can choose to create a static library or simply compile as part of the executable.

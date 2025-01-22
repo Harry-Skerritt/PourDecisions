@@ -31,6 +31,8 @@ public:
 	sf::FloatRect getGlobalBounds() const;
 	sf::FloatRect getLocalBounds() const;
 
+	sf::Vector2f getPosition() const;
+
 	void draw(sf::RenderWindow& window);
 
 private:
