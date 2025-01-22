@@ -30,9 +30,20 @@ public:
 
 	void draw(sf::RenderWindow& window);
 
+	bool isRestartRequested() const { return restartRequested; }
+
+	//Graphics
+	Checkbox fullscreenCheckbox;
+	DropdownMenu resolutionMenu;
+
+	//Helper function
+	void splitResolution(const std::string& resolution, int& width, int& height);
+
 private:
 	sf::RenderWindow& window;
 	sf::Font& font;
+
+	bool restartRequested = false;
 
 	Game* m_game;
 	std::string settingLoc = "../Data/Settings.json";
@@ -55,8 +66,7 @@ private:
 	//Graphics
 	sf::Text fullscreenLabel;
 	sf::Text resolutionLabel;
-	Checkbox fullscreenCheckbox;
-	DropdownMenu resolutionMenu;
+	
 
 	//Audio
 	sf::Text musicLabel;
@@ -73,8 +83,7 @@ private:
 	Button backButton;
 	Button saveButton;
 
-	//Helper function
-	void splitResolution(const std::string& resolution, int& width, int& height);
+	
 };
 
 #endif // OPTIONSSCREEN_H

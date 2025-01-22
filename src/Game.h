@@ -56,9 +56,36 @@ class Game
 		sf::Texture buttonCircleTexture;
 		sf::Texture buttonThinRectTexture;
 
+		//Screen
+		bool isRestartRequired() const;
+		void getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution);
+
 	private:
 		//Settings from file
 		bool loadSettings(std::string fileLoc);;
+
+		//Screen
+		sf::View gameView;
+
+		const sf::Vector2f BASE_RESOLUTION = sf::Vector2f(1920.0f, 1080.0f);
+		
+		struct Resolution {
+			unsigned int width;
+			unsigned int height;
+		};
+
+		std::vector<Resolution> predefinedResolutions = {
+			{1080, 720},
+			{1280, 720},
+			{1920, 1080}
+		};
+
+		int currentResolutionIndex = 0;
+
+		void applyResolution(const Resolution& resolution);
+		void switchToNextResolution(); //Debug?
+		void applyFullscreen(bool inFullscreen);
+		void toggleFullscreen(); //Debug?
 
 		//Graphics
 		std::string resolution;

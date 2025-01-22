@@ -1,6 +1,7 @@
 
 #include "Game.h"
 #include <iostream>
+#include <string>
 #include "VisualAddons/SpriteTransition.h"
 #include "Utils/GradientBackground.h"
 
@@ -382,5 +383,18 @@ void Game::textEntered(sf::Event event)
 
 void Game::keyPressed(sf::Event event)
 {
-
+	
 }
+
+bool Game::isRestartRequired() const {
+	return optionsScreen.isRestartRequested();
+}
+
+void Game::getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution) {
+	fullscreen = optionsScreen.fullscreenCheckbox.isChecked();
+	std::string res = optionsScreen.resolutionMenu.getSelectedItem();
+	int width, height;
+	optionsScreen.splitResolution(res, width, height);
+	resolution = sf::VideoMode(width, height);
+}
+

@@ -271,7 +271,11 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 						// Save the updated settings back to the file
 						settings.saveToFile(settingLoc);
 
+
 						std::cout << "Settings updated and saved successfully.\n";
+
+						//Settings saved so restart
+						restartRequested = true;
 					}
 					catch (const std::exception& e) {
 						std::cerr << "Error: " << e.what() << "\n";
