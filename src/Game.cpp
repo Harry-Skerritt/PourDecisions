@@ -65,10 +65,20 @@ bool Game::init()
 		std::cout << "Thin Rect Button Did not load" << std::endl;;
 	}
 
-	//Transition Texture
+	//Transition Textures
 	if (!transitionTexture.loadFromFile("../Data/Assets/spinwheel.png"))
 	{
-		std::cout << "Spinwheel Transition did no load" << std::endl;;
+		std::cout << "Spinwheel Transition did not load" << std::endl;;
+	}
+
+	if (!forfeitTexture.loadFromFile("../Data/Assets/forfeitBadge.png")) 
+	{
+		std::cout << "Forfeit Transition did not load";
+	}
+
+	if (!spinwheel.loadFromFile("../Data/Assets/categorySpinwheel.png"))
+	{
+		std::cout << "Spinwheel did not load";
 	}
 
 	//Player Names
@@ -95,6 +105,9 @@ bool Game::init()
 
 	//Card Select SFX
 	audioManager.loadSoundEffect("cardPick", "../Data/Audio/SFX/cardSelect.wav");
+
+	//Forfeit SFX
+	audioManager.loadSoundEffect("forfeitRock", "../Data/Audio/SFX/forfeitSound.wav");
 
 	audioManager.setMusicVolume(musicVolume);
 
@@ -152,7 +165,10 @@ bool Game::init()
 	
 	//Transition
 	spinwheelTransition.init(transitionTexture, 0.3f, window); //0.3s transition
+	forfeitRock.init(forfeitTexture, window);
 
+	spinwheel_wheel.init(spinwheel, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 200.0f);
+	
 
 	//Options Screen
 	in_options = false;
@@ -199,6 +215,9 @@ void Game::update(float dt)
 		htpButton.handleHover(windowClickPos);
 		quitButton.handleHover(windowClickPos);
 		confettiManager.update(window);
+
+		forfeitRock.update(dt);
+		spinwheel_wheel.update(dt);
 	}
 
 	if(!in_main_menu && in_options)
@@ -241,6 +260,9 @@ void Game::render(float dt)
 		optionButton.draw(window);
 		htpButton.draw(window);
 		quitButton.draw(window);
+
+		forfeitRock.draw(window);
+		//spinwheel_wheel.draw(window);
 
 		if (showCard) {
 			cardTest.showCard(window, dt);
@@ -447,6 +469,14 @@ void Game::keyPressed(sf::Event event)
 		showCard = !showCard;
 	}
 	
+	if (event.key.code == sf::Keyboard::R) {
+		audioManager.playSoundEffect("forfeitRock");
+		forfeitRock.startRocking();
+	}
+
+	if (event.key.code == sf::Keyboard::Space) {
+		spinwheel_wheel.spin();
+	}
 }
 
 bool Game::isRestartRequired() const {

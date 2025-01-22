@@ -7,6 +7,8 @@
 
 #include "VisualAddons/Confetti.h"
 #include "VisualAddons/SpriteTransition.h"
+#include "VisualAddons/RockingSprite.h"
+#include "VisualAddons/SpinWheel.h"
 
 #include "Utils/Widgets/InputField.h"
 #include "Utils/Widgets/Button.h"
@@ -105,9 +107,6 @@ class Game
 		std::vector<std::string> playerNames;
 		std::vector<int> playerPoints;
 
-
-		
-
 	
 		//Main Menu
 		bool in_main_menu;
@@ -121,10 +120,18 @@ class Game
 
 		Button quitButton;
 
-		
 		ConfettiManager confettiManager;
+
+		//Transitions
 		sf::Texture transitionTexture;
 		SpriteTransition spinwheelTransition;
+
+		sf::Texture forfeitTexture;
+		RockingSprite forfeitRock;
+
+		sf::Texture spinwheel;
+		SpinWheel spinwheel_wheel;
+
 
 		//Options Screen
 		bool in_options;
