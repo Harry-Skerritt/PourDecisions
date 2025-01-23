@@ -25,11 +25,40 @@ Game::~Game()
 //Main Game Funcs
 bool Game::init()
 {
+	//Disclamer
+	if (showDisclamer) {
+		
+		if (!disclamerTexture.loadFromFile("../Data/Assets/disclamer.png")) {
+			std::cout << "Disclamer did not load" << std::endl;
+		}
+
+		float disclamerScaleX = static_cast<float>(window.getSize().x) / disclamerTexture.getSize().x;
+		float disclamerScaleY = static_cast<float>(window.getSize().y) / disclamerTexture.getSize().y;
+
+		disclamerSprite.setTexture(disclamerTexture);
+		disclamerSprite.setScale(disclamerScaleX, disclamerScaleY);
+		disclamerSprite.setPosition(0.f, 0.f);
+
+		disclamerAcknowledged = false;
+
+		sf::Color disclamerRed = sf::Color(255, 1, 67);
+		sf::Color disclamerWhite = sf::Color::White;
+
+		disclamerButton.setBackgroundColor(disclamerRed, window.getSize().x * 0.25f, window.getSize().y * 0.07f);
+		disclamerButton.setBorder(disclamerRed, 2.0f);
+		disclamerButton.setText("TEST", ryeFont, window.getSize().y * 0.055f);
+		disclamerButton.setTextColor(disclamerWhite);
+		disclamerButton.setPosition(window.getSize().x / 2 - disclamerButton.getGlobalBounds().width / 2, window.getSize().y * 0.91f);
+	}
+
+	if (!showDisclamer) {
+		disclamerAcknowledged = true;
+	}
+
+	//Main Game
+
 	scaleX = static_cast<float>(window.getSize().x) / BASE_RESOLUTION.x;
-	std::cout << "S SX: " << scaleX << std::endl;
-	
 	scaleY = static_cast<float>(window.getSize().y) / BASE_RESOLUTION.y;
-	std::cout << "S SY: " << scaleY << std::endl;
 
 	//Load Settings
 	loadSettings("../Data/Settings.json");
@@ -120,7 +149,7 @@ bool Game::init()
 	currentPlayers = 0;
 
 	//Main Menu
-	in_main_menu = true; //Main Menu State
+	in_main_menu = !showDisclamer; //Main Menu State
 	is_menu_music_playing = false;
 
 	//Logo
@@ -190,7 +219,7 @@ bool Game::init()
 	//Main Game
 	in_game = false;
 	is_game_music_playing = false;
-	mainGame.init(); // Needs to be moved to happen after the players are entered, okay for testing tho
+	mainGame.init();
 
 	//Test Card
 	sf::Color colourTest = sf::Color(0, 168, 64);
@@ -210,7 +239,11 @@ void Game::update(float dt)
 
 	cardTest.update(dt, windowClickPos);
 
-	if (in_main_menu) {
+	if (!disclamerAcknowledged) {
+		disclamerButton.handleHover(windowClickPos);
+	}
+
+	if (in_main_menu && disclamerAcknowledged) {
 		//In The Main Menu
 		if (!is_menu_music_playing) {
 			audioManager.playMusic("menuMusic", true);
@@ -265,8 +298,12 @@ void Game::update(float dt)
 
 void Game::render(float dt)
 {
+	if (!disclamerAcknowledged) {
+		window.draw(disclamerSprite);
+		disclamerButton.draw(window);
+	}
 
-	if (in_main_menu) {
+	if (in_main_menu && disclamerAcknowledged) {
 		//In THe Main Menu - Move to own class soon
 		GradientBackground::setBackgroundGradient(window);
 		confettiManager.draw(window);
@@ -332,7 +369,14 @@ void Game::backToMainMenu(int pageID)
 		in_main_menu = true;
 		spinwheelTransition.reset();
 	}
-	//3 - Main Game
+	else if (pageID == 3)
+	{
+		//Coming from game
+		in_game = false;
+		in_main_menu = true;
+		playerSetup.reset();
+	}
+	
 
 }
 
@@ -417,10 +461,16 @@ void Game::mouseClicked(sf::Event event)
 	sf::Vector2i click = sf::Mouse::getPosition(window);
 	sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
 
-
 	if (event.mouseButton.button == sf::Mouse::Left)  //Left Click
 	{
-		if (in_main_menu) {
+		if (!disclamerAcknowledged) {
+			if (disclamerButton.isClicked(windowClickPos)) {
+				audioManager.playSoundEffect("buttonClick");
+				disclamerAcknowledged = true;
+				in_main_menu = true;
+			}
+		}
+		if (in_main_menu && disclamerAcknowledged) {
 			//Main Menu Buttons
 			if (playButton.isClicked(windowClickPos)) {
 				//Play Button Clicked
@@ -456,6 +506,9 @@ void Game::mouseClicked(sf::Event event)
 		else if (in_player_setup) {
 			//In Player Setup
 			playerSetup.handleMouse(event, windowClickPos);
+		}
+		else if (!in_player_setup && in_game) {
+			mainGame.handleMouse(event, windowClickPos);
 		}
 		
 

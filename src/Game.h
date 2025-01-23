@@ -13,6 +13,7 @@
 #include "Utils/Widgets/InputField.h"
 #include "Utils/Widgets/Button.h"
 #include "Utils/GradientText.h"
+#include "Utils/Widgets/SolidButton.h"
 
 #include "Screens/OptionsScreen.h"
 #include "Screens/PlayerSetup.h"
@@ -70,6 +71,13 @@ class Game
 		void getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution);
 
 	private:
+		//Disclamer
+		bool showDisclamer = false;
+		bool disclamerAcknowledged;
+		sf::Texture disclamerTexture;
+		sf::Sprite disclamerSprite;
+		SolidButton disclamerButton;
+
 		//Settings from file
 		bool loadSettings(std::string fileLoc);;
 

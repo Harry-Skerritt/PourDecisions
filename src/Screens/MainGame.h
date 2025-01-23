@@ -5,6 +5,7 @@
 #include "../GameObjects/PlayerBoardDisplay.h"
 #include "../Utils/Widgets/Button.h"
 #include "../Utils/Widgets/GrowFadeText.h"
+#include "../Screens/Menus/PauseMenu.h"
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -28,6 +29,7 @@ public:
 	void update(float dt, sf::Vector2f clickPos);
 
 	void handleKeypress(sf::Event event);
+	void handleMouse(sf::Event event, sf::Vector2f clickPos);
 
 	void draw(sf::RenderWindow& window);
 
@@ -39,6 +41,9 @@ private:
 	sf::Font& righteousFont;
 	sf::Font& ryeFont;
 	sf::Font& lcdFont;
+
+	PauseMenu pauseMenu;
+	bool menu_visible;
 
 	//Player List
 	sf::RectangleShape playerBoard;

@@ -4,7 +4,7 @@
 #include "../Managers/AudioManager.h"
 
 MainGame::MainGame(sf::RenderWindow& window, sf::Font& font1, sf::Font& font2, sf::Font& font3) : 
-	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3) {};
+	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont) {};
 MainGame::~MainGame() {};
 
 void MainGame::setGameInstance(Game* game) {
@@ -12,15 +12,18 @@ void MainGame::setGameInstance(Game* game) {
 }
 
 void MainGame::init() {
-
-	//CHANGE ANYTHING HARDCODED IN POS TO BE DYNAMIC
-
 	//Vars Set
 	currentGo = 0;
 	turnsPlayed = 0;
 	lastTurnNo = turnsPlayed;
 	playersPopulated = false;
+	menu_visible = false;
 	pointNotiferPos = sf::Vector2f(400, 300); //Make Dyanmic
+
+	//Pause menu
+	pauseMenu.setGameInstance(m_game);
+	pauseMenu.init();
+	
 
 	//Player Board
 	playerBoard.setSize(sf::Vector2f(window.getSize().x * 0.23f, window.getSize().y * 0.9));
@@ -151,6 +154,7 @@ void MainGame::awardPoint(int pointAmount, int currentPlayer, bool allPlayers) {
 void MainGame::update(float dt, sf::Vector2f clickPos) {
 	spinButton.handleHover(clickPos);
 	pointNotifier.update(dt);
+	pauseMenu.update(dt, clickPos);
 
 	if (playersPopulated && turnsPlayed != 0 && currentGo != lastTurnNo) {
 		//If players are present, and its not the first go workout who is winning - should only run once per turn
@@ -173,6 +177,21 @@ void MainGame::handleKeypress(sf::Event event) {
 		}
 
 	}
+
+	if (event.key.code == sf::Keyboard::Escape) {
+		menu_visible = !menu_visible;
+		pauseMenu.showMenu(menu_visible);
+	}
+}
+
+void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
+	
+	if (menu_visible) {
+		pauseMenu.handleMouse(event, clickPos);
+	}
+	else {
+		menu_visible = pauseMenu.getVisible();
+	}
 }
 
 void MainGame::draw(sf::RenderWindow& window) {
@@ -187,6 +206,8 @@ void MainGame::draw(sf::RenderWindow& window) {
 	spinButton.draw(window);
 
 	pointNotifier.draw(window);
+
+	pauseMenu.draw(window);
 }
 
 

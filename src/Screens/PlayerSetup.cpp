@@ -145,6 +145,15 @@ void PlayerSetup::update(float dt, sf::Vector2f& windowClick) {
 	currentPlayerDisplay.handleHover(windowClick);
 }
 
+void PlayerSetup::reset() {
+	currentPlayerDisplay.clearTextFields();
+	currentPlayers = 0;
+	inputAllowed = true;
+	currentPlayerCount.setString("0");
+	currentPlayerCount.setFillColor(disallowedPlayerColour);
+	maxPlayerCount.setFillColor(disallowedPlayerColour);
+}
+
 // Handles mouse
 void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 	currentPlayerDisplay.handleClick(windowClick); //Handle current player click
@@ -153,12 +162,7 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 	if (backButton.isClicked(windowClick)) {
 		AudioManager::getInstance().playSoundEffect("buttonClick");
 		//Reset Screen
-		currentPlayerDisplay.clearTextFields();
-		currentPlayers = 0;
-		inputAllowed = true;
-		currentPlayerCount.setString("0");
-		currentPlayerCount.setFillColor(disallowedPlayerColour);
-		maxPlayerCount.setFillColor(disallowedPlayerColour);
+		reset();
 		//Back to menu
 		m_game->backToMainMenu(2);
 	}

@@ -33,6 +33,8 @@ public:
 
 	void draw(sf::RenderWindow& window, ConfettiManager& confetti);
 
+	void reset();
+
 private:
 	sf::RenderWindow& window;
 	sf::Font& font;
