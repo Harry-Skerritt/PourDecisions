@@ -29,7 +29,7 @@ int main()
         width = std::stoi(widthStr);
         height = std::stoi(heightStr);
 
-        const std::string VERSION_NO = "beta-0.2.0";
+        const std::string VERSION_NO = "beta-0.2.3";
         const std::string RES = std::to_string(width) + "x" + std::to_string(height);
         const sf::String BASE_WINDOW_TITLE = "Pour Decisions - " + VERSION_NO + " - " + RES;
 

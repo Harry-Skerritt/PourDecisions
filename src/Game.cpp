@@ -9,10 +9,11 @@
 
 Game::Game(sf::RenderWindow& game_window)
 	: window(game_window), optionsScreen(window, righteousFont),
-	playerSetup(window, righteousFont)
+	playerSetup(window, righteousFont), mainGame(window, righteousFont, ryeFont, lcdFont)
 {
 	optionsScreen.setGameInstance(this);
 	playerSetup.setGameInstance(this);
+	mainGame.setGameInstance(this);
 	srand(time(NULL));
 
 }
@@ -88,7 +89,7 @@ bool Game::init()
 	//Music
 	audioManager.loadMusic("menuMusic", "../Data/Audio/Music/menu_music.mp3");
 
-	audioManager.loadMusic("mainMusic", "../Data/Audio/Music/game_music.mp3");
+	audioManager.loadMusic("gameMusic", "../Data/Audio/Music/game_music.mp3");
 
 	//SFX
 	//Play Button Sound Effect
@@ -108,6 +109,10 @@ bool Game::init()
 
 	//Forfeit SFX
 	audioManager.loadSoundEffect("forfeitRock", "../Data/Audio/SFX/forfeitSound.wav");
+
+	//Point SFX
+	audioManager.loadSoundEffect("pointGot", "../Data/Audio/SFX/pointSFX.wav");
+
 
 	audioManager.setMusicVolume(musicVolume);
 
@@ -184,6 +189,8 @@ bool Game::init()
 
 	//Main Game
 	in_game = false;
+	is_game_music_playing = false;
+	mainGame.init(); // Needs to be moved to happen after the players are entered, okay for testing tho
 
 	//Test Card
 	sf::Color colourTest = sf::Color(0, 168, 64);
@@ -240,10 +247,18 @@ void Game::update(float dt)
 		spinwheelTransition.update(dt);
 
 		//In Main Game
+
+		//Change music
 		if (is_menu_music_playing) {
 			audioManager.stopMusic();
 			is_menu_music_playing = false;
+			if (!is_game_music_playing) {
+				audioManager.playMusic("gameMusic", true);
+				is_game_music_playing = true;
+			}
 		}
+
+		mainGame.update(dt, windowClickPos);
 	}
 	
 }
@@ -293,8 +308,7 @@ void Game::render(float dt)
 
 	if (!in_main_menu && in_game) 
 	{
-		
-		
+		mainGame.draw(window);
 	}
 	
 }
@@ -322,6 +336,13 @@ void Game::backToMainMenu(int pageID)
 
 }
 
+void Game::transitionToMainGame() {
+	if (in_player_setup) {
+		in_player_setup = false;
+		in_game = true;
+		mainGame.populatePlayers(playerNames);
+	}
+}
 //Getters / Setters
 float Game::getMusicVolume() {
 	return musicVolume;
@@ -465,6 +486,11 @@ void Game::keyPressed(sf::Event event)
 		}
 	}
 
+	if (in_game) {
+		mainGame.handleKeypress(event);
+	}
+
+	/*
 	if (event.key.code == sf::Keyboard::C) {
 		showCard = !showCard;
 	}
@@ -477,6 +503,7 @@ void Game::keyPressed(sf::Event event)
 	if (event.key.code == sf::Keyboard::Space) {
 		spinwheel_wheel.spin();
 	}
+	*/
 }
 
 bool Game::isRestartRequired() const {

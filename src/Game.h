@@ -16,6 +16,7 @@
 
 #include "Screens/OptionsScreen.h"
 #include "Screens/PlayerSetup.h"
+#include "Screens/MainGame.h"
 
 //Settings
 #include <iostream>
@@ -39,7 +40,8 @@ class Game
 		void textEntered(sf::Event event);
 		void mouseDragged(sf::Event event);
 
-		void backToMainMenu(int pageID); //0 - Options, 1 - HTP, 2 - Game
+		void backToMainMenu(int pageID); //0 - Options, 1 - HTP, 2 - Setup, 3 - Game
+		void transitionToMainGame();
 
 		float getMusicVolume();
 		float getSFXVolume();
@@ -102,7 +104,7 @@ class Game
 		//Players & Points
 		const int MAX_PLAYERS = 8;
 		int currentPlayers;
-		const int ALLOWED_THRESHOLD = 3;
+		const int ALLOWED_THRESHOLD = 1; //3
 		
 		std::vector<std::string> playerNames;
 		std::vector<int> playerPoints;
@@ -144,6 +146,8 @@ class Game
 
 		//Main Game
 		bool in_game;
+		bool is_game_music_playing;
+		MainGame mainGame;
 		
 
 

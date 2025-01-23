@@ -185,7 +185,8 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 			}
 
 			m_game->setCurrentPlayers(currentPlayers); //Set the amount of players
-			//Change screen
+			//Do more with passing player data to the game
+			m_game->transitionToMainGame();
 		}
 		else {
 			//Not the allowed number of players

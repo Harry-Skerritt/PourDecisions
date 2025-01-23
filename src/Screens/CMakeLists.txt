@@ -6,7 +6,7 @@ project(Screens)
 set(SOURCE_FILES
     OptionsScreen.h
     OptionsScreen.cpp
- "PlayerSetup.h" "PlayerSetup.cpp")
+ "PlayerSetup.h" "PlayerSetup.cpp" "MainGame.h" "MainGame.cpp" "Menus/PauseMenu.h" "Menus/PauseMenu.cpp")
 
 # Add a library or an object file for the options menu (if it's a separate module)
 # You can choose to create a static library or simply compile as part of the executable.
