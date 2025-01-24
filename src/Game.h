@@ -19,11 +19,12 @@
 #include "Screens/PlayerSetup.h"
 #include "Screens/MainGame.h"
 
-//Settings
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include "Utils/JSON/Settings.h"
+#include "Utils/JSON/CardImporter.h"
+
 
 #include "GameObjects/Card.h" //Test
 
@@ -109,7 +110,7 @@ class Game
 		sf::Font lcdFont;
 
 
-		//Players & Points
+		//Players & Points - Gameplay
 		const int MAX_PLAYERS = 8;
 		int currentPlayers;
 		const int ALLOWED_THRESHOLD = 1; //3
@@ -117,6 +118,19 @@ class Game
 		std::vector<std::string> playerNames;
 		std::vector<int> playerPoints;
 
+		//Cards
+		const int MAX_CATEGORIES = 8; //Maximum amount of allowed categories
+		const int DEFAULT_CATEGORIES_AMOUNT = 7; //Amount of default categories present
+		bool usingCustomCards = false; //Set to true in Options Screen - need to create dir
+		int categoriesLoaded;
+
+		std::vector<std::string> cardCategories;			 //Stores the names of the categories
+		std::vector<sf::Color> cardColours;					 //Stores the colours of each category
+		std::vector<int> cardQuantity;						 //Stores the amount of cards in each category
+		std::vector<std::vector<std::string>> cardQuestions; //Stores the questions for each category
+		std::vector<std::vector<int>> usedCards;			 //Stores the cards which have been played
+
+		CardImporter cardImporter;
 	
 		//Main Menu
 		bool in_main_menu;

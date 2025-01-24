@@ -65,16 +65,68 @@ void PauseMenu::update(float dt, sf::Vector2f clickPos) {
 	quitButton.handleHover(clickPos);
 }
 
-void PauseMenu::draw(sf::RenderWindow& window) {
-	if (menu_visible) {
-		window.draw(screenDarken);
-		window.draw(menuBackground);
-		window.draw(pausedTitle);
-		resumeButton.draw(window);
-		optionsButton.draw(window);
-		quitButton.draw(window);
-	}
+void PauseMenu::draw(sf::RenderWindow& window, float dt) {
+	//Show the menu
+	drawFadeComponents(window,
+		screenDarken,
+		menuBackground,
+		pausedTitle,
+		resumeButton,
+		optionsButton,
+		quitButton,
+		dt,
+		1.5f,
+		menu_visible);
+
 	
+}
+
+void PauseMenu::drawFadeComponents(
+	sf::RenderWindow& window,
+	sf::RectangleShape& screenDarken,
+	sf::RectangleShape& menuBackground,
+	GradientText& title,
+	Button resume,
+	Button options,
+	Button quit,
+	float dt,
+	float speed,
+	bool fadeIn
+) {
+	static float fadeProgress = fadeIn ? 0.0f : 1.0f;
+
+	//Update progress
+	fadeProgress += (fadeIn ? speed : -speed) * dt;
+	fadeProgress = std::clamp(fadeProgress, 0.0f, 1.0f);
+
+	//Calc alpha
+	sf::Uint8 alpha = static_cast<sf::Uint8>(fadeProgress * 255);
+	sf::Uint8 darkenAlpha = static_cast<sf::Uint8>(fadeProgress * 179);
+
+	//Screen darken
+	sf::Color darkenColour = screenDarken.getFillColor();
+	darkenColour.a = darkenAlpha;
+	screenDarken.setFillColor(darkenColour);
+
+	//Menu Background
+	sf::Color backgroundColour = menuBackground.getFillColor();
+	backgroundColour.a = alpha;
+	menuBackground.setFillColor(backgroundColour);
+
+	//Title
+	title.setAlpha(alpha);
+	
+	// Buttons
+	resume.setAlpha(alpha);
+	options.setAlpha(alpha);
+	quit.setAlpha(alpha);
+
+	window.draw(screenDarken);
+	window.draw(menuBackground);
+	window.draw(title);
+	resume.draw(window);
+	options.draw(window);
+	quit.draw(window);
 }
 
 void PauseMenu::showMenu(bool state) {

@@ -86,3 +86,13 @@ void Button::draw(sf::RenderWindow& window) {
 	window.draw(backgroundSprite);
 	window.draw(buttonText);
 }
+
+void Button::setAlpha(sf::Uint8 alpha) {
+	sf::Color bgColor = backgroundSprite.getColor();
+	bgColor.a = alpha;
+	backgroundSprite.setColor(bgColor);
+
+	sf::Color textColor = buttonText.getFillColor();
+	textColor.a = alpha;
+	buttonText.setFillColor(textColor);
+}

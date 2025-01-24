@@ -23,7 +23,7 @@ void MainGame::init() {
 	//Pause menu
 	pauseMenu.setGameInstance(m_game);
 	pauseMenu.init();
-	
+	pauseMenu.showMenu(false);
 
 	//Player Board
 	playerBoard.setSize(sf::Vector2f(window.getSize().x * 0.23f, window.getSize().y * 0.9));
@@ -194,7 +194,7 @@ void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 	}
 }
 
-void MainGame::draw(sf::RenderWindow& window) {
+void MainGame::draw(sf::RenderWindow& window, float dt) {
 	GradientBackground::setBackgroundGradient(window);
 	window.draw(playerBoard);
 	window.draw(playerBoardTitle);
@@ -207,7 +207,7 @@ void MainGame::draw(sf::RenderWindow& window) {
 
 	pointNotifier.draw(window);
 
-	pauseMenu.draw(window);
+	pauseMenu.draw(window, dt);
 }
 
 

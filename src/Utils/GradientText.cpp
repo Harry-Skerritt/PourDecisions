@@ -112,3 +112,10 @@ void GradientText::draw(sf::RenderTarget& target, sf::RenderStates states) const
     states.texture = fontTexture;
     target.draw(vertices, states);
 }
+
+void GradientText::setAlpha(sf::Uint8 alpha) {
+    topColor.a = alpha;
+    bottomColor.a = alpha;
+
+    updateGradient();
+}

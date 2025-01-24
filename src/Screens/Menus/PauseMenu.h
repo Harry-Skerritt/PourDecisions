@@ -19,7 +19,10 @@ public:
 
 	void update(float dt, sf::Vector2f clickPos);
 
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, float dt);
+
+	void drawFadeComponents(sf::RenderWindow& window, sf::RectangleShape& screenDarken,
+		sf::RectangleShape& menuBackground, GradientText& title, Button resume, Button options, Button quit, float dt, float speed, bool fadeIn);
 
 	void handleMouse(sf::Event event, sf::Vector2f clickPos);
 

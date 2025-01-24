@@ -1,8 +1,15 @@
 {
   "content-name": "nsfw",
-  "card-count": 8,
+  "card-count": "8",
   "card-color": "#FF0143",
   "cards": [
-
+    "Dirty Secret! Reveal your most embarrassing bedroom moment or take 2 shots",
+    "Kiss and Tell! Share the name of your last hookup or take a big sip from your drink",
+    "Risky Text! Send 'You up?' to a random contact the group chooses, or drink twice",
+    "Sexy Spin! Spin the bottle (or use the wheel) to pick someone. Share your favorite position or take 3 sips",
+    "Confessions! What’s the most public place you’ve done it? Spill the details or finish your drink",
+    "Truth or Strip! Answer a personal question chosen by the group or remove one item of clothing (down to your comfort level)",
+    "Body Shots! Let someone in the group take a body shot off you, or drink three times to pass",
+    "Spicy Dare! Let the group give you a dare that must stay within NSFW territory—or take a shot to opt out"
   ]
 }

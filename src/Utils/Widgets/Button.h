@@ -37,6 +37,8 @@ public:
 
 	void draw(sf::RenderWindow& window);
 
+	void setAlpha(sf::Uint8 alpha);
+
 private:
 	sf::Sprite backgroundSprite;
 	sf::Text buttonText;

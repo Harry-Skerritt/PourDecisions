@@ -31,7 +31,7 @@ public:
 	void handleKeypress(sf::Event event);
 	void handleMouse(sf::Event event, sf::Vector2f clickPos);
 
-	void draw(sf::RenderWindow& window);
+	void draw(sf::RenderWindow& window, float dt);
 
 
 private:

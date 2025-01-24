@@ -17,6 +17,8 @@ public:
     sf::FloatRect getGlobalBounds() const;
     sf::FloatRect getLocalBounds() const;
 
+    void setAlpha(sf::Uint8 alpha);
+
 private:
     virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const override;
 

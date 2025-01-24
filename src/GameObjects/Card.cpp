@@ -161,33 +161,33 @@ void Card::drawFadeComponents(
 	screenDarken.setFillColor(darkenColor);
 
 	// Set alpha for all other components
-	sf::Color backgroundColor = cardBackground.getFillColor();
-	backgroundColor.a = alpha;
-	cardBackground.setFillColor(backgroundColor);
+	sf::Color backgroundColour = cardBackground.getFillColor();
+	backgroundColour.a = alpha;
+	cardBackground.setFillColor(backgroundColour);
 
-	sf::Color backgroundBorderColor = cardBackground.getOutlineColor();
-	backgroundBorderColor.a = alpha;
-	cardBackground.setOutlineColor(backgroundBorderColor);
+	sf::Color backgroundBorderColour = cardBackground.getOutlineColor();
+	backgroundBorderColour.a = alpha;
+	cardBackground.setOutlineColor(backgroundBorderColour);
 
-	sf::Color headerColor = cardHeader.getFillColor();
-	headerColor.a = alpha;
-	cardHeader.setFillColor(headerColor);
+	sf::Color headerColour = cardHeader.getFillColor();
+	headerColour.a = alpha;
+	cardHeader.setFillColor(headerColour);
 
-	sf::Color headerBorderColor = cardBackground.getOutlineColor();
-	headerBorderColor.a = alpha;
-	cardHeader.setOutlineColor(headerBorderColor);
+	sf::Color headerBorderColour = cardBackground.getOutlineColor();
+	headerBorderColour.a = alpha;
+	cardHeader.setOutlineColor(headerBorderColour);
 
-	sf::Color titleColor = cardTitle.getFillColor();
-	titleColor.a = alpha;
-	cardTitle.setFillColor(titleColor);
+	sf::Color titleColour = cardTitle.getFillColor();
+	titleColour.a = alpha;
+	cardTitle.setFillColor(titleColour);
 
-	sf::Color messageColor = cardMessage.getFillColor();
-	messageColor.a = alpha;
-	cardMessage.setFillColor(messageColor);
+	sf::Color messageColour = cardMessage.getFillColor();
+	messageColour.a = alpha;
+	cardMessage.setFillColor(messageColour);
 
-	sf::Color motifColor = cardMotif.getColor();
-	motifColor.a = alpha;
-	cardMotif.setColor(motifColor);
+	sf::Color motifColour = cardMotif.getColor();
+	motifColour.a = alpha;
+	cardMotif.setColor(motifColour);
 
 	// Update button alpha
 	forfeitButton.setAlpha(alpha);

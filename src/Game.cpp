@@ -4,12 +4,15 @@
 #include <string>
 #include "VisualAddons/SpriteTransition.h"
 #include "Utils/GradientBackground.h"
+#include "Utils/CustomMessageBox.h"
 
-//Add music credit - Zapsplat
 
 Game::Game(sf::RenderWindow& game_window)
-	: window(game_window), optionsScreen(window, righteousFont),
-	playerSetup(window, righteousFont), mainGame(window, righteousFont, ryeFont, lcdFont)
+	: window(game_window),
+	optionsScreen(window, righteousFont),
+	playerSetup(window, righteousFont),
+	mainGame(window, righteousFont, ryeFont, lcdFont),
+	cardImporter(cardCategories, cardColours, cardQuantity, cardQuestions)
 {
 	optionsScreen.setGameInstance(this);
 	playerSetup.setGameInstance(this);
@@ -221,6 +224,33 @@ bool Game::init()
 	is_game_music_playing = false;
 	mainGame.init();
 
+	//Initialise all vectors - reserve enough room for all vectors to hold their max info
+	categoriesLoaded = 0;
+
+	cardImporter.initialise(DEFAULT_CATEGORIES_AMOUNT, usingCustomCards, MAX_CATEGORIES);
+	std::string cardFolder = "../Cards/";
+	if (cardImporter.setCardDir(cardFolder)) {
+		//Directory is formatted correctly
+		cardImporter.importCards();
+	}
+	else {
+		std::cout << "Card Directory is incorrectly formatted" << std::endl;
+		CustomMessageBox restartWarning("Pour Decisions", "Cards could not be imported", 1);
+		MessageBoxButton result = restartWarning.showMessageBox(); //Show the message box
+
+		if (result == MessageBoxButton::Ok) {
+			std::cout << "OK button clicked" << std::endl;
+			window.close();
+		}
+		else if (result == MessageBoxButton::Cancel) {
+			std::cout << "Cancel button clicked" << std::endl;
+			window.close();
+		}
+	}
+
+
+
+
 	//Test Card
 	sf::Color colourTest = sf::Color(0, 168, 64);
 	std::string textTest = "What's the most embarrassing thing you've ever done?";
@@ -345,7 +375,7 @@ void Game::render(float dt)
 
 	if (!in_main_menu && in_game) 
 	{
-		mainGame.draw(window);
+		mainGame.draw(window, dt);
 	}
 	
 }
