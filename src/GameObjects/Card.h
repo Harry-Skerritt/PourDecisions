@@ -9,16 +9,22 @@
 #include <vector>
 #include <cmath>
 
+class MainGame;
+
 class Card {
 public:
 	Card();
 	~Card();
 
-	void initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondaryFont, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window);
+	void getMainGameInstance(MainGame* game);
+
+	void initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondaryFont, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window, bool group);
 
 	void setPosition(float x, float y);
 
 	void update(float dt, sf::Vector2f clickPos);
+
+	void handleMouse(sf::Vector2f clickPos);
 
 
 	sf::FloatRect getGlobalBounds() const;
@@ -46,6 +52,9 @@ public:
 	);
 
 private:
+
+	MainGame* m_mainGame;
+
 	sf::RectangleShape cardBackground;
 	sf::RectangleShape cardHeader;
 	sf::RectangleShape screenDarken;
@@ -64,6 +73,8 @@ private:
 
 	SolidButton forfeitButton;
 	SolidButton passButton;
+
+	bool groupCard;
 
 	sf::Color borderColour = sf::Color::Black;
 	sf::Color cardBackColour = sf::Color::White;

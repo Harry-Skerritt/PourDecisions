@@ -3,14 +3,7 @@
 #include <iostream>
 #include <fstream>
 
-CardImporter::CardImporter(std::vector<std::string>& cardCategories,
-	std::vector<sf::Color>& cardColours,
-	std::vector<int>& cardQuantity,
-	std::vector<std::vector<std::string>>& cardQuestions) :
-	m_cardCategories(cardCategories),
-	m_cardColours(cardColours),
-	m_cardQuantity(cardQuantity),
-	m_cardQuestions(cardQuestions) {};
+CardImporter::CardImporter() {};
 
 CardImporter::~CardImporter() {};
 
@@ -27,17 +20,36 @@ void CardImporter::initialise(int expectedCategories, bool importCustom, int max
 	m_cardColours.reserve(max_categories);
 	m_cardQuantity.reserve(max_categories);
 	m_cardQuestions.reserve(max_categories);
+	m_motifLoc.reserve(max_categories);
 }
 
-void CardImporter::setCardStorage(std::vector<std::string>& cardCategories,
-	std::vector<sf::Color>& cardColours,
-	std::vector<int>& cardQuantity,
-	std::vector<std::vector<std::string>>& cardQuestions) 
-{
-	m_cardCategories = cardCategories;
-	m_cardColours = cardColours;
-	m_cardQuantity = cardQuantity;
-	m_cardQuestions = cardQuestions; //2d array
+int CardImporter::getNumberOfCards() {
+	int totalCards = 0;
+	for (int i = 0; i < m_cardQuantity.size(); i++) {
+		totalCards += m_cardQuantity.at(i);
+	}
+
+	return totalCards;
+}
+
+std::vector<std::string> CardImporter::getCardCategories() {
+	return m_cardCategories;
+}
+
+std::vector<sf::Color>  CardImporter::getCardColours() {
+	return m_cardColours;
+}
+
+std::vector<int> CardImporter::getCardQuantity() {
+	return m_cardQuantity;
+}
+
+std::vector<std::vector<std::string>> CardImporter::getCardQuestions() {
+	return m_cardQuestions;
+}
+
+std::vector<std::string> CardImporter::getMotifLoc() {
+	return m_motifLoc;
 }
 
 bool CardImporter::setCardDir(std::string& folderLoc) {
@@ -70,6 +82,7 @@ bool CardImporter::setCardDir(std::string& folderLoc) {
 			m_cardColours.resize(m_expectedCategories + 1);
 			m_cardQuantity.resize(m_expectedCategories + 1);
 			m_cardQuestions.resize(m_expectedCategories + 1);
+			m_motifLoc.resize(m_expectedCategories + 1);
 		}
 		else {
 			//If not importing the custom card data
@@ -77,13 +90,14 @@ bool CardImporter::setCardDir(std::string& folderLoc) {
 			m_cardColours.resize(m_expectedCategories);
 			m_cardQuantity.resize(m_expectedCategories);
 			m_cardQuestions.resize(m_expectedCategories);
+			m_motifLoc.resize(m_expectedCategories);
 		}
 		return 1; //Expected amount of files = 7 or 8
 	}
 
 }
 
-void CardImporter::importCards() {
+bool CardImporter::importCards() {
 	try {
 		//Go through every file in the directory
 		for (const auto& entry : fs::directory_iterator(m_cardLocation)) {
@@ -109,6 +123,8 @@ void CardImporter::importCards() {
 					for (const auto& card : m_cardCatData.cards) {
 						std::cout << "- " << card << "\n";
 					}
+
+					std::cout << "Motif Loc: " << m_cardCatData.motifLoc << "\n";
 					
 					//Populate the arrays with the data
 					std::string cardCategory = m_cardCatData.contentName;
@@ -123,13 +139,18 @@ void CardImporter::importCards() {
 					std::vector<std::string> cards = m_cardCatData.cards;
 					m_cardQuestions.at(m_currentCardNo) = cards;
 
+					std::string motif = m_cardCatData.motifLoc;
+					m_motifLoc.at(m_currentCardNo) = motif;
+
 					m_currentCardNo += 1; //Inc current card counter
 
 				}
 			}
 		}
+		return true;
 	}
 	catch (const std::exception& e) {
 		std::cerr << "Error: " << e.what() << std::endl;
+		return false;
 	}
 }

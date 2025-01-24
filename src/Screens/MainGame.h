@@ -6,6 +6,7 @@
 #include "../Utils/Widgets/Button.h"
 #include "../Utils/Widgets/GrowFadeText.h"
 #include "../Screens/Menus/PauseMenu.h"
+#include "../GameObjects/Card.h"
 #include <vector>
 #include <string>
 #include <algorithm>
@@ -24,12 +25,20 @@ public:
 
 	void populatePlayers(std::vector<std::string> names);
 	void calculateWinningPlayer();
-	void awardPoint(int pointValue, int currentPlayer, bool allPlayers = false);
+	void awardPoint(int pointValue, int currentPlayer, sf::Color pointColour, bool allPlayers = false);
 
 	void update(float dt, sf::Vector2f clickPos);
 
 	void handleKeypress(sf::Event event);
 	void handleMouse(sf::Event event, sf::Vector2f clickPos);
+
+	void pickCard();
+
+	void cardPass(bool group);
+
+	void cardForfeit();
+
+	void moveToNextPlayer();
 
 	void draw(sf::RenderWindow& window, float dt);
 
@@ -54,6 +63,11 @@ private:
 	int currentGo; //Which player is currently playing rotates from 0 - MAX-1 (7)
 	std::vector<int> playerPoints;
 	sf::Vector2f pointNotiferPos;
+
+	Card cardDisplay;
+	const std::string MOTIF_BASE_LOCATION = "../Data/Assets/Motifs/";
+	bool cardShown;
+	sf::Color currentCardColour;
 
 	GrowFadeText pointNotifier;
 

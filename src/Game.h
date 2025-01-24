@@ -25,9 +25,6 @@
 #include "Utils/JSON/Settings.h"
 #include "Utils/JSON/CardImporter.h"
 
-
-#include "GameObjects/Card.h" //Test
-
 class Game
 {
 	public:
@@ -71,6 +68,28 @@ class Game
 		bool isRestartRequired() const;
 		void getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution);
 
+		//Cards
+		const int MAX_CATEGORIES = 8; //Maximum amount of allowed categories
+		const int DEFAULT_CATEGORIES_AMOUNT = 7; //Amount of default categories present
+		int amountOfCustomCards;
+		bool usingCustomCards = false; //Set to true in Options Screen - need to create dir
+		int categoriesLoaded;
+
+		std::vector<std::string> cardCategories;			 //Stores the names of the categories
+		std::vector<sf::Color> cardColours;					 //Stores the colours of each category
+		std::vector<int> cardQuantity;						 //Stores the amount of cards in each category
+		std::vector<std::vector<std::string>> cardQuestions; //Stores the questions for each category
+		std::vector<std::vector<int>> usedCards;			 //Stores the cards which have been played
+		std::vector<std::string> motifLoc;					 //Stores the file location of the motif for each card 
+
+		std::vector<int> usedCustomCards;
+
+		bool checkAllCardsUsed();
+		int maxNumberOfCards;
+		void resetUsedCards();
+
+		CardImporter cardImporter;
+
 	private:
 		//Disclamer
 		bool showDisclamer = false;
@@ -85,9 +104,6 @@ class Game
 		//Screen
 		const sf::Vector2f BASE_RESOLUTION = sf::Vector2f(1080.0f, 720.0f);
 
-		Card cardTest; //Test
-
-		bool showCard = false;
 
 		//Graphics
 		std::string resolution;
@@ -118,19 +134,6 @@ class Game
 		std::vector<std::string> playerNames;
 		std::vector<int> playerPoints;
 
-		//Cards
-		const int MAX_CATEGORIES = 8; //Maximum amount of allowed categories
-		const int DEFAULT_CATEGORIES_AMOUNT = 7; //Amount of default categories present
-		bool usingCustomCards = false; //Set to true in Options Screen - need to create dir
-		int categoriesLoaded;
-
-		std::vector<std::string> cardCategories;			 //Stores the names of the categories
-		std::vector<sf::Color> cardColours;					 //Stores the colours of each category
-		std::vector<int> cardQuantity;						 //Stores the amount of cards in each category
-		std::vector<std::vector<std::string>> cardQuestions; //Stores the questions for each category
-		std::vector<std::vector<int>> usedCards;			 //Stores the cards which have been played
-
-		CardImporter cardImporter;
 	
 		//Main Menu
 		bool in_main_menu;

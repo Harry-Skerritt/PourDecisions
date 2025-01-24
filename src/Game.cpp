@@ -11,8 +11,7 @@ Game::Game(sf::RenderWindow& game_window)
 	: window(game_window),
 	optionsScreen(window, righteousFont),
 	playerSetup(window, righteousFont),
-	mainGame(window, righteousFont, ryeFont, lcdFont),
-	cardImporter(cardCategories, cardColours, cardQuantity, cardQuestions)
+	mainGame(window, righteousFont, ryeFont, lcdFont)
 {
 	optionsScreen.setGameInstance(this);
 	playerSetup.setGameInstance(this);
@@ -227,14 +226,52 @@ bool Game::init()
 	//Initialise all vectors - reserve enough room for all vectors to hold their max info
 	categoriesLoaded = 0;
 
+	bool failedImport = false;
+
 	cardImporter.initialise(DEFAULT_CATEGORIES_AMOUNT, usingCustomCards, MAX_CATEGORIES);
 	std::string cardFolder = "../Cards/";
 	if (cardImporter.setCardDir(cardFolder)) {
 		//Directory is formatted correctly
-		cardImporter.importCards();
+		if (cardImporter.importCards()) {
+			
+			//Everything imported
+			if (usingCustomCards) {
+				cardCategories.resize(MAX_CATEGORIES);
+				cardColours.resize(MAX_CATEGORIES);
+				cardQuantity.resize(MAX_CATEGORIES);
+				cardQuestions.resize(MAX_CATEGORIES);
+				motifLoc.resize(MAX_CATEGORIES);
+				usedCards = std::vector<std::vector<int>>(DEFAULT_CATEGORIES_AMOUNT);
+				//usedCustomCards; //Set to be the length of the amount of custom cards
+
+			}
+			else {
+				cardCategories.resize(DEFAULT_CATEGORIES_AMOUNT);
+				cardColours.resize(DEFAULT_CATEGORIES_AMOUNT);
+				cardQuantity.resize(DEFAULT_CATEGORIES_AMOUNT);
+				cardQuestions.resize(DEFAULT_CATEGORIES_AMOUNT);
+				motifLoc.resize(DEFAULT_CATEGORIES_AMOUNT);
+				usedCards = std::vector<std::vector<int>>(DEFAULT_CATEGORIES_AMOUNT); 
+
+			}
+
+			cardCategories = cardImporter.getCardCategories();
+			cardColours = cardImporter.getCardColours();
+			cardQuantity = cardImporter.getCardQuantity();
+			cardQuestions = cardImporter.getCardQuestions();
+			motifLoc = cardImporter.getMotifLoc();
+		}
+		else {
+			failedImport = true;
+		}
+
 	}
 	else {
 		std::cout << "Card Directory is incorrectly formatted" << std::endl;
+		failedImport = true;
+	}
+
+	if (failedImport) {
 		CustomMessageBox restartWarning("Pour Decisions", "Cards could not be imported", 1);
 		MessageBoxButton result = restartWarning.showMessageBox(); //Show the message box
 
@@ -254,11 +291,41 @@ bool Game::init()
 	//Test Card
 	sf::Color colourTest = sf::Color(0, 168, 64);
 	std::string textTest = "What's the most embarrassing thing you've ever done?";
-	std::cout << "PC SX: " << scaleX << std::endl;
-	cardTest.initialise(colourTest, righteousFont, ryeFont, "TRUTH", textTest, "../Data/Assets/Motifs/truthMotif.png", scaleX, window);
 	
 
 	return true;
+}
+
+bool Game::checkAllCardsUsed() {
+	bool allCardsUsed = true;
+
+	// Check non-custom cards
+	for (int i = 0; i < DEFAULT_CATEGORIES_AMOUNT; i++) {
+		if (usedCards[i].size() != cardQuantity[i]) {
+			allCardsUsed = false;
+			break;
+		}
+	}
+
+	// Check custom cards if in use
+	if (usingCustomCards) {
+		if (usedCustomCards.size() != amountOfCustomCards) {
+			allCardsUsed = false;
+		}
+	}
+
+	return allCardsUsed;
+}
+
+void Game::resetUsedCards() {
+	if (usingCustomCards) {
+		usedCustomCards.clear(); // Clear custom cards
+	}
+
+	// Clear used cards for each category
+	for (int i = 0; i < DEFAULT_CATEGORIES_AMOUNT; i++) {
+		usedCards[i].clear();
+	}
 }
 
 void Game::update(float dt)
@@ -266,8 +333,6 @@ void Game::update(float dt)
 	//Button Hover Handling
 	sf::Vector2i click = sf::Mouse::getPosition(window);
     sf::Vector2f windowClickPos = window.mapPixelToCoords(click);
-
-	cardTest.update(dt, windowClickPos);
 
 	if (!disclamerAcknowledged) {
 		disclamerButton.handleHover(windowClickPos);
@@ -345,15 +410,6 @@ void Game::render(float dt)
 
 		forfeitRock.draw(window);
 		//spinwheel_wheel.draw(window);
-
-		if (showCard) {
-			cardTest.showCard(window, dt);
-			
-		}
-		else {
-			cardTest.hideCard(window, dt);
-			audioManager.playSoundEffect("cardPick");
-		}
 	}
 
 	if (!in_main_menu && in_options)

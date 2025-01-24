@@ -1,16 +1,22 @@
 #include "Card.h"
 #include "../Managers/AudioManager.h"
+#include "../Screens/MainGame.h"
 
 
 Card::Card() {};
 Card::~Card() {};
 
-void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondaryFont, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window) {
+void Card::getMainGameInstance(MainGame* game) {
+	m_mainGame = game;
+}
+
+void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondaryFont, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window, bool group) {
 	cardColour = colour;
 	cardBodyFont = mainFont;
 	cardHeaderFont = secondaryFont;
 	cardHeaderText = title;
 	cardBodyText = body;
+	groupCard = group;
 
 	//Load Motif Texture
 	if (!cardMotifTex.loadFromFile(imgLoc)) {
@@ -81,6 +87,12 @@ void Card::setPosition(float x, float y) {
 void Card::update(float dt, sf::Vector2f clickPos) {
 	forfeitButton.handleHover(clickPos);
 	passButton.handleHover(clickPos);
+}
+
+void Card::handleMouse(sf::Vector2f clickPos) {
+	if (passButton.isClicked(clickPos)) {
+		m_mainGame->cardPass(groupCard);
+	}
 }
 
 sf::FloatRect Card::getGlobalBounds() const {

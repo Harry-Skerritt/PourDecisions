@@ -7,22 +7,22 @@
 
 class CardImporter {
 public:
-	CardImporter(std::vector<std::string>& cardCategories,
-		std::vector<sf::Color>& cardColours,
-		std::vector<int>& cardQuantity,
-		std::vector<std::vector<std::string>>& cardQuestions);
+	CardImporter();
 	~CardImporter();
 
 	bool setCardDir(std::string& folderLoc);
 
-	void setCardStorage(std::vector<std::string>& cardCategories,
-		std::vector<sf::Color>& cardColours,
-		std::vector<int>& cardQuantity,
-		std::vector<std::vector<std::string>>& cardQuestions);
+	std::vector<std::string> getCardCategories();
+	std::vector<sf::Color>  getCardColours();
+	std::vector<int> getCardQuantity();
+	std::vector<std::vector<std::string>> getCardQuestions();
+	std::vector<std::string> getMotifLoc();
 
 	void initialise(int expectedCategories, bool importCustom, int max_categories);
 
-	void importCards();
+	int getNumberOfCards();
+
+	bool importCards();
 
 private:
 	std::string m_cardLocation = "";
@@ -34,19 +34,21 @@ private:
 
 	CardParser::CategoryData m_cardCatData;
 
-	std::vector<std::string>& m_cardCategories;
-	std::vector<sf::Color>& m_cardColours;
-	std::vector<int>& m_cardQuantity;
-	std::vector<std::vector<std::string>>& m_cardQuestions;
+	std::vector<std::string> m_cardCategories;
+	std::vector<sf::Color> m_cardColours;
+	std::vector<int> m_cardQuantity;
+	std::vector<std::vector<std::string>> m_cardQuestions;
+	std::vector<std::string> m_motifLoc;
 
 
 	//From Game.h
 	/*
-	std::vector<std::string> cardCategories;			 //Stores the names of the categories
-	std::vector<sf::Color> cardColours;					 //Stores the colours of each category
-	std::vector<int> cardQuantity;						 //Stores the amount of cards in each category
-	std::vector<std::vector<std::string>> cardQuestions; //Stores the questions for each category
-	std::vector<std::vector<int>> usedCards;			 //Stores the cards which have been played
+		std::vector<std::string> cardCategories;			 //Stores the names of the categories
+		std::vector<sf::Color> cardColours;					 //Stores the colours of each category
+		std::vector<int> cardQuantity;						 //Stores the amount of cards in each category
+		std::vector<std::vector<std::string>> cardQuestions; //Stores the questions for each category
+		std::vector<std::vector<int>> usedCards;			 //Stores the cards which have been played
+		std::vector<std::string> motifLoc;					 //Stores the file location of the motif for each card 
 	*/
 
 

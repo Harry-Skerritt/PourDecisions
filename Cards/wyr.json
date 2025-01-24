@@ -2,6 +2,7 @@
   "content-name": "would-you-rather",
   "card-count": "8",
   "card-color": "#FF9D1C",
+  "motif-loc": "wyrMotif.png",
   "cards": [
     "Would you rather lose your phone for a week or your wallet for a day?",
     "Would you rather be famous for something embarrassing or stay unknown forever?",

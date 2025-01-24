@@ -15,6 +15,7 @@ public:
 		int cardCount;
 		sf::Color cardColour;
 		std::vector<std::string> cards;
+		std::string motifLoc;
 	};
 
 	static CategoryData readFromFile(const std::string& filePath);

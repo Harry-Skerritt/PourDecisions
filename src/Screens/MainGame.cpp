@@ -2,6 +2,7 @@
 #include "../Game.h"
 #include "../Utils/GradientBackground.h"
 #include "../Managers/AudioManager.h"
+#include "../Utils/CustomMessageBox.h"
 
 MainGame::MainGame(sf::RenderWindow& window, sf::Font& font1, sf::Font& font2, sf::Font& font3) : 
 	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont) {};
@@ -18,7 +19,10 @@ void MainGame::init() {
 	lastTurnNo = turnsPlayed;
 	playersPopulated = false;
 	menu_visible = false;
+	cardShown = false;
 	pointNotiferPos = sf::Vector2f(400, 300); //Make Dyanmic
+
+	cardDisplay.getMainGameInstance(this);
 
 	//Pause menu
 	pauseMenu.setGameInstance(m_game);
@@ -60,7 +64,7 @@ void MainGame::init() {
 
 	//Point notifer
 	pointNotifier.init(righteousFont, 1.5f); //1.5 seconds
-	pointNotifier.reset("+1 Point", sf::Color::Red, 15.0f, pointNotiferPos);
+	
 
 
 
@@ -121,7 +125,7 @@ void MainGame::calculateWinningPlayer() {
 	}
 }
 
-void MainGame::awardPoint(int pointAmount, int currentPlayer, bool allPlayers) {
+void MainGame::awardPoint(int pointAmount, int currentPlayer, sf::Color pointColour, bool allPlayers) {
 	std::string pointNotifierText;
 	if (pointAmount == 1) {
 		//if one point
@@ -132,7 +136,7 @@ void MainGame::awardPoint(int pointAmount, int currentPlayer, bool allPlayers) {
 		pointNotifierText = "+" + std::to_string(pointAmount) + "points";
 	}
 
-	pointNotifier.reset(pointNotifierText, sf::Color::Blue, 15.0f, pointNotiferPos); //Get colour from card
+	pointNotifier.reset(pointNotifierText, pointColour, 15.0f, pointNotiferPos); //Get colour from card
 	AudioManager::getInstance().playSoundEffect("pointGot");
 	pointNotifier.go();
 
@@ -150,11 +154,143 @@ void MainGame::awardPoint(int pointAmount, int currentPlayer, bool allPlayers) {
 		playerDisplay.at(currentPlayer).changePoints(newPoints);
 	}
 }
+	
+void MainGame::pickCard() {
+	std::cout << "Turns Played: " << turnsPlayed << "/" << m_game->cardImporter.getNumberOfCards() << std::endl;
+	std::cout << "Check Used Cards State: " << m_game->checkAllCardsUsed() << std::endl;
+	cardShown = false;
+
+	// Check if all cards have been used
+	if (m_game->checkAllCardsUsed()) {
+		// If all cards have been used, display a message
+		CustomMessageBox restartWarning("Pour Decisions", "All Cards have been used, would you like to start the cards again?", 1);
+		MessageBoxButton result = restartWarning.showMessageBox(); // Show the message box
+
+		if (result == MessageBoxButton::Ok) {
+			std::cout << "Yes button clicked" << std::endl;
+			m_game->resetUsedCards(); // Reset used cards
+		}
+		else {
+			std::cout << "Any other button clicked" << std::endl;
+			// End game screen (future code)
+			return; // Exit early as there are no more cards
+		}
+	}
+
+	// Pick a category, ensuring it is not full
+	int catMax;
+	if (m_game->usingCustomCards) {
+		catMax = m_game->MAX_CATEGORIES;
+	}
+	else {
+		catMax = m_game->DEFAULT_CATEGORIES_AMOUNT;
+	}
+
+	int category = -1;
+	bool categoryPicked = false;
+	std::string catName;
+
+	// Loop to find a category with unused cards
+	while (!categoryPicked) {
+		category = rand() % catMax;
+		catName = m_game->cardCategories.at(category);
+
+		// Check if there are still unused cards in the chosen category
+		if (m_game->usedCards[category].size() < m_game->cardQuantity.at(category)) {
+			categoryPicked = true;
+		}
+		else {
+			std::cout << "Category " << catName << " is full, picking another category..." << std::endl;
+		}
+	}
+
+	std::cout << "Category Picked: " + catName << std::endl;
+
+	bool cardPicked = false;
+	int card = -1;
+
+	// Loop to try picking a card from the chosen category
+	while (!cardPicked) {
+		int cardMax = m_game->cardQuantity.at(category); // Number of cards in the chosen category
+		card = rand() % cardMax; // Randomly select a card
+
+		// Check if the card has been used already
+		bool cardAlreadyUsed = std::count(m_game->usedCards[category].begin(), m_game->usedCards[category].end(), card) > 0;
+
+		if (cardAlreadyUsed) {
+			// If the card has been used, pick another one
+			std::cout << "Card already picked, selecting another card..." << std::endl;
+		}
+		else {
+			// If the card hasn't been used, use it
+			std::cout << "Found an unused card: " << card << std::endl;
+			m_game->usedCards[category].push_back(card); // Mark this card as used
+			cardPicked = true; // Successfully picked a new card
+		}
+	}
+
+	// Display the picked card
+	currentCardColour = m_game->cardColours.at(category);
+	std::string cardTitleToShow = m_game->cardCategories.at(category);
+	std::transform(cardTitleToShow.begin(), cardTitleToShow.end(), cardTitleToShow.begin(), ::toupper);
+	std::string cardMessageToShow = m_game->cardQuestions[category][card];
+	std::string motifLocation = MOTIF_BASE_LOCATION + m_game->motifLoc.at(category);
+	bool groupCard = false;
+	if (cardTitleToShow == "GROUP") {
+		//Group Card
+		groupCard = true;
+	}
+
+	// Display the card
+	cardDisplay.initialise(currentCardColour, righteousFont, ryeFont, cardTitleToShow, cardMessageToShow, motifLocation, m_game->scaleX, window, groupCard);
+	cardShown = true;
+}
+
+void MainGame::cardPass(bool group) {
+	if (group) {
+		//It is a group card - award everyone 1 points
+		awardPoint(1, 0, currentCardColour, true);
+		moveToNextPlayer();
+		cardShown = false;
+	}
+	else {
+		//Not a group card - award the player 2 points
+		awardPoint(2, currentGo, currentCardColour);
+		moveToNextPlayer();
+		cardShown = false;
+	}
+}
+
+void MainGame::moveToNextPlayer() {
+	turnsPlayed++;
+	if (currentGo == playerAmt - 1) {
+		currentGo = 0;
+	}
+	else {
+		currentGo++;
+	}
+
+	for (int i = 0; i < playerAmt; i++) {
+		if (i == currentGo) {
+			playerDisplay.at(i).setSelected(true);
+		}
+		else {
+			playerDisplay.at(i).setSelected(false);
+		}
+	}
+
+}
 
 void MainGame::update(float dt, sf::Vector2f clickPos) {
-	spinButton.handleHover(clickPos);
-	pointNotifier.update(dt);
 	pauseMenu.update(dt, clickPos);
+
+	if (cardShown) {
+		cardDisplay.update(dt, clickPos);
+	}
+	else {
+		spinButton.handleHover(clickPos);
+		pointNotifier.update(dt);
+	}
 
 	if (playersPopulated && turnsPlayed != 0 && currentGo != lastTurnNo) {
 		//If players are present, and its not the first go workout who is winning - should only run once per turn
@@ -164,23 +300,15 @@ void MainGame::update(float dt, sf::Vector2f clickPos) {
 }
 
 void MainGame::handleKeypress(sf::Event event) {
-	//Debug
-	if (event.key.code == sf::Keyboard::N) {
-		awardPoint(2, currentGo);
-
-		turnsPlayed++;
-		if (currentGo == playerAmt - 1) {
-			currentGo = 0;
-		}
-		else {
-			currentGo++;
-		}
-
-	}
 
 	if (event.key.code == sf::Keyboard::Escape) {
 		menu_visible = !menu_visible;
 		pauseMenu.showMenu(menu_visible);
+	}
+
+	//Debug
+	if (event.key.code == sf::Keyboard::R) {
+		cardShown = false;
 	}
 }
 
@@ -192,6 +320,18 @@ void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 	else {
 		menu_visible = pauseMenu.getVisible();
 	}
+
+	if (!cardShown) {
+		//Cant click the spin button if the card is displaying
+		if (spinButton.isClicked(clickPos)) {
+			pickCard();
+		}
+	}
+	else {
+		//The card is shown
+		cardDisplay.handleMouse(clickPos);
+	}
+	
 }
 
 void MainGame::draw(sf::RenderWindow& window, float dt) {
@@ -206,6 +346,16 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 	spinButton.draw(window);
 
 	pointNotifier.draw(window);
+
+
+	if (cardShown) {
+		cardDisplay.showCard(window, dt);
+
+	}
+	else {
+		cardDisplay.hideCard(window, dt);
+		AudioManager::getInstance().playSoundEffect("cardPick");
+	}
 
 	pauseMenu.draw(window, dt);
 }

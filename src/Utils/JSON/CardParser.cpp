@@ -3,6 +3,7 @@
 #include <sstream>
 #include <stdexcept>
 #include <algorithm>
+#include <iostream>
 
 
 CardParser::CardParser() {};
@@ -26,6 +27,7 @@ CardParser::CategoryData CardParser::readFromFile(const std::string& filePath) {
 	catData.cardCount = std::stoi(extractValue(json, "card-count"));
 	catData.cardColour = parseHexColour(extractValue(json, "card-color"));
 	catData.cards = extractArray(json, "cards");
+	catData.motifLoc = extractValue(json, "motif-loc");
 
 	return catData;
 }
@@ -78,25 +80,40 @@ std::vector<std::string> CardParser::extractArray(const std::string& json, const
 		throw std::invalid_argument("Key not found: " + key);
 	}
 
-	size_t start = json.find("[", keyPos) + 1;
+	size_t start = json.find("[", keyPos);
 	size_t end = json.find("]", start);
+	if (start == std::string::npos || end == std::string::npos) {
+		throw std::invalid_argument("Invalid array format for key: " + key);
+	}
 
 	std::vector<std::string> values;
-	size_t current = start;
+	size_t current = start + 1; // Skip the opening bracket
 
 	while (current < end) {
-		size_t valueStart = json.find("\"", current) + 1;
-		size_t valueEnd = json.find("\"", valueStart);
+		// Skip over any whitespace or commas
+		current = json.find_first_not_of(" ,", current);
+		if (current >= end) break;
 
-		if (valueStart == std::string::npos || valueEnd == std::string::npos) {
-			break;
-		}
+		size_t valueStart = json.find("\"", current);
+		if (valueStart == std::string::npos) break;
+		valueStart++; // Skip the opening quote
+
+		size_t valueEnd = json.find("\"", valueStart);
+		if (valueEnd == std::string::npos) break;
 
 		values.push_back(json.substr(valueStart, valueEnd - valueStart));
-		current = valueEnd + 1;
+		current = valueEnd + 1; // Move past the closing quote and comma
+
+		// Skip over any commas or spaces after the value
+		current = json.find_first_not_of(" ,", current);
+	}
+
+	// Ensure no unexpected data is left over
+	if (current < end) {
+		std::cerr << "Warning: Extra data found in the array after processing: "
+			<< json.substr(current, end - current) << std::endl;
 	}
 
 	return values;
-
 }
 
