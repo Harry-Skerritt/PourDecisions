@@ -3,6 +3,7 @@
 #include "../Utils/GradientBackground.h"
 #include "../Managers/AudioManager.h"
 #include "../Utils/CustomMessageBox.h"
+#include <stdlib.h>
 
 MainGame::MainGame(sf::RenderWindow& window, sf::Font& font1, sf::Font& font2, sf::Font& font3) : 
 	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont) {};
@@ -20,7 +21,6 @@ void MainGame::init() {
 	playersPopulated = false;
 	menu_visible = false;
 	cardShown = false;
-	pointNotiferPos = sf::Vector2f(400, 300); //Make Dyanmic
 
 	cardDisplay.getMainGameInstance(this);
 
@@ -63,7 +63,8 @@ void MainGame::init() {
 	spinButton.setPosition(buttonX, buttonY);
 
 	//Point notifer
-	pointNotifier.init(righteousFont, 1.5f); //1.5 seconds
+	pointNotifier.init(righteousFont, 2.0f); //1.5 seconds
+	pointNotiferPos = sf::Vector2f(playerBoard.getPosition().x - (window.getSize().x * 0.15f), window.getSize().y * 0.31f);
 	
 
 
@@ -249,15 +250,17 @@ void MainGame::pickCard() {
 void MainGame::cardPass(bool group) {
 	if (group) {
 		//It is a group card - award everyone 1 points
+		cardShown = false;
+		
 		awardPoint(1, 0, currentCardColour, true);
 		moveToNextPlayer();
-		cardShown = false;
 	}
 	else {
 		//Not a group card - award the player 2 points
+		cardShown = false;
 		awardPoint(2, currentGo, currentCardColour);
 		moveToNextPlayer();
-		cardShown = false;
+		
 	}
 }
 

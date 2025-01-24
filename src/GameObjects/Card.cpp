@@ -137,7 +137,7 @@ void Card::hideCard(sf::RenderWindow& window, float dt) {
 		forfeitButton,
 		passButton,
 		dt,        // Delta time
-		1.5f,       // Fade speed (normalized, 0.5 = 2 seconds for full fade)
+		150.0f,       // Fade speed (normalized, 0.5 = 2 seconds for full fade)
 		false
 	);
 }

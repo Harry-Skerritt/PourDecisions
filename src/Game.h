@@ -28,7 +28,7 @@
 class Game
 {
 	public:
-		Game(sf::RenderWindow& window);
+		Game(sf::RenderWindow& window, int fps);
 		~Game();
 
 		bool init();
@@ -67,7 +67,8 @@ class Game
 		//Screen
 		bool isRestartRequired() const;
 		void getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution);
-
+		int framesPerSecond;
+		
 		//Cards
 		const int MAX_CATEGORIES = 8; //Maximum amount of allowed categories
 		const int DEFAULT_CATEGORIES_AMOUNT = 7; //Amount of default categories present
@@ -108,6 +109,8 @@ class Game
 		//Graphics
 		std::string resolution;
 		bool fullscreen;
+
+		
 
 		//Audio 
 		float musicVolume;

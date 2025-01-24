@@ -29,7 +29,8 @@ int main()
         width = std::stoi(widthStr);
         height = std::stoi(heightStr);
 
-        const std::string VERSION_NO = "beta-0.2.5";
+        const int FPS = 60;
+        const std::string VERSION_NO = "beta-0.3.1";
         const std::string RES = std::to_string(width) + "x" + std::to_string(height);
         const sf::String BASE_WINDOW_TITLE = "Pour Decisions - " + VERSION_NO + " @" + RES;
 
@@ -39,7 +40,7 @@ int main()
 
         // Create the window with the current settings
         sf::RenderWindow window(videoMode, BASE_WINDOW_TITLE, style);
-        window.setFramerateLimit(60);
+        window.setFramerateLimit(FPS);
 
         auto image = sf::Image{};
         if (!image.loadFromFile("../Data/Assets/Favicon.png")) {
@@ -51,7 +52,7 @@ int main()
         sf::Clock clock;
 
         // Initialize the game instance
-        Game game(window);
+        Game game(window, FPS);
 
         if (!game.init()) {
             return 0; // Exit if the game initialization fails

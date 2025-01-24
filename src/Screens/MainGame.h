@@ -83,6 +83,7 @@ private:
 
 	void drawGradientBorder(sf::RenderWindow& window, const sf::FloatRect& rect, float borderThickness, sf::Color color1, sf::Color color2); //Add a gradient border to a shapeRect
 
+
 };
 
 #endif

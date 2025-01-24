@@ -7,8 +7,8 @@
 #include "Utils/CustomMessageBox.h"
 
 
-Game::Game(sf::RenderWindow& game_window)
-	: window(game_window),
+Game::Game(sf::RenderWindow& game_window, int fps)
+	: window(game_window), framesPerSecond(fps),
 	optionsScreen(window, righteousFont),
 	playerSetup(window, righteousFont),
 	mainGame(window, righteousFont, ryeFont, lcdFont)
