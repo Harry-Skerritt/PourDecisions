@@ -22,8 +22,10 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+
 #include "Utils/JSON/Settings.h"
 #include "Utils/JSON/CardImporter.h"
+#include "Utils/JSON/ForfeitImporter.h"
 
 class Game
 {
@@ -90,6 +92,19 @@ class Game
 		void resetUsedCards();
 
 		CardImporter cardImporter;
+
+		//Forfeits
+		const int DEFAULT_FORFEITS_AMOUNT = 15; //Amount of defalut forfeits
+		const std::string FORFEIT_MOTIF_LOC = "../Data/Assets/Motifs/Forfeits/";
+
+		std::vector<std::string> forfeitMotifNames;		//Stores the names of the motif files
+		std::vector<std::string> forfeitTitles;			//Stores the titles for the forfeit card
+		std::vector<std::string> forfeitCards;			//Stores the card value for the forfeit card
+		std::vector<int> forfeitTimers;					//Stores the duration for the timers on forefeit cards
+		int forfeitQuantity;							//Amount of forfeits
+
+		ForfeitImporter forfeitImporter;
+
 
 	private:
 		//Disclamer

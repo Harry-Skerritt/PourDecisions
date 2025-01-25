@@ -6,7 +6,15 @@ project(JSON)
 set(SOURCE_FILES
 	Settings.h
 	Settings.cpp
-   "CardParser.h" "CardParser.cpp" "CardImporter.h" "CardImporter.cpp")
+	CardParser.h
+	CardParser.cpp
+	CardImporter.h
+	CardImporter.cpp
+	ForfeitParser.h
+	ForfeitParser.cpp
+	ForfeitImporter.h
+	ForfeitImporter.cpp
+)
 
 # Add a library or an object file for the options menu (if it's a separate module)
 # You can choose to create a static library or simply compile as part of the executable.

@@ -223,10 +223,11 @@ bool Game::init()
 	is_game_music_playing = false;
 	mainGame.init();
 
+	//Import cards
 	//Initialise all vectors - reserve enough room for all vectors to hold their max info
 	categoriesLoaded = 0;
 
-	bool failedImport = false;
+	bool failedCardImport = false;
 
 	cardImporter.initialise(DEFAULT_CATEGORIES_AMOUNT, usingCustomCards, MAX_CATEGORIES);
 	std::string cardFolder = "../Cards/";
@@ -262,18 +263,18 @@ bool Game::init()
 			motifLoc = cardImporter.getMotifLoc();
 		}
 		else {
-			failedImport = true;
+			failedCardImport = true;
 		}
 
 	}
 	else {
 		std::cout << "Card Directory is incorrectly formatted" << std::endl;
-		failedImport = true;
+		failedCardImport = true;
 	}
 
-	if (failedImport) {
-		CustomMessageBox restartWarning("Pour Decisions", "Cards could not be imported", 1);
-		MessageBoxButton result = restartWarning.showMessageBox(); //Show the message box
+	if (failedCardImport) {
+		CustomMessageBox failedCard("Pour Decisions", "Cards could not be imported", 1);
+		MessageBoxButton result = failedCard.showMessageBox(); //Show the message box
 
 		if (result == MessageBoxButton::Ok) {
 			std::cout << "OK button clicked" << std::endl;
@@ -285,12 +286,47 @@ bool Game::init()
 		}
 	}
 
+	//Import forfeits
+	bool failedForfeitImport = false;
+	forfeitImporter.initialise(DEFAULT_FORFEITS_AMOUNT);
+	std::string forfeitFileLoc = "../Cards/forfeits.json";
+	if (forfeitImporter.setForfeitDir(forfeitFileLoc)) {
+		if (forfeitImporter.importForfeits()) {
+			forfeitMotifNames.resize(DEFAULT_FORFEITS_AMOUNT);
+			forfeitTitles.resize(DEFAULT_FORFEITS_AMOUNT);
+			forfeitCards.resize(DEFAULT_FORFEITS_AMOUNT);
+			forfeitTimers.resize(DEFAULT_FORFEITS_AMOUNT);
 
+			forfeitMotifNames = forfeitImporter.getMotifNames();
+			forfeitTitles = forfeitImporter.getForfeitTitles();
+			forfeitCards = forfeitImporter.getForfeitCards();
+			forfeitTimers = forfeitImporter.getForfeitTimers();
 
+			forfeitQuantity = forfeitImporter.getForfeitQuantity();
+		}
+		else {
+			failedForfeitImport = true;
+		}
+	}
+	else {
+		std::cout << "Failed to open forfeit file" << std::endl;
+		failedForfeitImport = true;
+	}
 
-	//Test Card
-	sf::Color colourTest = sf::Color(0, 168, 64);
-	std::string textTest = "What's the most embarrassing thing you've ever done?";
+	if (failedForfeitImport) {
+		CustomMessageBox failedForfeit("Pour Decisions", "Forfeits could not be imported", 1);
+		MessageBoxButton result = failedForfeit.showMessageBox(); //Show the message box
+
+		if (result == MessageBoxButton::Ok) {
+			std::cout << "OK button clicked" << std::endl;
+			window.close();
+		}
+		else if (result == MessageBoxButton::Cancel) {
+			std::cout << "Cancel button clicked" << std::endl;
+			window.close();
+		}
+	}
+
 	
 
 	return true;

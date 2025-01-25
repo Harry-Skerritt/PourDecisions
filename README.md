@@ -1,12 +1,14 @@
 ﻿![Pour Decisions Banner](https://raw.githubusercontent.com/Harry-Skerritt/test/refs/heads/main/pd_github_banner.png)
 
 ![Static Badge](https://img.shields.io/badge/in_development-green)
-![Static Badge](https://img.shields.io/badge/Built_With-SFML-orange)
+![SFML Badge](https://img.shields.io/badge/Built_with-SFML-%238CC445?style=flat&logo=SFML&logoColor=%238CC445)
+![C++ Version](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
 ![GitHub Release](https://img.shields.io/github/v/release/Harry-Skerritt/PourDecisions)
 ![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Harry-Skerritt/PourDecisions/total)
+
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-windows.yml?label=Windows)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-macos.yml?label=MacOS)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-linux.yml?label=Linux)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-macos.yml?label=MacOS)
 
 
 # A Spinwheel based drinking game!
