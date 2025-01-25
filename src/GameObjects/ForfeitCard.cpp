@@ -1,29 +1,27 @@
-#include "Card.h"
+#include "ForfeitCard.h"
 #include "../Managers/AudioManager.h"
 #include "../Screens/MainGame.h"
 
+ForfeitCard::ForfeitCard() {};
+ForfeitCard::~ForfeitCard() {};
 
-Card::Card() {};
-Card::~Card() {};
-
-void Card::setMainGameInstance(MainGame* game) {
+void ForfeitCard::setMainGameInstance(MainGame* game) {
 	m_mainGame = game;
 }
 
-void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondaryFont, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window, bool group) {
-	cardColour = colour;
-	cardBodyFont = mainFont;
-	cardHeaderFont = secondaryFont;
-	cardHeaderText = title;
-	cardBodyText = body;
+void ForfeitCard::initialise(sf::Font& font1, sf::Font& font2, std::string title, std::string body, std::string imgLoc, float scaleX, sf::RenderWindow& window, bool group) {
+	righteousFont = font1;
+	ryeFont = font2;
+	titleText = title;
+	messageText = body;
 	groupCard = group;
+	headerText = "FORFEIT";
 
-	//Load Motif Texture
-	if (!cardMotifTex.loadFromFile(imgLoc)) {
+	if (!motifTexture.loadFromFile(imgLoc)) {
 		std::cerr << "Card Motif did not load" << std::endl;
 	}
 
-	cardMotif.setTexture(cardMotifTex);
+	motifSprite.setTexture(motifTexture);
 
 	//Darken Screen
 	screenDarken.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
@@ -36,126 +34,130 @@ void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondary
 	cardBackground.setOutlineThickness(4.0f);
 	cardBackground.setOutlineColor(borderColour);
 
-	cardMotif.setScale(scaleX * 0.6f, scaleX * 0.6f);
-	cardMotif.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) - cardMotif.getGlobalBounds().width / 2,
-		(cardBackground.getPosition().y + cardBackground.getGlobalBounds().height / 2)); //Place Motif
-
+	//Set header up
 	cardHeader.setSize(sf::Vector2f(cardBackground.getSize().x, cardBackground.getSize().y * 0.17f));
 	cardHeader.setFillColor(cardColour);
 	cardHeader.setPosition(cardBackground.getPosition().x, cardBackground.getPosition().y); //Set header position
 	cardHeader.setOutlineThickness(4.0f);
 	cardHeader.setOutlineColor(borderColour);
 
-	cardTitle.setFont(cardHeaderFont);
-	cardTitle.setFillColor(cardBackColour);
-	cardTitle.setString(cardHeaderText);
-	cardTitle.setCharacterSize(cardHeader.getSize().y * 0.8f); //Make dyanmic to make it all fit
-	cardTitle.setOrigin(cardTitle.getGlobalBounds().width / 2, cardTitle.getGlobalBounds().height / 2);
-	cardTitle.setPosition((cardHeader.getPosition().x + cardHeader.getGlobalBounds().width / 2),
-		(cardHeader.getPosition().y + cardHeader.getGlobalBounds().height / 2) - cardHeader.getSize().y * 0.2f); //Place title
+	//Set header text up
+	cardHeaderText.setFont(ryeFont);
+	cardHeaderText.setFillColor(cardBackColour);
+	cardHeaderText.setString(headerText);
+	cardHeaderText.setCharacterSize(cardHeader.getSize().y * 0.8f); //Make dyanmic to make it all fit
+	cardHeaderText.setOrigin(cardHeaderText.getLocalBounds().width / 2, cardHeaderText.getLocalBounds().height / 2);
+	cardHeaderText.setPosition(cardHeader.getPosition().x + cardHeader.getSize().x / 2,
+		cardHeader.getPosition().y + cardHeader.getSize().y / 2 - cardHeaderText.getCharacterSize() * 0.2f); //Place header
 
-	cardMessage.setFont(cardBodyFont);
-	cardMessage.setFillColor(borderColour);
-	cardMessage.setCharacterSize(window.getSize().y * 0.042f);
-	cardMessage.setString(cardBodyText);
-	wrapText(cardMessage, cardBackground.getSize().x * 0.9f);
-	cardMessage.setOrigin(cardMessage.getGlobalBounds().width / 2, cardMessage.getGlobalBounds().height / 2);
-	cardMessage.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2),
-		(cardBackground.getPosition().y + cardBackground.getGlobalBounds().height / 2) - cardMessage.getGlobalBounds().height*0.9f);
+	//Set title up
+	cardTitleText.setFont(righteousFont);
+	cardTitleText.setFillColor(borderColour);
+	cardTitleText.setString(titleText);
+	cardTitleText.setCharacterSize(cardHeader.getSize().y * 0.6f); //Make dyanmic to make it all fit
+	cardTitleText.setOrigin(cardTitleText.getLocalBounds().width / 2, cardTitleText.getLocalBounds().height / 2);
+	cardTitleText.setPosition(cardHeader.getPosition().x + cardHeader.getSize().x / 2,
+		cardHeader.getPosition().y + cardHeader.getSize().y * 1.25f); //Place title
 
-	forfeitButton.setBackgroundColor(cardColour, cardBackground.getSize().x * 0.43f, cardBackground.getSize().y * 0.1f);
-	forfeitButton.setBorder(borderColour, 2.0f);
-	forfeitButton.setText("Forfeit", secondaryFont, window.getSize().y * 0.055f);
-	forfeitButton.setTextColor(cardBackColour);
-	forfeitButton.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) - forfeitButton.getGlobalBounds().width - 10,
-		cardBackground.getSize().y - 30);
 
-	passButton.setBackgroundColor(cardBackColour, cardBackground.getSize().x * 0.43f, cardBackground.getSize().y * 0.1f);
-	passButton.setBorder(cardColour, 2.0f);
-	passButton.setText("Pass", secondaryFont, window.getSize().y * 0.055f);
-	passButton.setTextColor(cardColour);
-	passButton.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) + 10,
-		cardBackground.getSize().y - 30);
+	//Set Message up
+	cardMessageText.setFont(righteousFont);
+	cardMessageText.setFillColor(borderColour);
+	cardMessageText.setCharacterSize(window.getSize().y * 0.037f);
+	cardMessageText.setString(messageText);
+	wrapText(cardMessageText, cardBackground.getSize().x * 0.9f);
+	cardMessageText.setOrigin(cardMessageText.getLocalBounds().width / 2, cardMessageText.getLocalBounds().height / 2);
+	cardMessageText.setPosition(cardBackground.getPosition().x + cardBackground.getSize().x / 2,
+		cardBackground.getPosition().y + cardBackground.getSize().y * 0.4f); //place message
 
+
+	//Set up motif
+	motifSprite.setScale(scaleX * 0.6f, scaleX * 0.6f);
+	motifSprite.setOrigin(motifSprite.getLocalBounds().width / 2, motifSprite.getLocalBounds().height / 2);
+	motifSprite.setPosition(cardBackground.getPosition().x + cardBackground.getSize().x / 2,
+		cardBackground.getPosition().y + cardBackground.getSize().y * 0.65f); //place motif
+
+	//Done button
+	doneButton.setBackgroundColor(cardColour, cardBackground.getSize().x * 0.89f, cardBackground.getSize().y * 0.1f);
+	doneButton.setBorder(borderColour, 2.0f);
+	doneButton.setText("DONE", ryeFont, window.getSize().y * 0.055f);
+	doneButton.setTextColor(cardBackColour);
+	doneButton.setPosition(cardBackground.getPosition().x + cardBackground.getSize().x / 2 - doneButton.getGlobalBounds().width / 2,
+		cardBackground.getPosition().y + cardBackground.getSize().y - doneButton.getGlobalBounds().height - 20);
 
 }
 
-void Card::setPosition(float x, float y) {
+void ForfeitCard::setPosition(float x, float y) {
 	cardBackground.setPosition(sf::Vector2f(x, y));
 }
 
-void Card::update(float dt, sf::Vector2f clickPos) {
-	forfeitButton.handleHover(clickPos);
-	passButton.handleHover(clickPos);
+void ForfeitCard::update(float dt, sf::Vector2f clickPos) {
+	doneButton.handleHover(clickPos);
 }
 
-void Card::handleMouse(sf::Vector2f clickPos) {
-	if (passButton.isClicked(clickPos)) {
-		m_mainGame->cardPass(groupCard);
-	}
-
-	if (forfeitButton.isClicked(clickPos)) {
-		m_mainGame->cardForfeit(groupCard);
-	}
-}
-
-sf::FloatRect Card::getGlobalBounds() const {
+sf::FloatRect ForfeitCard::getGlobalBounds() const {
 	return cardBackground.getGlobalBounds();
 }
 
-sf::FloatRect Card::getLocalBounds() const {
+sf::FloatRect ForfeitCard::getLocalBounds() const {
 	return cardBackground.getLocalBounds();
 }
 
-sf::Vector2f Card::getPosition() const {
+sf::Vector2f ForfeitCard::getPosition() const {
 	return cardBackground.getPosition();
 }
 
-void Card::showCard(sf::RenderWindow& window, float dt) {
-	drawFadeComponents(
-		window,
-		screenDarken,
-		cardBackground,
-		cardHeader,
-		cardTitle,
-		cardMessage,
-		cardMotif,
-		forfeitButton,
-		passButton,
-		dt,        // Delta time
-		1.5f,       // Fade speed (normalized, 0.5 = 2 seconds for full fade)
-		true
-	);
-	
+void ForfeitCard::handleMouse(sf::Vector2f clickPos) {
+	if (doneButton.isClicked(clickPos)) {
+		m_mainGame->forfeitComplete(groupCard);
+	}
 }
 
-void Card::hideCard(sf::RenderWindow& window, float dt) {
+void ForfeitCard::showCard(sf::RenderWindow& window, float dt) {
 	drawFadeComponents(
 		window,
 		screenDarken,
 		cardBackground,
 		cardHeader,
-		cardTitle,
-		cardMessage,
-		cardMotif,
-		forfeitButton,
-		passButton,
-		dt,        // Delta time
-		1.0f,       // Fade speed (normalized, 0.5 = 2 seconds for full fade)
+		cardHeaderText,
+		cardTitleText,
+		cardMessageText,
+		motifSprite,
+		doneButton,        
+		dt, // Delta time
+		1.5f, // Fade speed (normalized, 0.5 = 2 seconds for full fade)
+		true
+	);
+
+}
+
+void ForfeitCard::hideCard(sf::RenderWindow& window, float dt) {
+	drawFadeComponents(
+		window,
+		screenDarken,
+		cardBackground,
+		cardHeader,
+		cardHeaderText,
+		cardTitleText,
+		cardMessageText,
+		motifSprite,
+		doneButton,
+		dt, // Delta time
+		1.0f, // Fade speed (normalized, 0.5 = 2 seconds for full fade)
 		false
 	);
 }
 
-void Card::drawFadeComponents(
+void ForfeitCard::drawFadeComponents(
 	sf::RenderWindow& window,
 	sf::RectangleShape& screenDarken,
 	sf::RectangleShape& cardBackground,
 	sf::RectangleShape& cardHeader,
+	sf::Text& cardHeaderText,
 	sf::Text& cardTitle,
 	sf::Text& cardMessage,
 	sf::Sprite& cardMotif,
-	SolidButton& forfeitButton,
-	SolidButton& passButton,
+	SolidButton& doneButton,
 	float deltaTime,
 	float fadeSpeed,
 	bool fadeIn // true for fade in, false for fade out
@@ -193,6 +195,10 @@ void Card::drawFadeComponents(
 	headerBorderColour.a = alpha;
 	cardHeader.setOutlineColor(headerBorderColour);
 
+	sf::Color headerTextColour = cardHeaderText.getFillColor();
+	headerTextColour.a = alpha;
+	cardHeaderText.setFillColor(headerTextColour);
+
 	sf::Color titleColour = cardTitle.getFillColor();
 	titleColour.a = alpha;
 	cardTitle.setFillColor(titleColour);
@@ -206,36 +212,35 @@ void Card::drawFadeComponents(
 	cardMotif.setColor(motifColour);
 
 	// Update button alpha
-	forfeitButton.setAlpha(alpha);
-	passButton.setAlpha(alpha);
+	doneButton.setAlpha(alpha);
 
 	// Draw everything
 	window.draw(screenDarken);
 	window.draw(cardBackground);
 	window.draw(cardHeader);
-	window.draw(cardMotif);
+	window.draw(cardHeaderText);
 	window.draw(cardTitle);
 	window.draw(cardMessage);
-	forfeitButton.draw(window);
-	passButton.draw(window);
+	window.draw(cardMotif);
+	doneButton.draw(window);
 
 	//If the fade is done and fading in
 	if (fadeProgress == 1.0f && fadeIn) {
 		//Then it must be visible
 		cardVisible = true;
 	}
-	else if (fadeProgress == 0.0f && !fadeIn) {
+	else if (fadeProgress == 1.0f && !fadeIn) {
 		//If the fade is done and fading out
 		//Then it must be hidden
 		cardVisible = false;
 	}
 }
 
-bool Card::isCardVisible() {
+bool ForfeitCard::isCardVisible() {
 	return cardVisible;
 }
 
-void Card::wrapText(sf::Text& text, float maxWidth)
+void ForfeitCard::wrapText(sf::Text& text, float maxWidth)
 {
 	const sf::Font* font = text.getFont();
 	if (!font)

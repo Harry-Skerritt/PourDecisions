@@ -7,9 +7,11 @@
 #include "../Utils/Widgets/GrowFadeText.h"
 #include "../Screens/Menus/PauseMenu.h"
 #include "../GameObjects/Card.h"
+#include "../GameObjects/ForfeitCard.h"
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <functional>
 
 class Game;
 
@@ -36,7 +38,9 @@ public:
 
 	void cardPass(bool group);
 
-	void cardForfeit();
+	void cardForfeit(bool group);
+
+	void forfeitComplete(bool group);
 
 	void moveToNextPlayer();
 
@@ -64,14 +68,31 @@ private:
 	std::vector<int> playerPoints;
 	sf::Vector2f pointNotiferPos;
 
+
+	//Cards
+	bool waitingForCardToBeHiddenPass = false;
+	bool waitingForCardToBeHiddenForfeit = false;
+	bool waitingForCardToBeHiddenComplete = false;
+
+	bool wasCardVisible = false;
+	bool wasForfeitCardVisible = false;
+
+	//Forfeit card
+	std::function<void()> showForfeitDeferredAction;
+	ForfeitCard forfeitCardDisplay;
+	bool forfeitCardShown;
+
+	//Card
 	Card cardDisplay;
 	const std::string MOTIF_BASE_LOCATION = "../Data/Assets/Motifs/";
 	bool cardShown;
 	sf::Color currentCardColour;
+	std::function<void()> backToGameDeferredAction;
 
 	GrowFadeText pointNotifier;
 
 	Button spinButton;
+
 
 	//Player Names
 	bool playersPopulated;
@@ -82,7 +103,6 @@ private:
 	std::vector<PlayerBoardDisplay> playerDisplay;
 
 	void drawGradientBorder(sf::RenderWindow& window, const sf::FloatRect& rect, float borderThickness, sf::Color color1, sf::Color color2); //Add a gradient border to a shapeRect
-
 
 };
 

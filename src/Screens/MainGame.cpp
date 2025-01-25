@@ -4,6 +4,8 @@
 #include "../Managers/AudioManager.h"
 #include "../Utils/CustomMessageBox.h"
 #include <stdlib.h>
+#include <thread>
+#include <chrono>
 
 MainGame::MainGame(sf::RenderWindow& window, sf::Font& font1, sf::Font& font2, sf::Font& font3) : 
 	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont) {};
@@ -21,8 +23,10 @@ void MainGame::init() {
 	playersPopulated = false;
 	menu_visible = false;
 	cardShown = false;
+	forfeitCardShown = false;
 
-	cardDisplay.getMainGameInstance(this);
+	cardDisplay.setMainGameInstance(this);
+	forfeitCardDisplay.setMainGameInstance(this);
 
 	//Pause menu
 	pauseMenu.setGameInstance(m_game);
@@ -243,6 +247,7 @@ void MainGame::pickCard() {
 	}
 
 	// Display the card
+	std::cout << "Scale X b4 nc call: " << m_game->scaleX << std::endl;
 	cardDisplay.initialise(currentCardColour, righteousFont, ryeFont, cardTitleToShow, cardMessageToShow, motifLocation, m_game->scaleX, window, groupCard);
 	cardShown = true;
 }
@@ -251,16 +256,79 @@ void MainGame::cardPass(bool group) {
 	if (group) {
 		//It is a group card - award everyone 1 points
 		cardShown = false;
-		
-		awardPoint(1, 0, currentCardColour, true);
-		moveToNextPlayer();
+
+		waitingForCardToBeHiddenPass = true;
+
+		backToGameDeferredAction = [this]() {
+			std::cout << "Card is hidden!" << std::endl;
+
+			awardPoint(1, 0, currentCardColour, true);
+			moveToNextPlayer();
+		};
 	}
 	else {
 		//Not a group card - award the player 2 points
 		cardShown = false;
-		awardPoint(2, currentGo, currentCardColour);
-		moveToNextPlayer();
-		
+
+		waitingForCardToBeHiddenPass = true;
+
+		backToGameDeferredAction = [this]() {
+			std::cout << "Card is hidden!" << std::endl;
+
+			awardPoint(2, currentGo, currentCardColour);
+			moveToNextPlayer();
+		};
+	}
+}
+
+void MainGame::cardForfeit(bool group) {
+	std::cout << "Forfeit Picked" << std::endl;
+	
+	//Transition to the forfeit spinner
+	//Get the stuff for the forfeit
+	//Show the card
+
+	std::string forfeitTitle = "Chug Relay"; //D
+	std::string forfeitBody = "You and another player both chug your drinks. Whoever finishes last does the winners next forfeit"; //D
+	std::cout << "Scale X b4 fc call: " << m_game->scaleX << std::endl;
+	forfeitCardDisplay.initialise(righteousFont, ryeFont, forfeitTitle, forfeitBody, "../Data/Assets/Motifs/Forfeits/chugrelay.png", m_game->scaleX, window, group);
+	
+	cardShown = false;
+	waitingForCardToBeHiddenForfeit = true;
+
+	showForfeitDeferredAction = [this]() {
+		std::cout << "Card is hidden!" << std::endl;
+
+		forfeitCardShown = true; //Show the card
+	};
+}
+
+void MainGame::forfeitComplete(bool group) {
+	//The forfeit is complete
+	if (group) {
+		//the forfeit was for a group card - no one gets a point
+		forfeitCardShown = false;
+
+		waitingForCardToBeHiddenComplete = true;
+
+		backToGameDeferredAction = [this]() {
+			std::cout << "Forfeit Card is hidden!" << std::endl;
+
+			moveToNextPlayer();
+		};
+	}
+	else {
+		//The card was for an invidiual player
+		forfeitCardShown = false;
+
+		waitingForCardToBeHiddenComplete = true;
+
+		backToGameDeferredAction = [this]() {
+			std::cout << "Forfeit Card is hidden!" << std::endl;
+
+			awardPoint(1, currentGo, forfeitCardDisplay.getColour());
+			moveToNextPlayer();
+		};
 	}
 }
 
@@ -287,10 +355,63 @@ void MainGame::moveToNextPlayer() {
 void MainGame::update(float dt, sf::Vector2f clickPos) {
 	pauseMenu.update(dt, clickPos);
 
+	//Card
 	if (cardShown) {
 		cardDisplay.update(dt, clickPos);
 	}
-	else {
+
+	//Changing from card back to game play - pass
+	if (waitingForCardToBeHiddenPass && !cardDisplay.isCardVisible()) {
+		waitingForCardToBeHiddenPass = false;
+		if (backToGameDeferredAction) {
+			backToGameDeferredAction();
+			backToGameDeferredAction = nullptr;
+		}
+	}
+
+	if (cardShown && !wasCardVisible) {
+		AudioManager::getInstance().playSoundEffect("cardPick");
+		wasCardVisible = true;
+	}
+	else if (!cardShown && wasCardVisible) {
+		wasCardVisible = false;
+	}
+
+	//Forfeit Card
+	if (forfeitCardShown) {
+		forfeitCardDisplay.update(dt, clickPos);
+	}
+
+	//Changing from card to forfeit card - forfeit
+	if (waitingForCardToBeHiddenForfeit && !cardDisplay.isCardVisible()) {
+		waitingForCardToBeHiddenForfeit = false;
+		if (showForfeitDeferredAction) {
+			showForfeitDeferredAction();
+			showForfeitDeferredAction = nullptr;
+		}
+	}
+
+	//Changing from forfiet card to game play - forfeit complete
+	if (waitingForCardToBeHiddenComplete && !cardDisplay.isCardVisible()) {
+		waitingForCardToBeHiddenComplete = false;
+		if (backToGameDeferredAction) {
+			backToGameDeferredAction();
+			backToGameDeferredAction = nullptr;
+		}
+	}
+
+	if (forfeitCardShown && !wasForfeitCardVisible) {
+		AudioManager::getInstance().playSoundEffect("cardPick");
+		wasForfeitCardVisible = true;
+	}
+	else if (!forfeitCardShown && wasForfeitCardVisible) {
+		wasForfeitCardVisible = false;
+	}
+
+	
+
+
+	if (!cardShown && !forfeitCardShown) {
 		spinButton.handleHover(clickPos);
 		pointNotifier.update(dt);
 	}
@@ -324,15 +445,19 @@ void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 		menu_visible = pauseMenu.getVisible();
 	}
 
-	if (!cardShown) {
+	if (!cardShown && !forfeitCardShown) {
 		//Cant click the spin button if the card is displaying
 		if (spinButton.isClicked(clickPos)) {
 			pickCard();
 		}
 	}
-	else {
+	else if (cardShown) {
 		//The card is shown
 		cardDisplay.handleMouse(clickPos);
+	}
+	else if (forfeitCardShown) {
+		//The forfeit card is shown
+		forfeitCardDisplay.handleMouse(clickPos);
 	}
 	
 }
@@ -353,11 +478,16 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 
 	if (cardShown) {
 		cardDisplay.showCard(window, dt);
-
 	}
 	else {
 		cardDisplay.hideCard(window, dt);
-		AudioManager::getInstance().playSoundEffect("cardPick");
+	}
+
+	if (forfeitCardShown) {
+		forfeitCardDisplay.showCard(window, dt);
+	}
+	else {
+		forfeitCardDisplay.hideCard(window, dt);
 	}
 
 	pauseMenu.draw(window, dt);

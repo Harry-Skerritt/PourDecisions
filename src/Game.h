@@ -104,7 +104,7 @@ class Game
 
 		//Screen
 		const sf::Vector2f BASE_RESOLUTION = sf::Vector2f(1080.0f, 720.0f);
-
+		const std::string CREDIT_URL = "https://harry-skerritt.github.io/PourDecisions/";
 
 		//Graphics
 		std::string resolution;
