@@ -2,8 +2,8 @@
 
 ![Static Badge](https://img.shields.io/badge/in_development-green)
 ![Static Badge](https://img.shields.io/badge/Built_With-SFML-orange)
-![Release Version]()
-![Downloads]()
+![GitHub Release](https://img.shields.io/github/v/release/Harry-Skerritt/PourDecisions)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Harry-Skerritt/PourDecisions/total)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-windows.yml?label=Windows)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-macos.yml?label=MacOS)
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-linux.yml?label=Linux)
