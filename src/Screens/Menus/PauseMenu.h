@@ -46,6 +46,8 @@ private:
 	Button resumeButton;
 	Button optionsButton;
 	Button quitButton;
+
+	float fadeProgress = 0.0f; // Tracks the fade-in/out progress
 	
 };
 

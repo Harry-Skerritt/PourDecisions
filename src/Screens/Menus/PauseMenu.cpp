@@ -3,7 +3,10 @@
 #include "../../Managers/AudioManager.h"
 #include <iostream>
 
-PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font) : window(window), font(font) {};
+PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font) : window(window), font(font) 
+{
+	menu_visible = false;
+};
 PauseMenu::~PauseMenu() {};
 
 void PauseMenu::setGameInstance(Game* game) {
@@ -13,8 +16,6 @@ void PauseMenu::setGameInstance(Game* game) {
 //MAKE IT ACTUALL PAUSE THE GAME
 
 void PauseMenu::init() {
-
-	menu_visible = false;
 
 	//Darken Screen
 	screenDarken.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
@@ -93,34 +94,34 @@ void PauseMenu::drawFadeComponents(
 	float speed,
 	bool fadeIn
 ) {
-	static float fadeProgress = fadeIn ? 0.0f : 1.0f;
-
-	//Update progress
+	// Update progress
 	fadeProgress += (fadeIn ? speed : -speed) * dt;
 	fadeProgress = std::clamp(fadeProgress, 0.0f, 1.0f);
 
-	//Calc alpha
+	// If fully faded out and fadeIn is false, stop rendering
+	if (!fadeIn && fadeProgress <= 0.0f) {
+		return;
+	}
+
+	// Calculate alpha
 	sf::Uint8 alpha = static_cast<sf::Uint8>(fadeProgress * 255);
 	sf::Uint8 darkenAlpha = static_cast<sf::Uint8>(fadeProgress * 179);
 
-	//Screen darken
+	// Update colors
 	sf::Color darkenColour = screenDarken.getFillColor();
 	darkenColour.a = darkenAlpha;
 	screenDarken.setFillColor(darkenColour);
 
-	//Menu Background
 	sf::Color backgroundColour = menuBackground.getFillColor();
 	backgroundColour.a = alpha;
 	menuBackground.setFillColor(backgroundColour);
 
-	//Title
 	title.setAlpha(alpha);
-	
-	// Buttons
 	resume.setAlpha(alpha);
 	options.setAlpha(alpha);
 	quit.setAlpha(alpha);
 
+	// Draw components
 	window.draw(screenDarken);
 	window.draw(menuBackground);
 	window.draw(title);
@@ -137,19 +138,20 @@ void PauseMenu::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 	if (resumeButton.isClicked(clickPos)) {
 		std::cout << "Resume Clicked" << std::endl;
 		AudioManager::getInstance().playSoundEffect("buttonClick");
-		menu_visible = false;
+		showMenu(false);
 	}
 	
 	if (optionsButton.isClicked(clickPos)) {
 		std::cout << "Options Clicked" << std::endl;
 		AudioManager::getInstance().playSoundEffect("buttonClick");
-		menu_visible = false;
+		showMenu(false);
+		m_game->toOptions(3);
 	}
 	
 	if (quitButton.isClicked(clickPos)) {
 		std::cout << "Quit Clicked" << std::endl;
 		AudioManager::getInstance().playSoundEffect("buttonClick");
-		menu_visible = false;
+		showMenu(false);
 		m_game->backToMainMenu(3);
 	}
 }

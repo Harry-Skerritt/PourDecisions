@@ -466,6 +466,14 @@ void Game::backToMainMenu(int pageID)
 
 }
 
+void Game::toOptions(int pageID) {
+	//3 = Main Game
+	if (pageID == 3) {
+		in_game = false;
+		in_options = true;
+	}
+}
+
 void Game::transitionToMainGame() {
 	if (in_player_setup) {
 		in_player_setup = false;
@@ -649,11 +657,4 @@ bool Game::isRestartRequired() const {
 	return optionsScreen.isRestartRequested();
 }
 
-void Game::getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution) {
-	fullscreen = optionsScreen.fullscreenCheckbox.isChecked();
-	std::string res = optionsScreen.resolutionMenu.getSelectedItem();
-	int width, height;
-	optionsScreen.splitResolution(res, width, height);
-	resolution = sf::VideoMode(width, height);
-}
 

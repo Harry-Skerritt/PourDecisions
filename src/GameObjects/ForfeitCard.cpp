@@ -75,7 +75,7 @@ void ForfeitCard::initialise(sf::Font& font1, sf::Font& font2, std::string title
 	motifSprite.setScale(scaleX * 0.6f, scaleX * 0.6f);
 	motifSprite.setOrigin(motifSprite.getLocalBounds().width / 2, motifSprite.getLocalBounds().height / 2);
 	motifSprite.setPosition(cardBackground.getPosition().x + cardBackground.getSize().x / 2,
-		cardBackground.getPosition().y + cardBackground.getSize().y * 0.65f); //place motif
+		cardBackground.getPosition().y + cardBackground.getSize().y * 0.75f); //place motif
 
 	//Done button
 	doneButton.setBackgroundColor(cardColour, cardBackground.getSize().x * 0.89f, cardBackground.getSize().y * 0.1f);

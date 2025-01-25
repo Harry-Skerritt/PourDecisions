@@ -40,6 +40,7 @@ class Game
 		void mouseDragged(sf::Event event);
 
 		void backToMainMenu(int pageID); //0 - Options, 1 - HTP, 2 - Setup, 3 - Game
+		void toOptions(int pageID); //3 - Game
 		void transitionToMainGame();
 
 		float getMusicVolume();
@@ -66,7 +67,6 @@ class Game
 
 		//Screen
 		bool isRestartRequired() const;
-		void getUpdatedSettings(bool& fullscreen, sf::VideoMode& resolution);
 		int framesPerSecond;
 		
 		//Cards

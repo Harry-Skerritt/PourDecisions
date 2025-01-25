@@ -8,7 +8,7 @@
 #include <chrono>
 
 MainGame::MainGame(sf::RenderWindow& window, sf::Font& font1, sf::Font& font2, sf::Font& font3) : 
-	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont) {};
+	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont), gameOver(window, righteousFont, ryeFont) {};
 MainGame::~MainGame() {};
 
 void MainGame::setGameInstance(Game* game) {
@@ -24,6 +24,7 @@ void MainGame::init() {
 	menu_visible = false;
 	cardShown = false;
 	forfeitCardShown = false;
+	game_over = false;
 
 	cardDisplay.setMainGameInstance(this);
 	forfeitCardDisplay.setMainGameInstance(this);
@@ -32,6 +33,9 @@ void MainGame::init() {
 	pauseMenu.setGameInstance(m_game);
 	pauseMenu.init();
 	pauseMenu.showMenu(false);
+
+	//Game Over
+	gameOver.setGameInstance(m_game);
 
 	//Player Board
 	playerBoard.setSize(sf::Vector2f(window.getSize().x * 0.23f, window.getSize().y * 0.9));
@@ -177,7 +181,8 @@ void MainGame::pickCard() {
 		}
 		else {
 			std::cout << "Any other button clicked" << std::endl;
-			// End game screen (future code)
+			gameOver.initialise("Replace Me");
+			gameOver.setVisibility(true);
 			return; // Exit early as there are no more cards
 		}
 	}
@@ -353,8 +358,6 @@ void MainGame::moveToNextPlayer() {
 }
 
 void MainGame::update(float dt, sf::Vector2f clickPos) {
-	pauseMenu.update(dt, clickPos);
-
 	//Card
 	if (cardShown) {
 		cardDisplay.update(dt, clickPos);
@@ -409,30 +412,47 @@ void MainGame::update(float dt, sf::Vector2f clickPos) {
 	}
 
 	
-
-
+	//Spin Button
 	if (!cardShown && !forfeitCardShown) {
 		spinButton.handleHover(clickPos);
 		pointNotifier.update(dt);
 	}
 
+	//Winning Player
 	if (playersPopulated && turnsPlayed != 0 && currentGo != lastTurnNo) {
 		//If players are present, and its not the first go workout who is winning - should only run once per turn
 		calculateWinningPlayer();
 		lastTurnNo = currentGo;
+
+		//Get the winning player and check if their score has won, if so game over;
+	}
+
+	//Game Over
+	if (gameOver.getVisible()) {
+		gameOver.update(dt, clickPos);
+	}
+
+	//Pause Menu
+	if (pauseMenu.getVisible()) {
+		pauseMenu.update(dt, clickPos);
 	}
 }
 
 void MainGame::handleKeypress(sf::Event event) {
 
 	if (event.key.code == sf::Keyboard::Escape) {
+		menu_visible = pauseMenu.getVisible();
 		menu_visible = !menu_visible;
 		pauseMenu.showMenu(menu_visible);
 	}
 
 	//Debug
 	if (event.key.code == sf::Keyboard::R) {
-		cardShown = false;
+		std::cout << "R Pressed" << std::endl;
+		gameOver.initialise("Harry");
+		game_over = gameOver.getVisible();
+		game_over = !game_over;
+		gameOver.setVisibility(game_over);
 	}
 }
 
@@ -443,6 +463,13 @@ void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 	}
 	else {
 		menu_visible = pauseMenu.getVisible();
+	}
+
+	if (game_over) {
+		gameOver.handleMouse(event, clickPos);
+	}
+	else {
+		game_over = gameOver.getVisible();
 	}
 
 	if (!cardShown && !forfeitCardShown) {
@@ -491,6 +518,8 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 	}
 
 	pauseMenu.draw(window, dt);
+
+	gameOver.draw(window, dt);
 }
 
 

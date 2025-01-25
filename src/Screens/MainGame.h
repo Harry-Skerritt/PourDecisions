@@ -2,16 +2,20 @@
 #define MAINGAME_H
 
 #include <SFML/Graphics.hpp>
-#include "../GameObjects/PlayerBoardDisplay.h"
-#include "../Utils/Widgets/Button.h"
-#include "../Utils/Widgets/GrowFadeText.h"
-#include "../Screens/Menus/PauseMenu.h"
-#include "../GameObjects/Card.h"
-#include "../GameObjects/ForfeitCard.h"
 #include <vector>
 #include <string>
 #include <algorithm>
 #include <functional>
+
+#include "../GameObjects/PlayerBoardDisplay.h"
+#include "../GameObjects/Card.h"
+#include "../GameObjects/ForfeitCard.h"
+
+#include "../Utils/Widgets/Button.h"
+#include "../Utils/Widgets/GrowFadeText.h"
+
+#include "../Screens/Menus/PauseMenu.h"
+#include "../Screens/Menus/GameOver.h"
 
 class Game;
 
@@ -57,6 +61,9 @@ private:
 
 	PauseMenu pauseMenu;
 	bool menu_visible;
+
+	GameOver gameOver;
+	bool game_over;
 
 	//Player List
 	sf::RectangleShape playerBoard;
