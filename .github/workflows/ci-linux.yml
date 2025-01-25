@@ -23,7 +23,19 @@ jobs:
 
     steps:
     - name: Install Dependencies
-      run: sudo apt-get update && sudo apt-get install libxrandr-dev libxcursor-dev libxi-dev libudev-dev libflac-dev libvorbis-dev libgl1-mesa-dev libegl1-mesa-dev libfreetype-dev
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libxrandr-dev \
+          libxcursor-dev \
+          libxi-dev \
+          libudev-dev \
+          libflac-dev \
+          libvorbis-dev \
+          libgl1-mesa-dev \
+          libegl1-mesa-dev \
+          libfreetype-dev \
+          libopenal-dev # Install OpenAL development files
 
     - name: Checkout
       uses: actions/checkout@v4
