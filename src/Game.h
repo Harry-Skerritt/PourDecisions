@@ -105,6 +105,14 @@ class Game
 
 		ForfeitImporter forfeitImporter;
 
+		//Loading Funcs
+		bool loadFonts();
+		bool loadAssets();
+		bool loadAudio();
+		bool loadCards();
+		bool loadForfeits();
+		bool loadSettings(std::string fileLoc);;
+
 
 	private:
 		//Disclamer
@@ -114,9 +122,6 @@ class Game
 		sf::Sprite disclamerSprite;
 		SolidButton disclamerButton;
 
-		//Settings from file
-		bool loadSettings(std::string fileLoc);;
-
 		//Screen
 		const sf::Vector2f BASE_RESOLUTION = sf::Vector2f(1080.0f, 720.0f);
 		const std::string CREDIT_URL = "https://harry-skerritt.github.io/PourDecisions/";
@@ -125,8 +130,6 @@ class Game
 		std::string resolution;
 		bool fullscreen;
 
-		
-
 		//Audio 
 		float musicVolume;
 		float sfxVolume;
@@ -134,7 +137,6 @@ class Game
 		//Game Stuff
 		bool nsfwEnabled;
 		int winPoints;
-
 		
 		//Main
 		sf::RenderWindow& window;

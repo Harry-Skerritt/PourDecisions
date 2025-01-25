@@ -2,9 +2,11 @@
 #include "Game.h"
 #include <iostream>
 #include <string>
+#include <algorithm>
 #include "VisualAddons/SpriteTransition.h"
 #include "Utils/GradientBackground.h"
 #include "Utils/CustomMessageBox.h"
+
 
 
 Game::Game(sf::RenderWindow& game_window, int fps)
@@ -24,7 +26,275 @@ Game::~Game()
 
 }
 
-//Main Game Funcs
+//Loading Funcs
+
+bool Game::loadFonts() {
+	std::cout << "Loading Fonts..." << std::endl;
+	//Fonts
+	if (!righteousFont.loadFromFile("../Data/Fonts/Righteous-Regular.ttf"))
+	{
+		std::cout << "Righteous Font did not load" << std::endl;
+	}
+
+	if (!ryeFont.loadFromFile("../Data/Fonts/Rye-Regular.ttf"))
+	{
+		std::cout << "Rye Font did not load" << std::endl;
+	}
+
+	if (!lcdFont.loadFromFile("../Data/Fonts/LCD14.otf"))
+	{
+		std::cout << "LCD Font did not load" << std::endl;
+	}
+	return true;
+}
+
+bool Game::loadAssets() {
+	std::cout << "Loading Assets..." << std::endl;
+	//Button Backs
+	if (!buttonRectTexture.loadFromFile("../Data/Assets/Buttons/rectButtonBack.png"))
+	{
+		std::cout << "Rect Button Did not load" << std::endl;;
+	}
+
+	if (!buttonCircleTexture.loadFromFile("../Data/Assets/Buttons/circleButtonBack.png"))
+	{
+		std::cout << "Circle Button Did not load" << std::endl;;
+	}
+
+	if (!buttonThinRectTexture.loadFromFile("../Data/Assets/Buttons/thinRectButtonBack.png"))
+	{
+		std::cout << "Thin Rect Button Did not load" << std::endl;;
+	}
+
+	//Transition Textures
+	if (!transitionTexture.loadFromFile("../Data/Assets/spinwheel.png"))
+	{
+		std::cout << "Spinwheel Transition did not load" << std::endl;;
+	}
+
+	if (!forfeitTexture.loadFromFile("../Data/Assets/forfeitBadge.png"))
+	{
+		std::cout << "Forfeit Transition did not load";
+	}
+
+	if (!spinwheel.loadFromFile("../Data/Assets/categorySpinwheel.png"))
+	{
+		std::cout << "Spinwheel did not load";
+	}
+
+	//Logo
+	if (!logoTexture.loadFromFile("../Data/Assets/gameLogo.png"))
+	{
+		std::cout << "Logo Did not load" << std::endl;;
+	}
+	logoSprite.setTexture(logoTexture);
+	return true;
+}
+
+bool Game::loadAudio() {
+	std::cout << "Loading Audio..." << std::endl;
+
+	//Audio Loading
+	//Music
+	audioManager.loadMusic("menuMusic", "../Data/Audio/Music/menu_music.mp3");
+
+	audioManager.loadMusic("gameMusic", "../Data/Audio/Music/game_music.mp3");
+
+	//SFX
+	//Play Button Sound Effect
+	audioManager.loadSoundEffect("playSF", "../Data/Audio/SFX/playButtonClick.wav");
+
+	//Other Click Sound Effect
+	audioManager.loadSoundEffect("buttonClick", "../Data/Audio/SFX/menuButtonClick.wav");
+
+	//Add Player Sound Effect
+	audioManager.loadSoundEffect("addPlayerSF", "../Data/Audio/SFX/addPlayer.wav");
+
+	//Wrong SFX
+	audioManager.loadSoundEffect("wrongSF", "../Data/Audio/SFX/wrongAction.wav");
+
+	//Card Select SFX
+	audioManager.loadSoundEffect("cardPick", "../Data/Audio/SFX/cardSelect.wav");
+
+	//Forfeit SFX
+	audioManager.loadSoundEffect("forfeitRock", "../Data/Audio/SFX/forfeitSound.wav");
+
+	//Point SFX
+	audioManager.loadSoundEffect("pointGot", "../Data/Audio/SFX/pointSFX.wav");
+
+	return true;
+}
+
+bool Game::loadCards() {
+	std::cout << "Loading Cards..." << std::endl;
+
+	//Import cards
+//Initialise all vectors - reserve enough room for all vectors to hold their max info
+	categoriesLoaded = 0;
+
+	bool failedCardImport = false;
+
+	cardImporter.initialise(DEFAULT_CATEGORIES_AMOUNT, usingCustomCards, MAX_CATEGORIES);
+	std::string cardFolder = "../Cards/";
+	if (cardImporter.setCardDir(cardFolder)) {
+		//Directory is formatted correctly
+		if (cardImporter.importCards()) {
+
+			//Everything imported
+			if (usingCustomCards) {
+				cardCategories.resize(MAX_CATEGORIES);
+				cardColours.resize(MAX_CATEGORIES);
+				cardQuantity.resize(MAX_CATEGORIES);
+				cardQuestions.resize(MAX_CATEGORIES);
+				motifLoc.resize(MAX_CATEGORIES);
+				usedCards = std::vector<std::vector<int>>(DEFAULT_CATEGORIES_AMOUNT);
+				//usedCustomCards; //Set to be the length of the amount of custom cards
+
+			}
+			else {
+				cardCategories.resize(DEFAULT_CATEGORIES_AMOUNT);
+				cardColours.resize(DEFAULT_CATEGORIES_AMOUNT);
+				cardQuantity.resize(DEFAULT_CATEGORIES_AMOUNT);
+				cardQuestions.resize(DEFAULT_CATEGORIES_AMOUNT);
+				motifLoc.resize(DEFAULT_CATEGORIES_AMOUNT);
+				usedCards = std::vector<std::vector<int>>(DEFAULT_CATEGORIES_AMOUNT);
+
+			}
+
+			cardCategories = cardImporter.getCardCategories();
+			cardColours = cardImporter.getCardColours();
+			cardQuantity = cardImporter.getCardQuantity();
+			cardQuestions = cardImporter.getCardQuestions();
+			motifLoc = cardImporter.getMotifLoc();
+		}
+		else {
+			failedCardImport = true;
+		}
+
+	}
+	else {
+		std::cout << "Card Directory is incorrectly formatted" << std::endl;
+		failedCardImport = true;
+	}
+
+	if (failedCardImport) {
+		CustomMessageBox failedCard("Pour Decisions", "Cards could not be imported", 1);
+		MessageBoxButton result = failedCard.showMessageBox(); //Show the message box
+
+		if (result == MessageBoxButton::Ok) {
+			std::cout << "OK button clicked" << std::endl;
+			window.close();
+		}
+		else if (result == MessageBoxButton::Cancel) {
+			std::cout << "Cancel button clicked" << std::endl;
+			window.close();
+		}
+	}
+	return !failedCardImport;
+}
+
+bool Game::loadForfeits() {
+	std::cout << "Loading Forfeits..." << std::endl;
+	bool failedForfeitImport = false;
+	forfeitImporter.initialise(DEFAULT_FORFEITS_AMOUNT);
+	std::string forfeitFileLoc = "../Cards/forfeits.json";
+
+	if (forfeitImporter.setForfeitDir(forfeitFileLoc)) {
+		if (forfeitImporter.importForfeits()) {
+			forfeitQuantity = 15;//forfeitImporter.getForfeitQuantity();
+
+			// Print data before proceeding
+			std::cout << "Forfeit Quantity: " << forfeitQuantity << std::endl;
+			auto motifNames = forfeitImporter.getMotifNames();
+			auto titles = forfeitImporter.getForfeitTitles();
+			auto cards = forfeitImporter.getForfeitCards();
+			auto timers = forfeitImporter.getForfeitTimers();
+
+			std::cout << "Motif Names Size: " << motifNames.size() << std::endl;
+			std::cout << "Titles Size: " << titles.size() << std::endl;
+			std::cout << "Cards Size: " << cards.size() << std::endl;
+			std::cout << "Timers Size: " << timers.size() << std::endl;
+
+			// Calculate the valid size (smallest size among vectors)
+			size_t validSize = std::min(
+				std::min(std::min(motifNames.size(), titles.size()),
+					std::min(cards.size(), timers.size())),
+				static_cast<size_t>(forfeitQuantity)
+			);
+
+			// Debugging the valid size
+			std::cout << "Valid Size: " << validSize << std::endl;
+
+			// Check if validSize is greater than 0 and resize the vectors accordingly
+			if (validSize > 0) {
+				forfeitMotifNames.resize(validSize);
+				forfeitTitles.resize(validSize);
+				forfeitCards.resize(validSize);
+				forfeitTimers.resize(validSize);
+
+				// Print resized vector sizes
+				std::cout << "Resized Motif Names Size: " << forfeitMotifNames.size() << std::endl;
+				std::cout << "Resized Titles Size: " << forfeitTitles.size() << std::endl;
+				std::cout << "Resized Cards Size: " << forfeitCards.size() << std::endl;
+				std::cout << "Resized Timers Size: " << forfeitTimers.size() << std::endl;
+
+				// Assign values from imported data to the vectors
+				std::copy(motifNames.begin(), motifNames.begin() + validSize, forfeitMotifNames.begin());
+				std::copy(titles.begin(), titles.begin() + validSize, forfeitTitles.begin());
+				std::copy(cards.begin(), cards.begin() + validSize, forfeitCards.begin());
+				std::copy(timers.begin(), timers.begin() + validSize, forfeitTimers.begin());
+
+				// Debugging the data copied into vectors
+				std::cout << "Motif Names after copy: ";
+				for (const auto& motif : forfeitMotifNames) std::cout << motif << " ";
+				std::cout << std::endl;
+
+				std::cout << "Titles after copy: ";
+				for (const auto& title : forfeitTitles) std::cout << title << " ";
+				std::cout << std::endl;
+
+				std::cout << "Cards after copy: ";
+				for (const auto& card : forfeitCards) std::cout << card << " ";
+				std::cout << std::endl;
+
+				std::cout << "Timers after copy: ";
+				for (const auto& timer : forfeitTimers) std::cout << timer << " ";
+				std::cout << std::endl;
+
+				std::cout << "All copied" << std::endl;
+			}
+			else {
+				std::cerr << "Error: No valid forfeit data to load" << std::endl;
+				failedForfeitImport = true;
+			}
+		}
+		else {
+			failedForfeitImport = true;
+			std::cout << ".import else" << std::endl;
+		}
+	}
+	else {
+		std::cout << "Failed to open forfeit file" << std::endl;
+		failedForfeitImport = true;
+	}
+
+	if (failedForfeitImport) {
+		CustomMessageBox failedForfeit("Pour Decisions", "Forfeits could not be imported", 1);
+		MessageBoxButton result = failedForfeit.showMessageBox(); // Show the message box
+
+		if (result == MessageBoxButton::Ok) {
+			std::cout << "OK button clicked" << std::endl;
+			window.close();
+		}
+		else if (result == MessageBoxButton::Cancel) {
+			std::cout << "Cancel button clicked" << std::endl;
+			window.close();
+		}
+	}
+
+	return !failedForfeitImport;
+}
+
 bool Game::init()
 {
 	//Disclamer
@@ -62,90 +332,8 @@ bool Game::init()
 	scaleX = static_cast<float>(window.getSize().x) / BASE_RESOLUTION.x;
 	scaleY = static_cast<float>(window.getSize().y) / BASE_RESOLUTION.y;
 
-	//Load Settings
-	loadSettings("../Data/Settings.json");
-
-	//Fonts
-	if (!righteousFont.loadFromFile("../Data/Fonts/Righteous-Regular.ttf"))
-	{
-		std::cout << "Righteous Font did not load" << std::endl;
-	}
-
-	if (!ryeFont.loadFromFile("../Data/Fonts/Rye-Regular.ttf"))
-	{
-		std::cout << "Rye Font did not load" << std::endl;
-	}
-
-	if (!lcdFont.loadFromFile("../Data/Fonts/LCD14.otf"))
-	{
-		std::cout << "LCD Font did not load" << std::endl;
-	}
-
-	//Button Backs
-	if (!buttonRectTexture.loadFromFile("../Data/Assets/Buttons/rectButtonBack.png"))
-	{
-		std::cout << "Rect Button Did not load" << std::endl;;
-	}
-
-	if (!buttonCircleTexture.loadFromFile("../Data/Assets/Buttons/circleButtonBack.png"))
-	{
-		std::cout << "Circle Button Did not load" << std::endl;;
-	}
-
-	if (!buttonThinRectTexture.loadFromFile("../Data/Assets/Buttons/thinRectButtonBack.png"))
-	{
-		std::cout << "Thin Rect Button Did not load" << std::endl;;
-	}
-
-	//Transition Textures
-	if (!transitionTexture.loadFromFile("../Data/Assets/spinwheel.png"))
-	{
-		std::cout << "Spinwheel Transition did not load" << std::endl;;
-	}
-
-	if (!forfeitTexture.loadFromFile("../Data/Assets/forfeitBadge.png")) 
-	{
-		std::cout << "Forfeit Transition did not load";
-	}
-
-	if (!spinwheel.loadFromFile("../Data/Assets/categorySpinwheel.png"))
-	{
-		std::cout << "Spinwheel did not load";
-	}
-
 	//Player Names
 	playerNames.reserve(MAX_PLAYERS); //Reserve space for max number of players
-
-	//Audio Loading
-	//Music
-	audioManager.loadMusic("menuMusic", "../Data/Audio/Music/menu_music.mp3");
-
-	audioManager.loadMusic("gameMusic", "../Data/Audio/Music/game_music.mp3");
-
-	//SFX
-	//Play Button Sound Effect
-	audioManager.loadSoundEffect("playSF", "../Data/Audio/SFX/playButtonClick.wav");
-
-	//Other Click Sound Effect
-	audioManager.loadSoundEffect("buttonClick", "../Data/Audio/SFX/menuButtonClick.wav");
-
-	//Add Player Sound Effect
-	audioManager.loadSoundEffect("addPlayerSF", "../Data/Audio/SFX/addPlayer.wav");
-
-	//Wrong SFX
-	audioManager.loadSoundEffect("wrongSF", "../Data/Audio/SFX/wrongAction.wav");
-
-	//Card Select SFX
-	audioManager.loadSoundEffect("cardPick", "../Data/Audio/SFX/cardSelect.wav");
-
-	//Forfeit SFX
-	audioManager.loadSoundEffect("forfeitRock", "../Data/Audio/SFX/forfeitSound.wav");
-
-	//Point SFX
-	audioManager.loadSoundEffect("pointGot", "../Data/Audio/SFX/pointSFX.wav");
-
-
-	audioManager.setMusicVolume(musicVolume);
 
 	//Other Vars
 	currentPlayers = 0;
@@ -153,14 +341,6 @@ bool Game::init()
 	//Main Menu
 	in_main_menu = !showDisclamer; //Main Menu State
 	is_menu_music_playing = false;
-
-	//Logo
-	if (!logoTexture.loadFromFile("../Data/Assets/gameLogo.png"))
-	{
-		std::cout << "Logo Did not load" << std::endl;;
-	}
-	logoSprite.setTexture(logoTexture);
-
 	
 
 	logoSprite.setScale(scaleX * 0.3f, scaleX * 0.3f);
@@ -215,119 +395,13 @@ bool Game::init()
 	in_player_setup = false;
 	playerSetup.initialise();
 	
-	
-
 
 	//Main Game
 	in_game = false;
 	is_game_music_playing = false;
 	mainGame.init();
-
-	//Import cards
-	//Initialise all vectors - reserve enough room for all vectors to hold their max info
-	categoriesLoaded = 0;
-
-	bool failedCardImport = false;
-
-	cardImporter.initialise(DEFAULT_CATEGORIES_AMOUNT, usingCustomCards, MAX_CATEGORIES);
-	std::string cardFolder = "../Cards/";
-	if (cardImporter.setCardDir(cardFolder)) {
-		//Directory is formatted correctly
-		if (cardImporter.importCards()) {
-			
-			//Everything imported
-			if (usingCustomCards) {
-				cardCategories.resize(MAX_CATEGORIES);
-				cardColours.resize(MAX_CATEGORIES);
-				cardQuantity.resize(MAX_CATEGORIES);
-				cardQuestions.resize(MAX_CATEGORIES);
-				motifLoc.resize(MAX_CATEGORIES);
-				usedCards = std::vector<std::vector<int>>(DEFAULT_CATEGORIES_AMOUNT);
-				//usedCustomCards; //Set to be the length of the amount of custom cards
-
-			}
-			else {
-				cardCategories.resize(DEFAULT_CATEGORIES_AMOUNT);
-				cardColours.resize(DEFAULT_CATEGORIES_AMOUNT);
-				cardQuantity.resize(DEFAULT_CATEGORIES_AMOUNT);
-				cardQuestions.resize(DEFAULT_CATEGORIES_AMOUNT);
-				motifLoc.resize(DEFAULT_CATEGORIES_AMOUNT);
-				usedCards = std::vector<std::vector<int>>(DEFAULT_CATEGORIES_AMOUNT); 
-
-			}
-
-			cardCategories = cardImporter.getCardCategories();
-			cardColours = cardImporter.getCardColours();
-			cardQuantity = cardImporter.getCardQuantity();
-			cardQuestions = cardImporter.getCardQuestions();
-			motifLoc = cardImporter.getMotifLoc();
-		}
-		else {
-			failedCardImport = true;
-		}
-
-	}
-	else {
-		std::cout << "Card Directory is incorrectly formatted" << std::endl;
-		failedCardImport = true;
-	}
-
-	if (failedCardImport) {
-		CustomMessageBox failedCard("Pour Decisions", "Cards could not be imported", 1);
-		MessageBoxButton result = failedCard.showMessageBox(); //Show the message box
-
-		if (result == MessageBoxButton::Ok) {
-			std::cout << "OK button clicked" << std::endl;
-			window.close();
-		}
-		else if (result == MessageBoxButton::Cancel) {
-			std::cout << "Cancel button clicked" << std::endl;
-			window.close();
-		}
-	}
-
-	//Import forfeits
-	bool failedForfeitImport = false;
-	forfeitImporter.initialise(DEFAULT_FORFEITS_AMOUNT);
-	std::string forfeitFileLoc = "../Cards/forfeits.json";
-	if (forfeitImporter.setForfeitDir(forfeitFileLoc)) {
-		if (forfeitImporter.importForfeits()) {
-			forfeitMotifNames.resize(DEFAULT_FORFEITS_AMOUNT);
-			forfeitTitles.resize(DEFAULT_FORFEITS_AMOUNT);
-			forfeitCards.resize(DEFAULT_FORFEITS_AMOUNT);
-			forfeitTimers.resize(DEFAULT_FORFEITS_AMOUNT);
-
-			forfeitMotifNames = forfeitImporter.getMotifNames();
-			forfeitTitles = forfeitImporter.getForfeitTitles();
-			forfeitCards = forfeitImporter.getForfeitCards();
-			forfeitTimers = forfeitImporter.getForfeitTimers();
-
-			forfeitQuantity = forfeitImporter.getForfeitQuantity();
-		}
-		else {
-			failedForfeitImport = true;
-		}
-	}
-	else {
-		std::cout << "Failed to open forfeit file" << std::endl;
-		failedForfeitImport = true;
-	}
-
-	if (failedForfeitImport) {
-		CustomMessageBox failedForfeit("Pour Decisions", "Forfeits could not be imported", 1);
-		MessageBoxButton result = failedForfeit.showMessageBox(); //Show the message box
-
-		if (result == MessageBoxButton::Ok) {
-			std::cout << "OK button clicked" << std::endl;
-			window.close();
-		}
-		else if (result == MessageBoxButton::Cancel) {
-			std::cout << "Cancel button clicked" << std::endl;
-			window.close();
-		}
-	}
-
 	
+	audioManager.setMusicVolume(musicVolume);
 
 	return true;
 }
@@ -577,10 +651,10 @@ bool Game::loadSettings(std::string fileLoc) {
 	}
 	catch (const std::exception& ex) {
 		std::cerr << "Error parsing Settings JSON: " << ex.what() << "\n";
-		return 1;
+		return false;
 	}
 
-	return 0;
+	return true;
 }
 
 //Event Handling

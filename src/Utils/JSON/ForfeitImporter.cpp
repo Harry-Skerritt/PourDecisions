@@ -48,60 +48,65 @@ bool ForfeitImporter::setForfeitDir(std::string& fileLoc) {
 }
 
 bool ForfeitImporter::importForfeits() {
-	try {
-		std::cout << "Opening File: " << m_fileLocation << std::endl;
+    try {
+        std::cout << "Opening File: " << m_fileLocation << std::endl;
 
-		m_forfeitData = ForfeitParser::readFromFile(m_fileLocation);
+        m_forfeitData = ForfeitParser::readFromFile(m_fileLocation);
 
-		//Debug
-		std::cout << "Content Name: " << m_forfeitData.contentName << "\n";
-		std::cout << "Forfeit Count: " << m_forfeitData.forfeitCount << "\n";
-		std::cout << "Forfeit Colour: " << (int)m_forfeitData.cardColour.r << ", "
-			<< (int)m_forfeitData.cardColour.g << ", " << (int)m_forfeitData.cardColour.b << ")\n";
+        // Debugging size prints
+        std::cout << "Content Name: " << m_forfeitData.contentName << "\n";
+        std::cout << "Forfeit Count: " << m_forfeitData.forfeitCount << "\n";
+        std::cout << "Forfeit Titles Size: " << m_forfeitData.forfeitTitles.size() << "\n";
+        std::cout << "Forfeit Cards Size: " << m_forfeitData.forfeitCards.size() << "\n";
+        std::cout << "Forfeit Motif Names Size: " << m_forfeitData.motifNames.size() << "\n";
+        std::cout << "Forfeit Timers Size: " << m_forfeitData.forfeitTimer.size() << "\n";
 
-		std::cout << "Forfeit Titles:\n";
-		for (const auto& title : m_forfeitData.forfeitTitles) {
-			std::cout << "- " << title << "\n";
-		}
+        // Check if sizes match the expected forfeit count
+        if (m_forfeitData.forfeitTitles.size() != m_forfeitData.forfeitCount ||
+            m_forfeitData.forfeitCards.size() != m_forfeitData.forfeitCount ||
+            m_forfeitData.motifNames.size() != m_forfeitData.forfeitCount ||
+            m_forfeitData.forfeitTimer.size() != m_forfeitData.forfeitCount) {
+            std::cerr << "Error: Data size does not match forfeit count!" << std::endl;
+            return false;
+        }
 
-		std::cout << "Forfeit Cards:\n";
-		for (const auto& card : m_forfeitData.forfeitCards) {
-			std::cout << "- " << card << "\n";
-		}
+        // Resize vectors based on forfeitCount
+        m_forfeitTitles.resize(m_forfeitData.forfeitCount);
+        m_forfeitCards.resize(m_forfeitData.forfeitCount);
+        m_motifNames.resize(m_forfeitData.forfeitCount);
+        m_forfeitTimers.resize(m_forfeitData.forfeitCount);
 
-		std::cout << "Forfeit Motif Names:\n";
-		for (const auto& motif : m_forfeitData.motifNames) {
-			std::cout << "- " << motif << "\n";
-		}
+        m_forfeitQuantity = m_forfeitData.forfeitCount;
 
-		std::cout << "Forfeit Timers:\n";
-		for (const auto& timer : m_forfeitData.forfeitTimer) {
-			std::cout << "- " << timer << "\n";
-		}
+        // Manually copy data from m_forfeitData to the resized vectors
+        for (size_t i = 0; i < m_forfeitData.forfeitTitles.size(); ++i) {
+            m_forfeitTitles.at(i) = m_forfeitData.forfeitTitles.at(i);
+        }
 
-		//Populate the arrays
-		m_forfeitQuantity = m_forfeitData.forfeitCount;
+        for (size_t i = 0; i < m_forfeitData.forfeitCards.size(); ++i) {
+            m_forfeitCards.at(i) = m_forfeitData.forfeitCards.at(i);
+        }
 
-		m_forfeitTitles.resize(m_forfeitQuantity);
-		m_forfeitCards.resize(m_forfeitQuantity);
-		m_motifNames.resize(m_forfeitQuantity);
-		m_forfeitTimers.resize(m_forfeitQuantity);
+        for (size_t i = 0; i < m_forfeitData.motifNames.size(); ++i) {
+            m_motifNames.at(i) = m_forfeitData.motifNames.at(i);
+        }
 
-		m_forfeitTitles = m_forfeitData.forfeitTitles;
-		m_forfeitCards = m_forfeitData.forfeitCards;
-		m_motifNames = m_forfeitData.motifNames;
+        for (size_t i = 0; i < m_forfeitData.forfeitTimer.size(); ++i) {
+            try {
+                m_forfeitTimers.at(i) = std::stoi(m_forfeitData.forfeitTimer.at(i));
+            }
+            catch (const std::invalid_argument& e) {
+                std::cerr << "Invalid timer value at index " << i << std::endl;
+                return false;
+            }
+        }
 
+        std::cout << "JSON Parsing/Importing Finished" << std::endl;
 
-		for (int i = 0; i < m_forfeitData.forfeitTimer.size(); i++) {
-			m_forfeitTimers.at(i) = std::stoi(m_forfeitData.forfeitTimer.at(i));
-		}
-
-		return true;
-	}
-	catch (const std::exception& e) {
-		std::cerr << "Error: " << e.what() << std::endl;
-		return false;
-	}
-	
-
+        return true;
+    }
+    catch (const std::exception& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return false;
+    }
 }
