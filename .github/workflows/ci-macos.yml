@@ -22,6 +22,14 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v4
 
+    - name: Install Dependencies
+      run: |
+        brew update
+        brew install openal-soft  # Install OpenAL using Homebrew
+        brew install cmake        # Ensure cmake is installed
+        brew install libxrandr    # If needed for your dependencies
+        brew install libxcursor   # If needed for your dependencies
+
     - name: Configure
       run: cmake -B build ${{ matrix.config.flags }}
 
