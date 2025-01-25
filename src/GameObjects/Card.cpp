@@ -36,48 +36,110 @@ void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondary
 	cardBackground.setOutlineThickness(4.0f);
 	cardBackground.setOutlineColor(borderColour);
 
-	cardMotif.setScale(scaleX * 0.6f, scaleX * 0.6f);
-	cardMotif.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) - cardMotif.getGlobalBounds().width / 2,
-		(cardBackground.getPosition().y + cardBackground.getGlobalBounds().height / 2)); //Place Motif
+	
 
+
+	//Header
 	cardHeader.setSize(sf::Vector2f(cardBackground.getSize().x, cardBackground.getSize().y * 0.17f));
 	cardHeader.setFillColor(cardColour);
 	cardHeader.setPosition(cardBackground.getPosition().x, cardBackground.getPosition().y); //Set header position
 	cardHeader.setOutlineThickness(4.0f);
 	cardHeader.setOutlineColor(borderColour);
 
+	//Title
 	cardTitle.setFont(cardHeaderFont);
 	cardTitle.setFillColor(cardBackColour);
 	cardTitle.setString(cardHeaderText);
-	cardTitle.setCharacterSize(cardHeader.getSize().y * 0.8f); //Make dyanmic to make it all fit
-	cardTitle.setOrigin(cardTitle.getGlobalBounds().width / 2, cardTitle.getGlobalBounds().height / 2);
-	cardTitle.setPosition((cardHeader.getPosition().x + cardHeader.getGlobalBounds().width / 2),
-		(cardHeader.getPosition().y + cardHeader.getGlobalBounds().height / 2) - cardHeader.getSize().y * 0.2f); //Place title
+	cardTitle.setCharacterSize(cardHeader.getSize().y * 0.8f);
 
+	// Calculate bounds and adjust origin
+	sf::FloatRect bounds = cardTitle.getLocalBounds();
+	cardTitle.setOrigin(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+
+	// Calculate target position for centering
+	sf::Vector2f targetPosition(
+		cardHeader.getPosition().x + cardHeader.getGlobalBounds().width / 2,
+		cardHeader.getPosition().y + cardHeader.getGlobalBounds().height / 2);
+	cardTitle.setPosition(targetPosition);
+
+	// Resize the text to fit within the header width
+	fitTextToWidth(cardTitle, cardHeader.getSize().x - 10);
+
+	// Recalculate the bounds after resizing
+	bounds = cardTitle.getLocalBounds();
+	cardTitle.setOrigin(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+
+	// Adjust vertical alignment
+	cardTitle.setPosition(targetPosition.x, targetPosition.y - bounds.top / 2);
+	
+
+	// Message
 	cardMessage.setFont(cardBodyFont);
 	cardMessage.setFillColor(borderColour);
 	cardMessage.setCharacterSize(window.getSize().y * 0.042f);
 	cardMessage.setString(cardBodyText);
 	wrapText(cardMessage, cardBackground.getSize().x * 0.9f);
-	cardMessage.setOrigin(cardMessage.getGlobalBounds().width / 2, cardMessage.getGlobalBounds().height / 2);
-	cardMessage.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2),
-		(cardBackground.getPosition().y + cardBackground.getGlobalBounds().height / 2) - cardMessage.getGlobalBounds().height*0.9f);
 
+
+
+
+	// Motif
+	cardMotif.setScale(scaleX * 0.6f, scaleX * 0.6f);
+
+	// Buttons
 	forfeitButton.setBackgroundColor(cardColour, cardBackground.getSize().x * 0.43f, cardBackground.getSize().y * 0.1f);
 	forfeitButton.setBorder(borderColour, 2.0f);
 	forfeitButton.setText("Forfeit", secondaryFont, window.getSize().y * 0.055f);
 	forfeitButton.setTextColor(cardBackColour);
-	forfeitButton.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) - forfeitButton.getGlobalBounds().width - 10,
-		cardBackground.getSize().y - 30);
+	forfeitButton.setPosition(
+		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2 - forfeitButton.getGlobalBounds().width - 10, // Left button
+		cardBackground.getPosition().y + cardBackground.getGlobalBounds().height - forfeitButton.getGlobalBounds().height - 20 // 20px from the bottom
+	);
 
 	passButton.setBackgroundColor(cardBackColour, cardBackground.getSize().x * 0.43f, cardBackground.getSize().y * 0.1f);
 	passButton.setBorder(cardColour, 2.0f);
 	passButton.setText("Pass", secondaryFont, window.getSize().y * 0.055f);
 	passButton.setTextColor(cardColour);
-	passButton.setPosition((cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2) + 10,
-		cardBackground.getSize().y - 30);
+	passButton.setPosition(
+		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2 + 10, // Right button
+		cardBackground.getPosition().y + cardBackground.getGlobalBounds().height - passButton.getGlobalBounds().height - 20 // 20px from the bottom
+	);
 
+	adjustLayout(cardMessage, cardBackground, cardMotif, forfeitButton, passButton);
+}
 
+void Card::adjustLayout(sf::Text& cardMessage, sf::RectangleShape& cardBackground, sf::Sprite& cardMotif, SolidButton& forfeitButton, SolidButton& passButton) {
+	const float padding = 30.0f; // Space between elements
+
+	// Get button top position (since they are at the bottom of the card)
+	float buttonsTop = forfeitButton.getPosition().y;
+
+	// Calculate the space required for the cardMessage and motif
+	float messageAndMotifHeight = cardMessage.getGlobalBounds().height + padding + cardMotif.getGlobalBounds().height;
+
+	// Check if the cardMessage and motif fit between the cardHeader and buttons
+	while ((cardHeader.getPosition().y + cardHeader.getGlobalBounds().height + padding + messageAndMotifHeight > buttonsTop) &&
+		cardMessage.getCharacterSize() > 10) { // Minimum font size of 10
+		// Reduce the character size of cardMessage
+		cardMessage.setCharacterSize(cardMessage.getCharacterSize() - 1);
+		wrapText(cardMessage, cardBackground.getSize().x * 0.9f); // Re-wrap text after resizing
+
+		// Recalculate the message height
+		messageAndMotifHeight = cardMessage.getGlobalBounds().height + padding + cardMotif.getGlobalBounds().height;
+	}
+
+	// Position cardMessage below cardHeader
+	cardMessage.setOrigin(cardMessage.getGlobalBounds().width / 2, 0); // Top center origin
+	cardMessage.setPosition(
+		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2, // Center horizontally
+		cardHeader.getPosition().y + cardHeader.getGlobalBounds().height + padding // Below cardHeader
+	);
+
+	// Position cardMotif below cardMessage
+	cardMotif.setPosition(
+		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2 - cardMotif.getGlobalBounds().width / 2, // Center horizontally
+		cardMessage.getPosition().y + cardMessage.getGlobalBounds().height + padding // Below cardMessage
+	);
 }
 
 void Card::setPosition(float x, float y) {
@@ -274,4 +336,15 @@ void Card::wrapText(sf::Text& text, float maxWidth)
 
 	// Update the sf::Text object with the wrapped text
 	text.setString(wrappedString);
+}
+
+void Card::fitTextToWidth(sf::Text& text, float targetWidth) {
+	float characterSize = text.getCharacterSize();
+	sf::FloatRect textBounds = text.getLocalBounds();
+
+	while (textBounds.width > targetWidth && characterSize > 1) {
+		characterSize -= 1;
+		text.setCharacterSize(characterSize);
+		textBounds = text.getLocalBounds();
+	}
 }

@@ -85,6 +85,8 @@ private:
 	//Helper function
 	void wrapText(sf::Text& text, float maxWidth);
 
+	void adjustLayout(sf::Text& cardMessage, sf::RectangleShape& cardBackground, sf::Sprite& cardMotif, SolidButton& doneButton);
+
 };
 
 
