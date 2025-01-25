@@ -73,7 +73,7 @@ Some things to note:
 ### If you are unfamilliar with JSON then you can read about JSON arrays here: 
 [Json Arrays](https://www.microfocus.com/documentation/silk-performer/205/en/silkperformer-205-webhelp-en/GUID-0847DE13-2A2F-44F2-A6E7-214CD703BF84.html)
 
-### Alternativly a sample file is located here: [custom.json]()
+### Alternativly a sample file is located here: [custom.json](https://github.com/Harry-Skerritt/PourDecisions/blob/dev/custom.json)
  
 
 
