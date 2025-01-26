@@ -344,11 +344,17 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 						settings.setSFXVolume(sfxVol);
 
 						// Modify game settings
-						settings.setNSFWEnabled(nsfwEnabledCheckbox.isChecked()); 
+						std::cout << "NSFW BEFORE CHANGING TO THE CHECKBOX: " << nsfwEnabled << std::endl;
+						nsfwEnabled = nsfwEnabledCheckbox.isChecked();
+						std::cout << "NSFW BEFORE WRITING TO SETTINGS: " << nsfwEnabled << std::endl;
+						settings.setNSFWEnabled(nsfwEnabled);
 
 						if (pointsToWinInput.hasValue()) {
-							if (pointsToWinInput.getCurrentValue() != std::to_string(pointsToWin)) {
+							std::cout << "PTW HAS VALUE" << std::endl;
+							if (std::stoi(pointsToWinInput.getCurrentValue()) != pointsToWin) {
 								//The points have changed
+								std::cout << "PTW BEFORE CHANGING: " << std::to_string(pointsToWin) << std::endl;
+								std::cout << "PTW BEFORE WRITING TO SETTINGS: " << std::stoi(pointsToWinInput.getCurrentValue()) << std::endl;
 								settings.setWinPoints(std::stoi(pointsToWinInput.getCurrentValue()));
 							}
 						}

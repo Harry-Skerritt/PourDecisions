@@ -72,7 +72,43 @@ void MainGame::init() {
 
 	//Point notifer
 	pointNotifier.init(righteousFont, 2.0f); //1.5 seconds
-	pointNotiferPos = sf::Vector2f(playerBoard.getPosition().x - (window.getSize().x * 0.15f), window.getSize().y * 0.31f);
+	pointNotiferPos = sf::Vector2f(playerBoard.getPosition().x - (window.getSize().x * 0.15f), window.getSize().y * 0.25f);
+
+	//Spin Wheel
+	if (m_game->nsfwEnabled) {
+		//NSFW Enabled load the nsfw wheel
+		if (!spinWheelTexture.loadFromFile("../Data/Assets/Wheels/nsfwCategorySpinwheel.png")) {
+			std::cout << "NSFW Wheel failed to load" << std::endl;
+		}
+	}
+	else {
+		//Load the sfw wheel
+		if (!spinWheelTexture.loadFromFile("../Data/Assets/Wheels/sfwCategorySpinwheel.png")) {
+			std::cout << "SFW Wheel failed to load" << std::endl;
+		}
+	}
+
+	if (!spinWheelClickerTexture.loadFromFile("../Data/Assets/Wheels/spinwheelPointer.png")) {
+		std::cout << "Spinwheel Clicker failed to load" << std::endl;
+	}
+
+	spinWheelSprite.setTexture(spinWheelTexture);
+	spinWheelSprite.setScale(m_game->scaleX * 0.55f, m_game->scaleX * 0.55f);
+	spinWheelSprite.setOrigin(spinWheelSprite.getLocalBounds().width / 2, spinWheelSprite.getLocalBounds().height / 2);
+	spinWheelSprite.setPosition(window.getSize().x * 0.28f, window.getSize().y / 2);
+
+	spinner.setSprite(spinWheelSprite);
+
+	spinner.setOnSpinCompleteCallback([this]() {
+		std::cout << "CALLBACK!!!" << std::endl;
+		std::cout << "Spin Complete!" << std::endl;
+		cardShown = true;
+		});
+	
+	spinwheelClickerSprite.setTexture(spinWheelClickerTexture);
+	spinwheelClickerSprite.setScale(m_game->scaleX * 0.55f, m_game->scaleX * 0.55f);
+	spinwheelClickerSprite.setOrigin(spinwheelClickerSprite.getLocalBounds().left, spinwheelClickerSprite.getLocalBounds().height / 2);
+	spinwheelClickerSprite.setPosition(0 - spinwheelClickerSprite.getGlobalBounds().width / 2, window.getSize().y / 2);
 	
 
 
@@ -84,8 +120,21 @@ void MainGame::populatePlayers(std::vector<std::string> names) {
 	playerNames = names;
 
 	playerAmt = static_cast<int>(playerNames.size());
+
+	if (playerDisplay.size() != 0) {
+		playerDisplay.clear();
+	}
+
+	if (playerPoints.size() != 0) {
+		playerPoints.clear();
+	}
+
 	playerDisplay.resize(playerAmt);
 	playerPoints.resize(playerAmt);
+
+	
+
+
 
 	float space = 20.0f;
 
@@ -138,11 +187,11 @@ void MainGame::awardPoint(int pointAmount, int currentPlayer, sf::Color pointCol
 	std::string pointNotifierText;
 	if (pointAmount == 1) {
 		//if one point
-		pointNotifierText = "+" + std::to_string(pointAmount) + "point";
+		pointNotifierText = "+" + std::to_string(pointAmount) + " point";
 	}
 	else {
 		//More than 1 point
-		pointNotifierText = "+" + std::to_string(pointAmount) + "points";
+		pointNotifierText = "+" + std::to_string(pointAmount) + " points";
 	}
 
 	pointNotifier.reset(pointNotifierText, pointColour, 15.0f, pointNotiferPos); //Get colour from card
@@ -181,7 +230,14 @@ void MainGame::pickCard() {
 		}
 		else {
 			std::cout << "Any other button clicked" << std::endl;
-			gameOver.initialise("Replace Me");
+
+			//Find the winning number
+			auto maxIt = std::max_element(playerPoints.begin(), playerPoints.end());
+			int index = std::distance(playerPoints.begin(), maxIt);
+
+			std::cout << "A player has won" << std::endl;
+			gameOver.initialise(playerNames.at(index));
+			game_over = true;
 			gameOver.setVisibility(true);
 			return; // Exit early as there are no more cards
 		}
@@ -254,7 +310,13 @@ void MainGame::pickCard() {
 	// Display the card
 	std::cout << "Scale X b4 nc call: " << m_game->scaleX << std::endl;
 	cardDisplay.initialise(currentCardColour, righteousFont, ryeFont, cardTitleToShow, cardMessageToShow, motifLocation, m_game->scaleX, window, groupCard);
-	cardShown = true;
+	cardShown = false;
+
+
+	if (!spinner.isSpinning()) {
+		spinner.spinToCategory(category, 1, 500.f, 8.f);
+	}
+	
 }
 
 void MainGame::cardPass(bool group) {
@@ -358,6 +420,9 @@ void MainGame::moveToNextPlayer() {
 }
 
 void MainGame::update(float dt, sf::Vector2f clickPos) {
+
+	spinner.update(dt);
+
 	//Card
 	if (cardShown) {
 		cardDisplay.update(dt, clickPos);
@@ -427,6 +492,17 @@ void MainGame::update(float dt, sf::Vector2f clickPos) {
 		//Get the winning player and check if their score has won, if so game over;
 	}
 
+	for (int i = 0; i < playerAmt; i++) {
+		if (playerPoints.at(i) >= m_game->winPoints) {
+			//This player has won
+			std::cout << "A player has won" << std::endl;
+			gameOver.initialise(playerNames.at(i));
+			game_over = true;
+			gameOver.setVisibility(true);
+			break; //Exit
+		}
+	}
+
 	//Game Over
 	if (gameOver.getVisible()) {
 		gameOver.update(dt, clickPos);
@@ -444,15 +520,6 @@ void MainGame::handleKeypress(sf::Event event) {
 		menu_visible = pauseMenu.getVisible();
 		menu_visible = !menu_visible;
 		pauseMenu.showMenu(menu_visible);
-	}
-
-	//Debug
-	if (event.key.code == sf::Keyboard::R) {
-		std::cout << "R Pressed" << std::endl;
-		gameOver.initialise("Harry");
-		game_over = gameOver.getVisible();
-		game_over = !game_over;
-		gameOver.setVisibility(game_over);
 	}
 }
 
@@ -502,6 +569,8 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 
 	pointNotifier.draw(window);
 
+	spinner.draw(window);
+	window.draw(spinwheelClickerSprite);
 
 	if (cardShown) {
 		cardDisplay.showCard(window, dt);
@@ -516,6 +585,8 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 	else {
 		forfeitCardDisplay.hideCard(window, dt);
 	}
+
+	
 
 	pauseMenu.draw(window, dt);
 

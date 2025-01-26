@@ -105,6 +105,10 @@ class Game
 
 		ForfeitImporter forfeitImporter;
 
+		//Game Stuff
+		bool nsfwEnabled;
+		int winPoints;
+
 		//Loading Funcs
 		bool loadFonts();
 		bool loadAssets();
@@ -134,9 +138,8 @@ class Game
 		float musicVolume;
 		float sfxVolume;
 
-		//Game Stuff
-		bool nsfwEnabled;
-		int winPoints;
+		
+
 		
 		//Main
 		sf::RenderWindow& window;
@@ -175,9 +178,6 @@ class Game
 
 		sf::Texture forfeitTexture;
 		RockingSprite forfeitRock;
-
-		sf::Texture spinwheel;
-		SpinWheel spinwheel_wheel;
 
 
 		//Options Screen

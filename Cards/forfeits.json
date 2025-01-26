@@ -1,7 +1,7 @@
 {
   "content-name": "forfeits",
   "card-count": "15",
-  "card-color": "#535353",
+  "card-color": "#7A7ADE",
   "motifs": [
     "categories.png",
     "groupcocktail.png",
@@ -51,7 +51,7 @@
     "Take a sip from every players drink",
     "The group chooses your next drink",
     "Speak in a different accent for the next round, if you mess up - drink!",
-    "You and another player both chug your drinks. Whever finished last does the winners next forfeit",
+    "You and another player both chug your drinks. Whever finished last does the winners next forfeit"
   ],
   "timers": [
     "30",

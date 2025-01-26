@@ -17,6 +17,8 @@
 #include "../Screens/Menus/PauseMenu.h"
 #include "../Screens/Menus/GameOver.h"
 
+#include "../VisualAddons/SpinWheel.h"
+
 class Game;
 
 class MainGame {
@@ -99,6 +101,14 @@ private:
 	GrowFadeText pointNotifier;
 
 	Button spinButton;
+
+	//Spin Wheel
+	sf::Texture spinWheelTexture;
+	sf::Sprite spinWheelSprite;
+	SpinWheel spinner;
+
+	sf::Texture spinWheelClickerTexture;
+	sf::Sprite spinwheelClickerSprite;
 
 
 	//Player Names

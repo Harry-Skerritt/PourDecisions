@@ -77,11 +77,6 @@ bool Game::loadAssets() {
 		std::cout << "Forfeit Transition did not load";
 	}
 
-	if (!spinwheel.loadFromFile("../Data/Assets/categorySpinwheel.png"))
-	{
-		std::cout << "Spinwheel did not load";
-	}
-
 	//Logo
 	if (!logoTexture.loadFromFile("../Data/Assets/gameLogo.png"))
 	{
@@ -151,6 +146,9 @@ bool Game::loadAudio() {
 
 	//Point SFX
 	audioManager.loadSoundEffect("pointGot", "../Data/Audio/SFX/pointSFX.wav");
+
+	//Wheel Click
+	audioManager.loadSoundEffect("wheelClick", "../Data/Audio/SFX/wheelClick.wav");
 
 	return true;
 }
@@ -412,8 +410,6 @@ bool Game::init()
 	//Transition
 	spinwheelTransition.init(transitionTexture, 0.3f, window); //0.3s transition
 	forfeitRock.init(forfeitTexture, window);
-
-	spinwheel_wheel.init(spinwheel, sf::Vector2f((window.getSize().x / 2), (window.getSize().y / 2)), 200.0f);
 	
 
 	//Options Screen
@@ -492,7 +488,6 @@ void Game::update(float dt)
 		confettiManager.update(window);
 
 		forfeitRock.update(dt);
-		spinwheel_wheel.update(dt);
 	}
 
 	if(!in_main_menu && in_options)
@@ -549,7 +544,6 @@ void Game::render(float dt)
 		quitButton.draw(window);
 
 		forfeitRock.draw(window);
-		//spinwheel_wheel.draw(window);
 	}
 
 	if (!in_main_menu && in_options)
@@ -601,9 +595,10 @@ void Game::backToMainMenu(int pageID)
 		in_game = false;
 		in_main_menu = true;
 		playerSetup.reset();
-	}
-	
-
+		if (playerNames.size() != 0) {
+			playerNames.clear();
+		}
+	}	
 }
 
 void Game::toOptions(int pageID) {
@@ -752,21 +747,6 @@ void Game::keyPressed(sf::Event event)
 	if (in_game) {
 		mainGame.handleKeypress(event);
 	}
-
-	/*
-	if (event.key.code == sf::Keyboard::C) {
-		showCard = !showCard;
-	}
-	
-	if (event.key.code == sf::Keyboard::R) {
-		audioManager.playSoundEffect("forfeitRock");
-		forfeitRock.startRocking();
-	}
-
-	if (event.key.code == sf::Keyboard::Space) {
-		spinwheel_wheel.spin();
-	}
-	*/
 }
 
 bool Game::isRestartRequired() const {

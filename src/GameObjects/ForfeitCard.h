@@ -58,7 +58,7 @@ private:
 	bool groupCard;
 	bool cardVisible;
 
-	sf::Color cardColour = sf::Color(83, 83, 83, 255);
+	sf::Color cardColour = sf::Color(122, 122, 222, 255);
 	sf::Color borderColour = sf::Color::Black;
 	sf::Color cardBackColour = sf::Color::White;
 

@@ -31,7 +31,7 @@ int main()
         height = std::stoi(heightStr);
 
         const int FPS = 60;
-        const std::string VERSION_NO = "beta-0.3.4";
+        const std::string VERSION_NO = "beta-0.4.1";
         const std::string RES = std::to_string(width) + "x" + std::to_string(height);
         const sf::String BASE_WINDOW_TITLE = "Pour Decisions - " + VERSION_NO + " @" + RES;
 
