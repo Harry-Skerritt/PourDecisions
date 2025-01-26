@@ -8,7 +8,10 @@
 #include <chrono>
 
 MainGame::MainGame(sf::RenderWindow& window, sf::Font& font1, sf::Font& font2, sf::Font& font3) : 
-	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), pauseMenu(window, righteousFont), gameOver(window, righteousFont, ryeFont) {};
+	window(window), righteousFont(font1), ryeFont(font2), lcdFont(font3), 
+	pauseMenu(window, font1),
+	gameOver(window, font1, font2),
+	forfeitScreen(window, font1, font2, font3) {};
 MainGame::~MainGame() {};
 
 void MainGame::setGameInstance(Game* game) {
@@ -16,6 +19,9 @@ void MainGame::setGameInstance(Game* game) {
 }
 
 void MainGame::init() {
+
+	std::cout << "In main game init" << std::endl; //DEBUG
+
 	//Vars Set
 	currentGo = 0;
 	turnsPlayed = 0;
@@ -25,17 +31,43 @@ void MainGame::init() {
 	cardShown = false;
 	forfeitCardShown = false;
 	game_over = false;
+	forfeitScreenShown = false;
+
+	std::cout << "Passed var setting" << std::endl; //DEBUG
 
 	cardDisplay.setMainGameInstance(this);
 	forfeitCardDisplay.setMainGameInstance(this);
+
+	std::cout << "Passed card displays instance setters" << std::endl; //DEBUG
+
+
+	std::cout << "Checking m_game" << std::endl; //DEBUG
+	if (!m_game) {
+		std::cerr << "Error: m_game is nullptr!" << std::endl;
+		return;
+	}
+	else {
+		std::cout << "m_game is fine" << std::endl; //DEBUG
+	}
+
+	//Forfeit Screen
+	forfeitScreen.setGameInstance(m_game);
+	forfeitScreen.setMainGameInstance(this);
+	forfeitScreen.setVisible(forfeitScreenShown);
+
+	std::cout << "Passed forfeit screen instance setters" << std::endl; //DEBUG
 
 	//Pause menu
 	pauseMenu.setGameInstance(m_game);
 	pauseMenu.init();
 	pauseMenu.showMenu(false);
 
+	std::cout << "Passed pause menu instance setters" << std::endl; //DEBUG
+
 	//Game Over
 	gameOver.setGameInstance(m_game);
+
+	std::cout << "Passed game over instance setters" << std::endl; //DEBUG
 
 	//Player Board
 	playerBoard.setSize(sf::Vector2f(window.getSize().x * 0.23f, window.getSize().y * 0.9));
@@ -43,6 +75,8 @@ void MainGame::init() {
 	playerBoard.setPosition(window.getSize().x - playerBoard.getSize().x, window.getSize().y / 2 - playerBoard.getSize().y / 2);
 	playerBoard.setOutlineThickness(8.0f);
 	playerBoard.setOutlineColor(sf::Color(250, 0, 188, 255));
+
+	std::cout << "Passed player board" << std::endl; //DEBUG
 
 	//drawGradientBorder(window, playerBoard.getGlobalBounds(), 8.0f, sf::Color(252, 0, 189, 255), sf::Color(43, 3, 62, 255));
 
@@ -52,13 +86,19 @@ void MainGame::init() {
 	playerBoardTitle.setOrigin(playerBoardTitle.getGlobalBounds().width / 2, playerBoardTitle.getGlobalBounds().height / 2);
 	playerBoardTitle.setPosition(playerBoard.getPosition().x + playerBoard.getGlobalBounds().width / 2, playerBoard.getPosition().y + playerBoardTitle.getGlobalBounds().height / 2);
 
+	std::cout << "Passed player board title" << std::endl; //DEBUG
+
 	playerBoardDivider.setSize(sf::Vector2f(playerBoard.getSize().x * 0.75f, playerBoard.getSize().y * 0.004f));
 	playerBoardDivider.setFillColor(sf::Color::White);
 	playerBoardDivider.setOrigin(playerBoardDivider.getSize().x / 2, playerBoardDivider.getSize().y / 2);
 	playerBoardDivider.setPosition(playerBoard.getPosition().x + playerBoard.getGlobalBounds().width / 2, playerBoardTitle.getPosition().y + playerBoardTitle.getGlobalBounds().height);
 
+	std::cout << "Passed player board divider" << std::endl; //DEBUG
+
 	playerDisplay.reserve(m_game->getMaxPlayers());
 	playerNames.reserve(m_game->getMaxPlayers());
+
+	std::cout << "Passed player detail reservation" << std::endl; //DEBUG
 
 	//Spin Button
 	spinButton.setBackgroundImage(m_game->buttonRectTexture);
@@ -70,9 +110,13 @@ void MainGame::init() {
 	float buttonY = (playerBoard.getPosition().y + playerBoard.getGlobalBounds().height) - spinButton.getGlobalBounds().height - (window.getSize().y * 0.01f);
 	spinButton.setPosition(buttonX, buttonY);
 
+	std::cout << "Passed spin setup" << std::endl; //DEBUG
+
 	//Point notifer
 	pointNotifier.init(righteousFont, 2.0f); //1.5 seconds
 	pointNotiferPos = sf::Vector2f(playerBoard.getPosition().x - (window.getSize().x * 0.15f), window.getSize().y * 0.25f);
+
+	std::cout << "Passed point notifier" << std::endl; //DEBUG
 
 	//Spin Wheel
 	if (m_game->nsfwEnabled) {
@@ -92,10 +136,14 @@ void MainGame::init() {
 		std::cout << "Spinwheel Clicker failed to load" << std::endl;
 	}
 
+	std::cout << "Passed wheel texture importing" << std::endl; //DEBUG
+
 	spinWheelSprite.setTexture(spinWheelTexture);
 	spinWheelSprite.setScale(m_game->scaleX * 0.55f, m_game->scaleX * 0.55f);
 	spinWheelSprite.setOrigin(spinWheelSprite.getLocalBounds().width / 2, spinWheelSprite.getLocalBounds().height / 2);
 	spinWheelSprite.setPosition(window.getSize().x * 0.28f, window.getSize().y / 2);
+
+	std::cout << "Passed spin wheel sprite setup" << std::endl; //DEBUG
 
 	spinner.setSprite(spinWheelSprite);
 
@@ -104,14 +152,22 @@ void MainGame::init() {
 		std::cout << "Spin Complete!" << std::endl;
 		cardShown = true;
 		});
+
+	std::cout << "Passed spinner setup" << std::endl; //DEBUG
 	
 	spinwheelClickerSprite.setTexture(spinWheelClickerTexture);
 	spinwheelClickerSprite.setScale(m_game->scaleX * 0.55f, m_game->scaleX * 0.55f);
 	spinwheelClickerSprite.setOrigin(spinwheelClickerSprite.getLocalBounds().left, spinwheelClickerSprite.getLocalBounds().height / 2);
 	spinwheelClickerSprite.setPosition(0 - spinwheelClickerSprite.getGlobalBounds().width / 2, window.getSize().y / 2);
 	
+	std::cout << "Passed clicker setup" << std::endl; //DEBUG
 
+	//Forfeit Rock Transition
+	forfeitRock.init(m_game->forfeitTexture, window);
 
+	std::cout << "Passed transition setup" << std::endl; //DEBUG
+
+	std::cout << "Main Game Init Done" << std::endl; //DEBUG
 
 }
 
@@ -350,24 +406,28 @@ void MainGame::cardPass(bool group) {
 
 void MainGame::cardForfeit(bool group) {
 	std::cout << "Forfeit Picked" << std::endl;
-	
-	//Transition to the forfeit spinner
-	//Get the stuff for the forfeit
-	//Show the card
 
-	std::string forfeitTitle = "Chug Relay"; //D
-	std::string forfeitBody = "You and another player both chug your drinks. Whoever finishes last does the winners next forfeit"; //D
-	std::cout << "Scale X b4 fc call: " << m_game->scaleX << std::endl;
-	forfeitCardDisplay.initialise(righteousFont, ryeFont, forfeitTitle, forfeitBody, "../Data/Assets/Motifs/Forfeits/chugrelay.png", m_game->scaleX, window, group);
-	
 	cardShown = false;
 	waitingForCardToBeHiddenForfeit = true;
 
-	showForfeitDeferredAction = [this]() {
+	showForfeitDeferredAction = [this, group]() {
 		std::cout << "Card is hidden!" << std::endl;
-
-		forfeitCardShown = true; //Show the card
+		AudioManager::getInstance().playSoundEffect("forfeitRock");
+		forfeitRock.startRocking(); //Change this transition to make it fill the screen as a proper transition
+		forfeitScreen.init(playerNames.at(currentGo), playerPoints.at(currentGo), group);
+		forfeitScreen.setVisible(true);
 	};
+}
+
+void MainGame::initForfeitCard(std::string title, std::string body, std::string motifName, bool group) {
+	std::cout << "Scale X b4 fc call: " << m_game->scaleX << std::endl;
+	std::string motifFileLocation = m_game->FORFEIT_MOTIF_LOC + motifName;
+	forfeitCardDisplay.initialise(righteousFont, ryeFont, title, body, motifFileLocation, m_game->scaleX, window, group);
+}
+
+void MainGame::setForfeitCardVisible(bool visible) {
+	//Show the card
+	forfeitCardShown = visible;
 }
 
 void MainGame::forfeitComplete(bool group) {
@@ -378,7 +438,9 @@ void MainGame::forfeitComplete(bool group) {
 
 		waitingForCardToBeHiddenComplete = true;
 
-		backToGameDeferredAction = [this]() {
+		std::cout << "BEFORE THE DEFFERED ACTION FUNCTION" << std::endl;
+
+		awardPointForForfeitCompleteAction = [this]() {
 			std::cout << "Forfeit Card is hidden!" << std::endl;
 
 			moveToNextPlayer();
@@ -390,7 +452,9 @@ void MainGame::forfeitComplete(bool group) {
 
 		waitingForCardToBeHiddenComplete = true;
 
-		backToGameDeferredAction = [this]() {
+		std::cout << "BEFORE THE DEFFERED ACTION FUNCTION" << std::endl;
+
+		awardPointForForfeitCompleteAction = [this]() {
 			std::cout << "Forfeit Card is hidden!" << std::endl;
 
 			awardPoint(1, currentGo, forfeitCardDisplay.getColour());
@@ -422,6 +486,8 @@ void MainGame::moveToNextPlayer() {
 void MainGame::update(float dt, sf::Vector2f clickPos) {
 
 	spinner.update(dt);
+	forfeitRock.update(dt);
+
 
 	//Card
 	if (cardShown) {
@@ -460,11 +526,11 @@ void MainGame::update(float dt, sf::Vector2f clickPos) {
 	}
 
 	//Changing from forfiet card to game play - forfeit complete
-	if (waitingForCardToBeHiddenComplete && !cardDisplay.isCardVisible()) {
+	if (waitingForCardToBeHiddenComplete && !forfeitCardDisplay.isCardVisible()) {
 		waitingForCardToBeHiddenComplete = false;
-		if (backToGameDeferredAction) {
-			backToGameDeferredAction();
-			backToGameDeferredAction = nullptr;
+		if (awardPointForForfeitCompleteAction) {
+			awardPointForForfeitCompleteAction();
+			awardPointForForfeitCompleteAction = nullptr;
 		}
 	}
 
@@ -512,6 +578,11 @@ void MainGame::update(float dt, sf::Vector2f clickPos) {
 	if (pauseMenu.getVisible()) {
 		pauseMenu.update(dt, clickPos);
 	}
+
+	//Forfeit Screen
+	if (forfeitScreen.getVisible()) {
+		forfeitScreen.update(dt, clickPos);
+	}
 }
 
 void MainGame::handleKeypress(sf::Event event) {
@@ -521,6 +592,9 @@ void MainGame::handleKeypress(sf::Event event) {
 		menu_visible = !menu_visible;
 		pauseMenu.showMenu(menu_visible);
 	}
+
+	forfeitScreen.handleKeypress(event);
+	
 }
 
 void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
@@ -537,6 +611,14 @@ void MainGame::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 	}
 	else {
 		game_over = gameOver.getVisible();
+	}
+
+	//Forfeit Screen
+	if (forfeitScreenShown) {
+		forfeitScreen.handleMouse(clickPos);
+	}
+	else {
+		forfeitScreenShown = forfeitScreen.getVisible();
 	}
 
 	if (!cardShown && !forfeitCardShown) {
@@ -572,6 +654,8 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 	spinner.draw(window);
 	window.draw(spinwheelClickerSprite);
 
+	
+
 	if (cardShown) {
 		cardDisplay.showCard(window, dt);
 	}
@@ -586,11 +670,17 @@ void MainGame::draw(sf::RenderWindow& window, float dt) {
 		forfeitCardDisplay.hideCard(window, dt);
 	}
 
-	
+	if (forfeitRock.getCompleted()) {
+		forfeitScreen.draw(window);
+	}
+
+	forfeitRock.draw(window);
 
 	pauseMenu.draw(window, dt);
 
 	gameOver.draw(window, dt);
+
+	
 }
 
 

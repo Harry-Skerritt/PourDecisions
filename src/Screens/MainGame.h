@@ -16,8 +16,10 @@
 
 #include "../Screens/Menus/PauseMenu.h"
 #include "../Screens/Menus/GameOver.h"
+#include "../Screens/ForfeitScreen.h"
 
 #include "../VisualAddons/SpinWheel.h"
+#include "../VisualAddons/RockingSprite.h"
 
 class Game;
 
@@ -41,16 +43,22 @@ public:
 	void handleMouse(sf::Event event, sf::Vector2f clickPos);
 
 	void pickCard();
-
 	void cardPass(bool group);
 
 	void cardForfeit(bool group);
-
 	void forfeitComplete(bool group);
+	void setForfeitCardVisible(bool visible);
+	void initForfeitCard(std::string title, std::string body, std::string motifName, bool group);
 
 	void moveToNextPlayer();
 
 	void draw(sf::RenderWindow& window, float dt);
+
+	PauseMenu pauseMenu;
+	bool menu_visible;
+
+	//Texture
+	sf::Texture spinWheelClickerTexture;
 
 
 private:
@@ -61,8 +69,7 @@ private:
 	sf::Font& ryeFont;
 	sf::Font& lcdFont;
 
-	PauseMenu pauseMenu;
-	bool menu_visible;
+	
 
 	GameOver gameOver;
 	bool game_over;
@@ -91,6 +98,10 @@ private:
 	ForfeitCard forfeitCardDisplay;
 	bool forfeitCardShown;
 
+	std::function<void()> awardPointForForfeitCompleteAction;
+	ForfeitScreen forfeitScreen;
+	bool forfeitScreenShown;
+
 	//Card
 	Card cardDisplay;
 	const std::string MOTIF_BASE_LOCATION = "../Data/Assets/Motifs/";
@@ -107,8 +118,11 @@ private:
 	sf::Sprite spinWheelSprite;
 	SpinWheel spinner;
 
-	sf::Texture spinWheelClickerTexture;
+	
 	sf::Sprite spinwheelClickerSprite;
+
+	//Transition
+	RockingSprite forfeitRock;
 
 
 	//Player Names

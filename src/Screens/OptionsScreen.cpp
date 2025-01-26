@@ -186,7 +186,7 @@ void OptionsScreen::initialise(float& musicVolIn, float& sfxVolIn, bool fs, std:
 	// Callback from slider
 	sfxSlider.setOnValueChangedCallback([](float value) {
 		std::cout << "SoundFx Slider Value: " << value << std::endl;
-		//AudioManager::getInstance().setMusicVolume(value); //Set the sfx volume globally
+		AudioManager::getInstance().setGlobalSoundEffectVolume(value); //Set the sfx volume globally
 		});
 	
 
@@ -337,7 +337,7 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 						}
 						settings.setMusicVolume(musicVol);
 
-						//sfxVol = AudioManager::getInstance().getSFXVolume(); //Update the stored sfx value which needs a global func
+						sfxVol = AudioManager::getInstance().getSoundEffectVolume();
 						if (sfxVol < 0) {
 							sfxVol = 0;
 						}

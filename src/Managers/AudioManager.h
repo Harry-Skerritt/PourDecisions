@@ -28,12 +28,16 @@ public:
     void playSoundEffect(const std::string& name, float volume = 100.0f);
     void stopAllSoundEffects();
     void setSoundEffectVolume(const std::string& name, float volume);
+    void setGlobalSoundEffectVolume(float volume);
+
+    float getSoundEffectVolume();
 
 private:
     AudioManager() = default;
     ~AudioManager() = default;
 
     float musicVolume = 50.0f;
+    float soundEffectVolume = 100.0f;
 
     // Prevent copy/move constructors
     AudioManager(const AudioManager&) = delete;

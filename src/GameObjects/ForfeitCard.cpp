@@ -245,7 +245,7 @@ void ForfeitCard::drawFadeComponents(
 		//Then it must be visible
 		cardVisible = true;
 	}
-	else if (fadeProgress == 1.0f && !fadeIn) {
+	else if (fadeProgress == 0.0f && !fadeIn) {
 		//If the fade is done and fading out
 		//Then it must be hidden
 		cardVisible = false;

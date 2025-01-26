@@ -23,8 +23,13 @@ void RockingSprite::init(const sf::Texture& texture, sf::RenderWindow& window) {
 
 void RockingSprite::startRocking() {
     isRocking = true;
+    hasCompleted = false;
     elapsedTime = 0.0f;  // Reset elapsed time
     sprite.setColor(sf::Color::White);
+}
+
+bool RockingSprite::getCompleted() {
+    return hasCompleted;
 }
 
 void RockingSprite::update(float dt) {
@@ -35,21 +40,23 @@ void RockingSprite::update(float dt) {
     // Increment elapsed time
     elapsedTime += dt;
 
-    // Scale the sprite gradually from 1.1x (10% bigger) to its original size
-    float scaleFactor = 0.9f - (elapsedTime / rockingDuration) * 0.9f; // Shrink by 10% over the duration
+    // Scale the sprite gradually from its original size to 3.0x (300% bigger)
+    float scaleFactor = 1.0f + (elapsedTime / rockingDuration) * 3.0f; // Grow by 300% over the duration
     sprite.setScale(scaleFactor, scaleFactor);
 
     // Slow down the rocking speed by reducing it over time
-    float speedFactor = 1.0f - (elapsedTime / rockingDuration) * 0.5f; // Reduce speed by 50% over duration
+    float speedFactor = 1.0f - (elapsedTime / rockingDuration) * 0.25f; // Reduce speed by 25% over duration
     float currentRockingSpeed = rockingSpeed * speedFactor;
 
     // If we've completed the rocking duration, stop the animation
     if (elapsedTime >= rockingDuration) {
         isRocking = false;
+        hasCompleted = true;
         elapsedTime = 0.0f;
         angle = 0.0f;
         sprite.setRotation(angle); // Ensure the sprite ends with a rotation of 0 degrees
-        sprite.setColor(sf::Color::Transparent);
+        sprite.setScale(1.0f, 1.0f); // Reset the scale to its original size
+        sprite.setColor(sf::Color::Transparent); // Optional: reset transparency
     }
     else {
         // Rock the sprite back and forth using sine wave between -12 and 12 degrees

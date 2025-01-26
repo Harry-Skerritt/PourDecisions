@@ -20,6 +20,9 @@ public:
     // Draw the sprite to the window
     void draw(sf::RenderWindow& window);
 
+    // Get if the transition has completed
+    bool getCompleted();
+
 private:
     sf::Sprite sprite;
     sf::Vector2f originalPosition;
@@ -28,6 +31,7 @@ private:
     float rockingSpeed;
     float rockingDuration;
     float elapsedTime;
+    bool hasCompleted;
 
     float scale;
 };

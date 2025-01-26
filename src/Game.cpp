@@ -229,7 +229,7 @@ bool Game::loadForfeits() {
 
 	if (forfeitImporter.setForfeitDir(forfeitFileLoc)) {
 		if (forfeitImporter.importForfeits()) {
-			forfeitQuantity = 15;//forfeitImporter.getForfeitQuantity();
+			forfeitQuantity = forfeitImporter.getForfeitQuantity();
 
 			// Print data before proceeding
 			std::cout << "Forfeit Quantity: " << forfeitQuantity << std::endl;
@@ -259,6 +259,7 @@ bool Game::loadForfeits() {
 				forfeitTitles.resize(validSize);
 				forfeitCards.resize(validSize);
 				forfeitTimers.resize(validSize);
+				usedForfeits.resize(validSize);
 
 				// Print resized vector sizes
 				std::cout << "Resized Motif Names Size: " << forfeitMotifNames.size() << std::endl;
@@ -323,8 +324,12 @@ bool Game::loadForfeits() {
 	return !failedForfeitImport;
 }
 
+
+//Game
+
 bool Game::init()
 {
+	std::cout << "Initialising Game.." << std::endl;
 	//Disclamer
 	if (showDisclamer) {
 		
@@ -355,10 +360,14 @@ bool Game::init()
 		disclamerAcknowledged = true;
 	}
 
+	std::cout << "Passed Disclamer" << std::endl; //DEBUG
+
 	//Main Game
 
 	scaleX = static_cast<float>(window.getSize().x) / BASE_RESOLUTION.x;
 	scaleY = static_cast<float>(window.getSize().y) / BASE_RESOLUTION.y;
+
+	std::cout << "Passed Scalers" << std::endl; //DEBUG
 
 	//Player Names
 	playerNames.reserve(MAX_PLAYERS); //Reserve space for max number of players
@@ -366,13 +375,19 @@ bool Game::init()
 	//Other Vars
 	currentPlayers = 0;
 
+	std::cout << "Passed Player Names stuff" << std::endl; //DEBUG
+
 	//Main Menu
 	in_main_menu = !showDisclamer; //Main Menu State
 	is_menu_music_playing = false;
+
+	std::cout << "Passed Main menu init vars" << std::endl; //DEBUG
 	
 
 	logoSprite.setScale(scaleX * 0.3f, scaleX * 0.3f);
 	logoSprite.setPosition(((window.getSize().x / 2) - (logoSprite.getGlobalBounds().width / 2)), 10);
+
+	std::cout << "Passed logo" << std::endl; //DEBUG
 
 	//Play Button
 	playButton.setBackgroundImage(buttonRectTexture);
@@ -382,6 +397,8 @@ bool Game::init()
 	playButton.setHoverColor(buttonHoverColour);
 	playButton.setPosition(((window.getSize().x / 2) - (playButton.getGlobalBounds().width / 2)), window.getSize().y - 270);
 
+	std::cout << "Passed play" << std::endl; //DEBUG
+
 	//Options Button
 	optionButton.setBackgroundImage(buttonThinRectTexture);
 	optionButton.setBackgroundScale(0.6f, 0.6f);
@@ -389,6 +406,8 @@ bool Game::init()
 	optionButton.setTextColor(buttonNormalColour);
 	optionButton.setHoverColor(buttonHoverColour);
 	optionButton.setPosition(((window.getSize().x / 2) - (optionButton.getGlobalBounds().width/2) - optionButton.getGlobalBounds().width/2) - 25, window.getSize().y - 150);
+
+	std::cout << "Passed options" << std::endl; //DEBUG
 
 	//HTP Button
 	htpButton.setBackgroundImage(buttonThinRectTexture);
@@ -398,6 +417,8 @@ bool Game::init()
 	htpButton.setHoverColor(buttonHoverColour);
 	htpButton.setPosition(((window.getSize().x / 2) - (htpButton.getGlobalBounds().width/2) + htpButton.getGlobalBounds().width/2) + 25, window.getSize().y - 150);
 
+	std::cout << "Passed htp" << std::endl; //DEBUG
+
 	//Quit Button
 	quitButton.setBackgroundImage(buttonCircleTexture);
 	quitButton.setBackgroundScale(scaleX * 0.4f, scaleX * 0.4f);
@@ -406,28 +427,38 @@ bool Game::init()
 	quitButton.setHoverColor(buttonHoverColour);
 	quitButton.setPosition(window.getSize().x - quitButton.getGlobalBounds().width - 25, 25);
 
-	
+	std::cout << "Passed quit" << std::endl; //DEBUG
+
 	//Transition
 	spinwheelTransition.init(transitionTexture, 0.3f, window); //0.3s transition
-	forfeitRock.init(forfeitTexture, window);
 	
+	std::cout << "Passed spinwheel transition" << std::endl; //DEBUG
 
 	//Options Screen
 	in_options = false;
 	optionsScreen.initialise(musicVolume, sfxVolume, fullscreen, resolution, nsfwEnabled, winPoints);
 	
+	std::cout << "Passed options screen init" << std::endl; //DEBUG
 
 	//Player Setup State
 	in_player_setup = false;
 	playerSetup.initialise();
 	
+	std::cout << "Passed player setup init" << std::endl; //DEBUG
 
 	//Main Game
 	in_game = false;
 	is_game_music_playing = false;
 	mainGame.init();
+
+	std::cout << "Passed main game init" << std::endl; //DEBUG
 	
 	audioManager.setMusicVolume(musicVolume);
+	audioManager.setGlobalSoundEffectVolume(sfxVolume);
+
+	std::cout << "Passed audio volume" << std::endl; //DEBUG
+
+	std::cout << "Game Initialised!" << std::endl; //DEBUG
 
 	return true;
 }
@@ -487,7 +518,7 @@ void Game::update(float dt)
 		quitButton.handleHover(windowClickPos);
 		confettiManager.update(window);
 
-		forfeitRock.update(dt);
+		
 	}
 
 	if(!in_main_menu && in_options)
@@ -543,7 +574,7 @@ void Game::render(float dt)
 		htpButton.draw(window);
 		quitButton.draw(window);
 
-		forfeitRock.draw(window);
+		
 	}
 
 	if (!in_main_menu && in_options)
@@ -616,6 +647,7 @@ void Game::transitionToMainGame() {
 		mainGame.populatePlayers(playerNames);
 	}
 }
+
 //Getters / Setters
 float Game::getMusicVolume() {
 	return musicVolume;

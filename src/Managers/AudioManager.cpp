@@ -110,3 +110,15 @@ void AudioManager::setSoundEffectVolume(const std::string& name, float volume) {
         std::cerr << "Sound effect not found: " << name << std::endl;
     }
 }
+
+// Set global volume for sound effects
+void AudioManager::setGlobalSoundEffectVolume(float volume) {
+    soundEffectVolume = volume;
+    for (auto& [name, sound] : sounds) {
+        sound.setVolume(volume);
+    }
+}
+
+float AudioManager::getSoundEffectVolume() {
+    return soundEffectVolume;
+}

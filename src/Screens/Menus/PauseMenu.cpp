@@ -10,21 +10,32 @@ PauseMenu::PauseMenu(sf::RenderWindow& window, sf::Font& font) : window(window),
 PauseMenu::~PauseMenu() {};
 
 void PauseMenu::setGameInstance(Game* game) {
-	m_game = game;
+	if (!game) {
+		std::cerr << "Error: game is nullptr in setGameInstance!" << std::endl;
+		return;
+	}
+	this->m_game = game;
+	std::cout << "ForfeitScreen::setGameInstance called successfully." << std::endl;
 }
 
 //MAKE IT ACTUALL PAUSE THE GAME
 
 void PauseMenu::init() {
 
+	std::cout << "In Pause Menu Init" << std::endl; //DEBUG
+
 	//Darken Screen
 	screenDarken.setSize(sf::Vector2f(window.getSize().x, window.getSize().y));
 	screenDarken.setFillColor(sf::Color(0, 0, 0, 179));
+
+	std::cout << "Passed screen darken" << std::endl; //DEBUG
 
 	//Menu Background
 	menuBackground.setSize(sf::Vector2f(window.getSize().x * 0.45f, window.getSize().y * 0.89f));
 	menuBackground.setFillColor(sf::Color(44, 3, 60, 255));
 	menuBackground.setPosition(window.getSize().x / 2 - menuBackground.getGlobalBounds().width / 2, window.getSize().y / 2 - menuBackground.getGlobalBounds().height / 2); //Centre to the screen
+
+	std::cout << "Passed menu background" << std::endl; //DEBUG
 
 	//Title
 	pausedTitle.setFont(font);
@@ -34,6 +45,8 @@ void PauseMenu::init() {
 	pausedTitle.setPosition(menuBackground.getPosition().x + ((menuBackground.getSize().x / 2) - (pausedTitle.getGlobalBounds().width / 2)), 60);
 	//pausedTitle.setPosition(((menuBackground.getSize().x / 2) - (pausedTitle.getGlobalBounds().width / 2)), 60);
 
+	std::cout << "Passed paused title" << std::endl; //DEBUG
+
 	//Resume Button
 	resumeButton.setBackgroundImage(m_game->buttonThinRectTexture);
 	resumeButton.setBackgroundScale(m_game->scaleX * 0.6f, m_game->scaleX * 0.6f);
@@ -41,6 +54,8 @@ void PauseMenu::init() {
 	resumeButton.setTextColor(m_game->buttonNormalColour);
 	resumeButton.setHoverColor(m_game->buttonHoverColour); 
 	resumeButton.setPosition(menuBackground.getPosition().x + (menuBackground.getSize().x / 2 - resumeButton.getGlobalBounds().width / 2), (pausedTitle.getPosition().y + resumeButton.getGlobalBounds().height /2) + menuBackground.getSize().y * 0.14f);
+
+	std::cout << "Passed resume button" << std::endl; //DEBUG
 
 	//Options Button
 	optionsButton.setBackgroundImage(m_game->buttonThinRectTexture);
@@ -50,6 +65,7 @@ void PauseMenu::init() {
 	optionsButton.setHoverColor(m_game->buttonHoverColour);
 	optionsButton.setPosition(menuBackground.getPosition().x + (menuBackground.getSize().x / 2 - optionsButton.getGlobalBounds().width / 2), (resumeButton.getPosition().y + optionsButton.getGlobalBounds().height / 2) + menuBackground.getSize().y * 0.4f);
 
+	std::cout << "Passed options button" << std::endl; //DEBUG
 
 	//Quit Button
 	quitButton.setBackgroundImage(m_game->buttonThinRectTexture);
@@ -58,6 +74,8 @@ void PauseMenu::init() {
 	quitButton.setTextColor(m_game->buttonNormalColour);
 	quitButton.setHoverColor(m_game->buttonHoverColour);
 	quitButton.setPosition(menuBackground.getPosition().x + (menuBackground.getSize().x / 2 - quitButton.getGlobalBounds().width / 2), (optionsButton.getPosition().y + quitButton.getGlobalBounds().height / 2) + menuBackground.getSize().y * 0.1f);
+	
+	std::cout << "Passed quit button" << std::endl; //DEBUG
 }
 
 void PauseMenu::update(float dt, sf::Vector2f clickPos) {

@@ -7,7 +7,6 @@
 
 #include "VisualAddons/Confetti.h"
 #include "VisualAddons/SpriteTransition.h"
-#include "VisualAddons/RockingSprite.h"
 #include "VisualAddons/SpinWheel.h"
 
 #include "Utils/Widgets/InputField.h"
@@ -102,12 +101,16 @@ class Game
 		std::vector<std::string> forfeitCards;			//Stores the card value for the forfeit card
 		std::vector<int> forfeitTimers;					//Stores the duration for the timers on forefeit cards
 		int forfeitQuantity;							//Amount of forfeits
-
+		std::vector<int> usedForfeits;					//Tracks the used forfeits
 		ForfeitImporter forfeitImporter;
+
+		sf::Texture forfeitTexture;
 
 		//Game Stuff
 		bool nsfwEnabled;
 		int winPoints;
+
+	
 
 		//Loading Funcs
 		bool loadFonts();
@@ -137,8 +140,6 @@ class Game
 		//Audio 
 		float musicVolume;
 		float sfxVolume;
-
-		
 
 		
 		//Main
@@ -176,8 +177,8 @@ class Game
 		sf::Texture transitionTexture;
 		SpriteTransition spinwheelTransition;
 
-		sf::Texture forfeitTexture;
-		RockingSprite forfeitRock;
+		
+		
 
 
 		//Options Screen
