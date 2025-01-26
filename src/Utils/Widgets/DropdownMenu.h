@@ -9,7 +9,7 @@ class DropdownMenu : public sf::Drawable {
 public:
     DropdownMenu();
 
-    void initialize(float x, float y, float width, float height, const std::vector<std::string>& items, sf::Font& font);
+    void initialize(float x, float y, float width, float height, const std::vector<std::string>& items, sf::Font& font, float charSize);
     void handleEvent(const sf::Event& event, const sf::Vector2i& mousePos);
     void setColors(const sf::Color& bgColor, const sf::Color& textColor, const sf::Color& highlightColor, const sf::Color& selectedColor, const sf::Color& borderColor);
 

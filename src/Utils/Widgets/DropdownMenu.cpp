@@ -6,7 +6,7 @@ DropdownMenu::DropdownMenu()
     setColors(sf::Color::White, sf::Color::Black, sf::Color(200, 200, 200), sf::Color(100, 100, 255), sf::Color::Black);
 }
 
-void DropdownMenu::initialize(float x, float y, float width, float height, const std::vector<std::string>& items, sf::Font& font) {
+void DropdownMenu::initialize(float x, float y, float width, float height, const std::vector<std::string>& items, sf::Font& font, float charSize) {
     m_items = items;
 
     m_font = font;
@@ -21,7 +21,7 @@ void DropdownMenu::initialize(float x, float y, float width, float height, const
     // Set button text
     m_buttonText.setFont(m_font);
     m_buttonText.setString(m_items[m_selectedIndex]);
-    m_buttonText.setCharacterSize(20);
+    m_buttonText.setCharacterSize(charSize);
     m_buttonText.setFillColor(m_textColor);
     m_buttonText.setPosition(x + 10, y + 5);
 
@@ -31,7 +31,7 @@ void DropdownMenu::initialize(float x, float y, float width, float height, const
         sf::Text text;
         text.setFont(m_font);
         text.setString(item);
-        text.setCharacterSize(20);
+        text.setCharacterSize(charSize);
         text.setFillColor(m_textColor);
         m_itemTexts.push_back(text);
     }

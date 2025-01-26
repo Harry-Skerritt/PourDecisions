@@ -39,7 +39,15 @@ Pour Decisions is a spinwheel based drinking game for 3-8 players. The idea of t
 ### Features
 - Soon Avaiable for Windows. (MacOS and Linux coming later)
 - Support for 3-8 Players
-- Has 56 default cards and 15 default forfeits!
+- Has 56 default cards across 7 categories and 15 default forfeits!
+	- Categories Include:
+		- Truth
+		- Dare
+		- Memory
+		- Challenges
+		- Group
+		- NSFW (Toggleable)
+		- Handicap
 - Supports the ability to import your own custom cards and forfeits (coming soon) please read [here](https://github.com/Harry-Skerritt/PourDecisions/tree/dev?tab=readme-ov-file#adding-custom-cardsforfeits) for how to do this
 - The amount of points needed to win is customisable within the settings page
 

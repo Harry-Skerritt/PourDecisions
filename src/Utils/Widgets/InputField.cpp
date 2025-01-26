@@ -107,6 +107,15 @@ std::string InputField::getCurrentValue() {
 	return input_text;
 }
 
+bool InputField::hasValue() {
+	if (input_text.isEmpty()) {
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 void InputField::resetField(bool usePlaceholder) {
 	input_text = "";
 	output.setColor(placeholderColour);

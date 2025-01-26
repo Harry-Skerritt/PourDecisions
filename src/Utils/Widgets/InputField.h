@@ -27,6 +27,7 @@ public:
 	bool isEmpty();
 
 	std::string getCurrentValue();
+	bool hasValue();
 
 	void handleInput(sf::Event event, bool inputAllowed = true);
 	void resetField(bool usePlaceholder = true);

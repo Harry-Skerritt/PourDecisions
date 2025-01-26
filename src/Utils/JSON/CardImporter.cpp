@@ -71,8 +71,9 @@ bool CardImporter::setCardDir(std::string& folderLoc) {
 		return 0;
 	}
 
-	if ((fileCount - 1) != m_expectedCategories) {
+	if ((fileCount - 1) != m_expectedCategories + 1) {
 		//There is not enough card files (-1 as forfeits isn't imported here)
+		//+1 as sfw and nsfw both exisit but only one will be used
 		return 0;
 	}
 	else {
@@ -97,7 +98,8 @@ bool CardImporter::setCardDir(std::string& folderLoc) {
 
 }
 
-bool CardImporter::importCards() {
+bool CardImporter::importCards(bool nsfwEnabled) {
+	std::cout << "NSFW State: " << nsfwEnabled << std::endl;
 	try {
 		//Go through every file in the directory
 		for (const auto& entry : fs::directory_iterator(m_cardLocation)) {
@@ -108,42 +110,45 @@ bool CardImporter::importCards() {
 
 				// Skip the forfeits file
 				if (fileName != "forfeits.json") {
-					std::cout << "Opening file: " << fileName << std::endl;
+					//Not forfeits.json
 
-					// Parse the file
-					m_cardCatData = CardParser::readFromFile(entry.path().string());
+					if ((nsfwEnabled && fileName == "nsfw.json") || (!nsfwEnabled && fileName == "sfw.json") || (fileName != "nsfw.json" && fileName != "sfw.json")) {
+						std::cout << "Opening file: " << fileName << std::endl;
 
-					//DEBUG
-					std::cout << "Content Name: " << m_cardCatData.contentName << "\n";
-					std::cout << "Card Count: " << m_cardCatData.cardCount << "\n";
-					std::cout << "Card Color: (" << (int)m_cardCatData.cardColour.r << ", "
-						<< (int)m_cardCatData.cardColour.g << ", " << (int)m_cardCatData.cardColour.b << ")\n";
+						// Parse the file
+						m_cardCatData = CardParser::readFromFile(entry.path().string());
 
-					std::cout << "Cards:\n";
-					for (const auto& card : m_cardCatData.cards) {
-						std::cout << "- " << card << "\n";
+						//DEBUG
+						std::cout << "Content Name: " << m_cardCatData.contentName << "\n";
+						std::cout << "Card Count: " << m_cardCatData.cardCount << "\n";
+						std::cout << "Card Color: (" << (int)m_cardCatData.cardColour.r << ", "
+							<< (int)m_cardCatData.cardColour.g << ", " << (int)m_cardCatData.cardColour.b << ")\n";
+
+						std::cout << "Cards:\n";
+						for (const auto& card : m_cardCatData.cards) {
+							std::cout << "- " << card << "\n";
+						}
+
+						std::cout << "Motif Loc: " << m_cardCatData.motifLoc << "\n";
+
+						//Populate the arrays with the data
+						std::string cardCategory = m_cardCatData.contentName;
+						m_cardCategories.at(m_currentCardNo) = cardCategory;
+
+						int cardCount = m_cardCatData.cardCount;
+						m_cardQuantity.at(m_currentCardNo) = cardCount;
+
+						sf::Color cardColour = m_cardCatData.cardColour;
+						m_cardColours.at(m_currentCardNo) = cardColour;
+
+						std::vector<std::string> cards = m_cardCatData.cards;
+						m_cardQuestions.at(m_currentCardNo) = cards;
+
+						std::string motif = m_cardCatData.motifLoc;
+						m_motifLoc.at(m_currentCardNo) = motif;
+
+						m_currentCardNo += 1; //Inc current card counter
 					}
-
-					std::cout << "Motif Loc: " << m_cardCatData.motifLoc << "\n";
-					
-					//Populate the arrays with the data
-					std::string cardCategory = m_cardCatData.contentName;
-					m_cardCategories.at(m_currentCardNo) = cardCategory;
-
-					int cardCount = m_cardCatData.cardCount;
-					m_cardQuantity.at(m_currentCardNo) = cardCount;
-
-					sf::Color cardColour = m_cardCatData.cardColour;
-					m_cardColours.at(m_currentCardNo) = cardColour;
-
-					std::vector<std::string> cards = m_cardCatData.cards;
-					m_cardQuestions.at(m_currentCardNo) = cards;
-
-					std::string motif = m_cardCatData.motifLoc;
-					m_motifLoc.at(m_currentCardNo) = motif;
-
-					m_currentCardNo += 1; //Inc current card counter
-
 				}
 			}
 		}

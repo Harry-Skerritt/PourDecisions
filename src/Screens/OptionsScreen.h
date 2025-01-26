@@ -9,6 +9,7 @@
 #include "../Utils/Widgets/CheckBox.h"
 #include "../Utils/Widgets/DropdownMenu.h"
 #include "../Utils/Widgets/Button.h"
+#include "../Utils/Widgets/InputField.h"
 #include "../Utils/JSON/Settings.h"
 
 #include <string>
@@ -22,11 +23,13 @@ public:
 
 	void setGameInstance(Game* game);
 
-	void initialise(float& musicVol, float& sfxVol, bool fs, std::string res);
+	void initialise(float& musicVol, float& sfxVol, bool fs, std::string res, bool nsfw, int winPoints);
 
 	void update(float dt, sf::Vector2f& windowClick);
 
 	void handleMouse(sf::Event event, sf::Vector2f& windowClick);
+
+	void handleTextEntry(sf::Event event);
 
 	void draw(sf::RenderWindow& window);
 
@@ -35,6 +38,10 @@ public:
 	//Graphics
 	Checkbox fullscreenCheckbox;
 	DropdownMenu resolutionMenu;
+
+	//Game Settings
+	Checkbox nsfwEnabledCheckbox;
+	InputField pointsToWinInput;
 
 	//Helper function
 	void splitResolution(const std::string& resolution, int& width, int& height);
@@ -52,6 +59,8 @@ private:
 	float sfxVol;
 	bool fullscreen;
 	std::string resolution;
+	bool nsfwEnabled;
+	int pointsToWin;
 
 	sf::Color gradientColour_1 = sf::Color(3, 58, 60, 255);
 	sf::Color gradientColour_2 = sf::Color(0, 215, 253, 255);
@@ -62,6 +71,8 @@ private:
 	GradientText optionsTitle;
 	sf::Text graphicsText;
 	sf::Text audioText;
+	sf::Text customText;
+	sf::Text gameText;
 
 	//Graphics
 	sf::Text fullscreenLabel;
@@ -74,10 +85,19 @@ private:
 	VolumeSlider musicSlider;
 	VolumeSlider sfxSlider;
 
+	//Custom Cards
+	sf::Text fileLabel;
+
+	//Game Settings
+	sf::Text nsfwLabel;
+	sf::Text pointsLabel;
+
+
 	//Backgrounds <- Set to rounded rects once working
 	sf::RectangleShape graphicsHolder;
 	sf::RectangleShape audioHolder;
 	sf::RectangleShape customFileHolder;
+	sf::RectangleShape gameSettingHolder;
 
 	//Buttons
 	Button backButton;

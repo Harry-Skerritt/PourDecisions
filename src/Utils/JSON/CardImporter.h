@@ -22,7 +22,7 @@ public:
 
 	int getNumberOfCards();
 
-	bool importCards();
+	bool importCards(bool nsfwEnabled);
 
 private:
 	std::string m_cardLocation = "";

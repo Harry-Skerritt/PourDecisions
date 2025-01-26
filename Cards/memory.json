@@ -1,0 +1,16 @@
+{
+  "content-name": "memory",
+  "card-count": "8",
+  "card-color": "#8002ED",
+  "motif-loc": "memory.png",
+  "cards": [
+    "Name 5 countries in Europe in 30 seconds.",
+    "Name 5 types of fruit in 30 seconds.",
+    "Name 5 movies that came out in the last 5 years in 30 seconds.",
+    "Name 5 famous TV shows in 30 seconds.",
+    "Name 5 items you’d find in a kitchen in 30 seconds.",
+    "Name 5 people you went to school with in 30 seconds.",
+    "Name 5 songs by your favorite band in 30 seconds.",
+    "Name 5 animals that live in the ocean in 30 seconds."
+  ]
+}

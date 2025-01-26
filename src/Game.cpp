@@ -91,6 +91,36 @@ bool Game::loadAssets() {
 	return true;
 }
 
+bool Game::loadSettings(std::string fileLoc) {
+	try {
+		//Parse JSON
+		Settings settings = Settings::fromFile(fileLoc);
+
+		//Print the values
+		std::cout << "Resolution: " << settings.getResolution() << "\n";
+		std::cout << "Fullscreen: " << settings.getFullscreen() << "\n";
+		std::cout << "Music Volume: " << settings.getMusicVolume() << "\n";
+		std::cout << "SFX Volume: " << settings.getSFXVolume() << "\n";
+		std::cout << "NSFW Enabled: " << settings.getNSFWEnabled() << "\n";
+		std::cout << "Win Points: " << settings.getWinPoints() << "\n";
+
+		//Get the values
+		resolution = settings.getResolution();
+		fullscreen = settings.getFullscreen();
+		musicVolume = settings.getMusicVolume();
+		sfxVolume = settings.getSFXVolume();
+		nsfwEnabled = settings.getNSFWEnabled();
+		winPoints = settings.getWinPoints();
+
+	}
+	catch (const std::exception& ex) {
+		std::cerr << "Error parsing Settings JSON: " << ex.what() << "\n";
+		return false;
+	}
+
+	return true;
+}
+
 bool Game::loadAudio() {
 	std::cout << "Loading Audio..." << std::endl;
 
@@ -138,7 +168,7 @@ bool Game::loadCards() {
 	std::string cardFolder = "../Cards/";
 	if (cardImporter.setCardDir(cardFolder)) {
 		//Directory is formatted correctly
-		if (cardImporter.importCards()) {
+		if (cardImporter.importCards(nsfwEnabled)) {
 
 			//Everything imported
 			if (usingCustomCards) {
@@ -178,7 +208,7 @@ bool Game::loadCards() {
 	}
 
 	if (failedCardImport) {
-		CustomMessageBox failedCard("Pour Decisions", "Cards could not be imported", 1);
+		CustomMessageBox failedCard("Pour Decisions", "Cards could not be imported", 2, window);
 		MessageBoxButton result = failedCard.showMessageBox(); //Show the message box
 
 		if (result == MessageBoxButton::Ok) {
@@ -279,7 +309,7 @@ bool Game::loadForfeits() {
 	}
 
 	if (failedForfeitImport) {
-		CustomMessageBox failedForfeit("Pour Decisions", "Forfeits could not be imported", 1);
+		CustomMessageBox failedForfeit("Pour Decisions", "Forfeits could not be imported", 2, window);
 		MessageBoxButton result = failedForfeit.showMessageBox(); // Show the message box
 
 		if (result == MessageBoxButton::Ok) {
@@ -388,7 +418,7 @@ bool Game::init()
 
 	//Options Screen
 	in_options = false;
-	optionsScreen.initialise(musicVolume, sfxVolume, fullscreen, resolution);
+	optionsScreen.initialise(musicVolume, sfxVolume, fullscreen, resolution, nsfwEnabled, winPoints);
 	
 
 	//Player Setup State
@@ -626,37 +656,6 @@ int Game::getSizeOfPlayerArray() {
 	return playerNames.size();
 }
 
-// Settings
-bool Game::loadSettings(std::string fileLoc) {
-	try {
-		//Parse JSON
-		Settings settings = Settings::fromFile(fileLoc);
-
-		//Print the values
-		std::cout << "Resolution: " << settings.getResolution() << "\n";
-		std::cout << "Fullscreen: " << settings.getFullscreen() << "\n";
-		std::cout << "Music Volume: " << settings.getMusicVolume() << "\n";
-		std::cout << "SFX Volume: " << settings.getSFXVolume() << "\n";
-		std::cout << "NSFW Enabled: " << settings.getNSFWEnabled() << "\n";
-		std::cout << "Win Points: " << settings.getWinPoints() << "\n";
-
-		//Get the values
-		resolution = settings.getResolution();
-		fullscreen = settings.getFullscreen();
-		musicVolume = settings.getMusicVolume();
-		sfxVolume = settings.getSFXVolume();
-		nsfwEnabled = settings.getNSFWEnabled();
-		winPoints = settings.getWinPoints();
-
-	}
-	catch (const std::exception& ex) {
-		std::cerr << "Error parsing Settings JSON: " << ex.what() << "\n";
-		return false;
-	}
-
-	return true;
-}
-
 //Event Handling
 
 void Game::mouseClicked(sf::Event event)
@@ -732,6 +731,13 @@ void Game::textEntered(sf::Event event)
 	{
 		//In Player Setup State
 		playerSetup.handleTextEntry(event);
+	}
+
+	if (!in_main_menu && in_options)
+	{
+		//In Options Menu
+		optionsScreen.handleTextEntry(event);
+
 	}
 }
 

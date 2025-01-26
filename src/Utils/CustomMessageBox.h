@@ -2,6 +2,7 @@
 #define CUSTOMMESSAGEBOX_H
 
 #include <string>
+#include <SFML/Graphics.hpp>
 
 // Enum for the button choices
 enum class MessageBoxButton {
@@ -15,12 +16,13 @@ enum class MessageBoxButton {
 class CustomMessageBox {
 public:
     // Constructor
-    CustomMessageBox(const std::string& title, const std::string& message, int numButtons);
+    CustomMessageBox(const std::string& title, const std::string& message, int numButtons, sf::RenderWindow& window);
 
     // Show the message box and return the button clicked
     MessageBoxButton showMessageBox();
 
 private:
+    sf::RenderWindow& window_;
     std::string title_;
     std::string message_;
     int numButtons_;

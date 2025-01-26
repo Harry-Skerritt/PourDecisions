@@ -198,7 +198,7 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 
 			//Create and show a OS-specific message box
 			std::string warningMsg = "You need at least " + std::to_string(allowedThreshold) + " players!";
-			CustomMessageBox playerWarning("Pour Decisions", warningMsg, 1);
+			CustomMessageBox playerWarning("Pour Decisions", warningMsg, 2, window);
 			MessageBoxButton result = playerWarning.showMessageBox();
 		}
 	}

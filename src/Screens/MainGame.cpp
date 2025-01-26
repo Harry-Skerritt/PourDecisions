@@ -172,7 +172,7 @@ void MainGame::pickCard() {
 	// Check if all cards have been used
 	if (m_game->checkAllCardsUsed()) {
 		// If all cards have been used, display a message
-		CustomMessageBox restartWarning("Pour Decisions", "All Cards have been used, would you like to start the cards again?", 1);
+		CustomMessageBox restartWarning("Pour Decisions", "All Cards have been used, would you like to start the cards again?", 2, window);
 		MessageBoxButton result = restartWarning.showMessageBox(); // Show the message box
 
 		if (result == MessageBoxButton::Ok) {

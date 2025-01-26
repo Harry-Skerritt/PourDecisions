@@ -48,6 +48,13 @@ bool Checkbox::isChecked() const {
 
 void Checkbox::setChecked(bool checked) {
     m_checked = checked;
+
+    if (m_checked) {
+        m_checkmark.setFillColor(m_checkedColor);  // Set the color when checked
+    }
+    else {
+        m_checkmark.setFillColor(sf::Color::Transparent);  // Hide the checkmark when unchecked
+    }
 }
 
 void Checkbox::handleMouseInput(const sf::Vector2i& mousePos, bool mousePressed) {

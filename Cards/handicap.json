@@ -1,0 +1,16 @@
+{
+  "content-name": "handicap",
+  "card-count": "8",
+  "card-color": "#FF9D1C",
+  "motif-loc": "handicap.png",
+  "cards": [
+    "For the next 2 rounds, you must play with your eyes closed (or wear a blindfold).",
+    "You must maintain a serious face for the next 5 minutes. If you smile or laugh, take a drink!",
+    "For the next round, refer to yourself in the third person (e.g., “Harry thinks this is fun!”).",
+    "For the next round, mimic the mannerisms (gestures, voice, posture) of another player.",
+    "For the next round, you can only answer questions with “Yes” or “No” and cannot elaborate.",
+    "For the next round, answer all questions in riddles or cryptic phrases. If anyone can’t solve your riddle or figure out your phrase, they take a drink!",
+    "For the next round, you can only speak using song lyrics. Try to communicate everything you want to say through lyrics from any song.",
+    "For the next 5 minutes, you must do everything in slow motion (even talking!)."
+  ]
+}

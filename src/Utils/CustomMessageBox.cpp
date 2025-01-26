@@ -10,20 +10,25 @@
 #endif
 
 // Constructor
-CustomMessageBox::CustomMessageBox(const std::string& title, const std::string& message, int numButtons)
-    : title_(title), message_(message), numButtons_(numButtons) {}
+CustomMessageBox::CustomMessageBox(const std::string& title, const std::string& message, int numButtons, sf::RenderWindow& window)
+    : title_(title), message_(message), numButtons_(numButtons), window_(window) {}
 
 // Show the message box and return the button clicked
 MessageBoxButton CustomMessageBox::showMessageBox() {
 #ifdef _WIN32
     // Windows Message Box
-    int result = MessageBoxA(NULL, message_.c_str(), title_.c_str(), MB_OKCANCEL | MB_ICONINFORMATION);
+    HWND sfmlHandle = window_.getSystemHandle();
+
+    int result = MessageBoxA(NULL, message_.c_str(), title_.c_str(), MB_OKCANCEL | MB_ICONINFORMATION | MB_TOPMOST);
+
+
     if (result == IDOK) {
         return MessageBoxButton::Ok;
     }
     else {
         return MessageBoxButton::Cancel;
     }
+
 #elif __APPLE__
     // macOS Message Box using Cocoa (Objective-C)
     @autoreleasepool {
