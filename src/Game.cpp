@@ -14,11 +14,13 @@ Game::Game(sf::RenderWindow& game_window, int fps)
 	optionsScreen(window, righteousFont),
 	htpScreen(window, righteousFont, ryeFont),
 	playerSetup(window, righteousFont),
+	creditScreen(window, righteousFont),
 	mainGame(window, righteousFont, ryeFont, lcdFont)
 {
 	optionsScreen.setGameInstance(this);
 	htpScreen.setGameInstance(this);
 	playerSetup.setGameInstance(this);
+	creditScreen.setGameInstance(this);
 	mainGame.setGameInstance(this);
 	srand(time(NULL));
 
@@ -459,6 +461,10 @@ bool Game::init()
 	is_game_music_playing = false;
 	mainGame.init();
 
+	//Credits
+	in_credits = false;
+	creditScreen.init();
+
 	std::cout << "Passed main game init" << std::endl; //DEBUG
 	
 	audioManager.setMusicVolume(musicVolume);
@@ -567,6 +573,10 @@ void Game::update(float dt)
 
 		mainGame.update(dt, windowClickPos);
 	}
+
+	if (in_credits) {
+		creditScreen.update(windowClickPos);
+	}
 	
 }
 
@@ -616,6 +626,10 @@ void Game::render(float dt)
 	{
 		mainGame.draw(window, dt);
 	}
+
+	if (in_credits) {
+		creditScreen.draw(window);
+	}
 	
 }
 
@@ -651,7 +665,13 @@ void Game::backToMainMenu(int pageID)
 		if (playerNames.size() != 0) {
 			playerNames.clear();
 		}
-	}	
+	} 
+	else if (pageID == 4)
+	{
+		//From credits
+		in_credits = false;
+		in_main_menu = true;
+	}
 }
 
 void Game::toOptions(int pageID) {
@@ -687,6 +707,11 @@ void Game::transitionToSetup(int pageID) {
 		playerSetup.repopulatePlayers(playerNames);
 	}
 
+}
+
+void Game::transitionToCredits() {
+	in_game = false;
+	in_credits = true;
 }
 
 //Getters / Setters
@@ -791,6 +816,10 @@ void Game::mouseClicked(sf::Event event)
 			mainGame.handleMouse(event, windowClickPos);
 		}
 		
+		if (in_credits) {
+			creditScreen.handleMouse(windowClickPos);
+		}
+
 
 	}
 

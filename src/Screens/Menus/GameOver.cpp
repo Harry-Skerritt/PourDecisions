@@ -156,6 +156,7 @@ void GameOver::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 		std::cout << "Credits Clicked" << std::endl;
 		AudioManager::getInstance().playSoundEffect("buttonClick");
 		setVisibility(false);
+		m_game->transitionToCredits();
 	}
 
 	if (playAgainButton.isClicked(clickPos)) {

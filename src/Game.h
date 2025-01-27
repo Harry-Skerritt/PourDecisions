@@ -18,6 +18,7 @@
 #include "Screens/PlayerSetup.h"
 #include "Screens/MainGame.h"
 #include "Screens/HTPScreen.h"
+#include "Screens/Credits.h"
 
 #include <iostream>
 #include <fstream>
@@ -45,6 +46,7 @@ class Game
 		void toOptions(int pageID); //3 - Game
 		void transitionToMainGame();
 		void transitionToSetup(int pageID); //0 - Menu, 3 - Game
+		void transitionToCredits();
 
 		float getMusicVolume();
 		float getSFXVolume();
@@ -123,6 +125,8 @@ class Game
 		bool loadForfeits();
 		bool loadSettings(std::string fileLoc);;
 
+		const std::string CREDIT_URL = "https://harry-skerritt.github.io/PourDecisions/";
+
 
 	private:
 		//Disclamer
@@ -134,7 +138,7 @@ class Game
 
 		//Screen
 		const sf::Vector2f BASE_RESOLUTION = sf::Vector2f(1080.0f, 720.0f);
-		const std::string CREDIT_URL = "https://harry-skerritt.github.io/PourDecisions/";
+		
 
 		//Graphics
 		std::string resolution;
@@ -193,6 +197,10 @@ class Game
 		//Player Setup
 		bool in_player_setup;
 		PlayerSetup playerSetup;
+
+		//Credits
+		bool in_credits;
+		CreditsScreen creditScreen;
 		
 
 		//Main Game
