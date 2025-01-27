@@ -20,6 +20,8 @@ set(SOURCE_FILES
     LoadingScreen.cpp 
     HTPScreen.h
     HTPScreen.cpp
+    Credits.h
+    Credits.cpp
 )
 
 # Add a library or an object file for the options menu (if it's a separate module)
