@@ -12,10 +12,12 @@
 Game::Game(sf::RenderWindow& game_window, int fps)
 	: window(game_window), framesPerSecond(fps),
 	optionsScreen(window, righteousFont),
+	htpScreen(window, righteousFont, ryeFont),
 	playerSetup(window, righteousFont),
 	mainGame(window, righteousFont, ryeFont, lcdFont)
 {
 	optionsScreen.setGameInstance(this);
+	htpScreen.setGameInstance(this);
 	playerSetup.setGameInstance(this);
 	mainGame.setGameInstance(this);
 	srand(time(NULL));
@@ -441,6 +443,11 @@ bool Game::init()
 	
 	std::cout << "Passed options screen init" << std::endl; //DEBUG
 
+	//How To play
+	in_how_to_play = false;
+	htpScreen.init();
+	
+
 	//Player Setup State
 	in_player_setup = false;
 	playerSetup.initialise();
@@ -529,6 +536,11 @@ void Game::update(float dt)
 
 	}
 
+	if (!in_main_menu && in_how_to_play)
+	{
+		htpScreen.update(dt, windowClickPos);
+	}
+
 	if (!in_main_menu && in_player_setup)
 	{
 		//In Player Setup
@@ -584,6 +596,11 @@ void Game::render(float dt)
 		optionsScreen.draw(window);
 	}
 
+	if (!in_main_menu && in_how_to_play)
+	{
+		htpScreen.draw(window);
+	}
+
 	if (!in_main_menu && in_player_setup)
 	{
 		//In Player Setup -> Music should keep playing
@@ -613,7 +630,11 @@ void Game::backToMainMenu(int pageID)
 		in_options = false;
 		in_main_menu = true;
 	}
-	//1 - HTP
+	else if (pageID == 1) {
+		//Coming from htp
+		in_how_to_play = false;
+		in_main_menu = true;
+	}
 	else if (pageID == 2)
 	{
 		//Coming from Setup
@@ -745,6 +766,8 @@ void Game::mouseClicked(sf::Event event)
 				//HTP Button Clicked
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "HTP Button Clicked" << std::endl;
+				in_main_menu = false;
+				in_how_to_play = true;
 			}
 
 			if (quitButton.isClicked(windowClickPos)) {
@@ -755,6 +778,10 @@ void Game::mouseClicked(sf::Event event)
 		{
 			//In Options
 			optionsScreen.handleMouse(event, windowClickPos);
+		}
+		else if (!in_main_menu && in_how_to_play)
+		{
+			htpScreen.handleMouse(windowClickPos);
 		}
 		else if (in_player_setup) {
 			//In Player Setup

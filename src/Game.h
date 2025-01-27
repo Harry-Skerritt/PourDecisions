@@ -17,6 +17,7 @@
 #include "Screens/OptionsScreen.h"
 #include "Screens/PlayerSetup.h"
 #include "Screens/MainGame.h"
+#include "Screens/HTPScreen.h"
 
 #include <iostream>
 #include <fstream>
@@ -181,7 +182,9 @@ class Game
 
 		
 		
-
+		//How To Play Screen
+		bool in_how_to_play;
+		HowToPlayScreen htpScreen;
 
 		//Options Screen
 		bool in_options;
