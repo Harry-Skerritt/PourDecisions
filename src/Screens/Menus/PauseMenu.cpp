@@ -40,9 +40,9 @@ void PauseMenu::init() {
 	//Title
 	pausedTitle.setFont(font);
 	pausedTitle.setString("PAUSED");
-	pausedTitle.setCharacterSize(window.getSize().x * 0.11f);
+	pausedTitle.setCharacterSize(window.getSize().y * 0.11f);
 	pausedTitle.setGradientColors(sf::Color(251, 0, 188, 255), sf::Color(0, 238, 255, 255));
-	pausedTitle.setPosition(menuBackground.getPosition().x + ((menuBackground.getSize().x / 2) - (pausedTitle.getGlobalBounds().width / 2)), 60);
+	pausedTitle.setPosition(menuBackground.getPosition().x + ((menuBackground.getSize().x / 2) - (pausedTitle.getGlobalBounds().width / 2)), window.getSize().y * 0.083f);
 	//pausedTitle.setPosition(((menuBackground.getSize().x / 2) - (pausedTitle.getGlobalBounds().width / 2)), 60);
 
 	std::cout << "Passed paused title" << std::endl; //DEBUG

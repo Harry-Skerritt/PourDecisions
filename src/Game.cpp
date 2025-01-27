@@ -349,11 +349,12 @@ bool Game::init()
 		sf::Color disclamerRed = sf::Color(255, 1, 67);
 		sf::Color disclamerWhite = sf::Color::White;
 
-		disclamerButton.setBackgroundColor(disclamerRed, window.getSize().x * 0.25f, window.getSize().y * 0.07f);
+		disclamerButton.setBackgroundColor(disclamerRed, window.getSize().x * 0.27f, window.getSize().y * 0.07f);
 		disclamerButton.setBorder(disclamerRed, 2.0f);
-		disclamerButton.setText("TEST", ryeFont, window.getSize().y * 0.055f);
-		disclamerButton.setTextColor(disclamerWhite);
 		disclamerButton.setPosition(window.getSize().x / 2 - disclamerButton.getGlobalBounds().width / 2, window.getSize().y * 0.91f);
+		disclamerButton.setText("ACKNOWLEDGE", ryeFont, window.getSize().y * 0.055f);
+		disclamerButton.setTextColor(disclamerWhite);
+		
 	}
 
 	if (!showDisclamer) {
@@ -633,8 +634,12 @@ void Game::backToMainMenu(int pageID)
 }
 
 void Game::toOptions(int pageID) {
-	//3 = Main Game
-	if (pageID == 3) {
+	if (pageID == 0) {
+		//From menu
+		in_main_menu = false;
+		in_options = true;
+	} else if (pageID == 3) {
+		//from Main Game
 		in_game = false;
 		in_options = true;
 	}
@@ -646,6 +651,21 @@ void Game::transitionToMainGame() {
 		in_game = true;
 		mainGame.populatePlayers(playerNames);
 	}
+}
+
+void Game::transitionToSetup(int pageID) {
+	if (pageID == 0) {
+		//From main menu
+		in_main_menu = false;
+		in_player_setup = true;
+	}
+	else if (pageID == 3) {
+		//From main game - play agiain
+		in_game = false;
+		in_player_setup = true;
+		playerSetup.repopulatePlayers(playerNames);
+	}
+
 }
 
 //Getters / Setters
@@ -683,6 +703,11 @@ int Game::getSizeOfPlayerArray() {
 	return playerNames.size();
 }
 
+void Game::clearPlayerArray() {
+	playerNames.clear();
+}
+
+
 //Event Handling
 
 void Game::mouseClicked(sf::Event event)
@@ -706,16 +731,14 @@ void Game::mouseClicked(sf::Event event)
 				//Play Button Clicked
 				audioManager.playSoundEffect("playSF");
 				std::cout << "Play Button Clicked" << std::endl;
-				in_main_menu = false;
-				in_player_setup = true; //Go into player setup state
+				transitionToSetup(0);
 			}
 
 			if (optionButton.isClicked(windowClickPos)) {
 				//Options Button Clicked
 				audioManager.playSoundEffect("buttonClick");
 				std::cout << "Options Button Clicked" << std::endl;
-				in_main_menu = false;
-				in_options = true; //Move to the options screen
+				toOptions(0);
 			}
 
 			if (htpButton.isClicked(windowClickPos)) {

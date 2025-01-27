@@ -162,6 +162,7 @@ void GameOver::handleMouse(sf::Event event, sf::Vector2f clickPos) {
 		std::cout << "Play Again Clicked" << std::endl;
 		AudioManager::getInstance().playSoundEffect("buttonClick");
 		setVisibility(false);
+		m_game->transitionToSetup(3);
 	}
 
 	if (quitToMenuButton.isClicked(clickPos)) {

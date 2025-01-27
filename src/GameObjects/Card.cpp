@@ -89,21 +89,23 @@ void Card::initialise(sf::Color& colour, sf::Font& mainFont, sf::Font& secondary
 	// Buttons
 	forfeitButton.setBackgroundColor(cardColour, cardBackground.getSize().x * 0.43f, cardBackground.getSize().y * 0.1f);
 	forfeitButton.setBorder(borderColour, 2.0f);
-	forfeitButton.setText("Forfeit", secondaryFont, window.getSize().y * 0.055f);
-	forfeitButton.setTextColor(cardBackColour);
 	forfeitButton.setPosition(
 		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2 - forfeitButton.getGlobalBounds().width - 10, // Left button
 		cardBackground.getPosition().y + cardBackground.getGlobalBounds().height - forfeitButton.getGlobalBounds().height - 20 // 20px from the bottom
 	);
+	forfeitButton.setText("Forfeit", secondaryFont, window.getSize().y * 0.055f);
+	forfeitButton.setTextColor(cardBackColour);
+	
 
 	passButton.setBackgroundColor(cardBackColour, cardBackground.getSize().x * 0.43f, cardBackground.getSize().y * 0.1f);
 	passButton.setBorder(cardColour, 2.0f);
-	passButton.setText("Pass", secondaryFont, window.getSize().y * 0.055f);
-	passButton.setTextColor(cardColour);
 	passButton.setPosition(
 		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2 + 10, // Right button
 		cardBackground.getPosition().y + cardBackground.getGlobalBounds().height - passButton.getGlobalBounds().height - 20 // 20px from the bottom
 	);
+	passButton.setText("Pass", secondaryFont, window.getSize().y * 0.055f);
+	passButton.setTextColor(cardColour);
+	
 
 	adjustLayout(cardMessage, cardBackground, cardMotif, forfeitButton, passButton);
 }

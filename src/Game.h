@@ -43,6 +43,7 @@ class Game
 		void backToMainMenu(int pageID); //0 - Options, 1 - HTP, 2 - Setup, 3 - Game
 		void toOptions(int pageID); //3 - Game
 		void transitionToMainGame();
+		void transitionToSetup(int pageID); //0 - Menu, 3 - Game
 
 		float getMusicVolume();
 		float getSFXVolume();
@@ -51,6 +52,7 @@ class Game
 		int getPlayerThreshold();
 		int getCurrentPlayers();
 		void setCurrentPlayers(int players);
+		void clearPlayerArray();
 
 		void addPlayer(std::string name);
 		int getSizeOfPlayerArray();
@@ -123,7 +125,7 @@ class Game
 
 	private:
 		//Disclamer
-		bool showDisclamer = false;
+		bool showDisclamer = true; //Should be true before release
 		bool disclamerAcknowledged;
 		sf::Texture disclamerTexture;
 		sf::Sprite disclamerSprite;
@@ -153,7 +155,7 @@ class Game
 		//Players & Points - Gameplay
 		const int MAX_PLAYERS = 8;
 		int currentPlayers;
-		const int ALLOWED_THRESHOLD = 1; //3
+		const int ALLOWED_THRESHOLD = 3;
 		
 		std::vector<std::string> playerNames;
 		std::vector<int> playerPoints;

@@ -8,6 +8,8 @@ void SolidButton::setBackgroundColor(const sf::Color& color, float x, float y) {
 	buttonBackground.setSize(sf::Vector2f(x, y));
 	buttonBackground.setFillColor(color);
 	bounds = buttonBackground.getGlobalBounds();
+
+	centerText();
 }
 
 void SolidButton::setBorder(sf::Color& color, float thickness) {
@@ -21,10 +23,16 @@ void SolidButton::setText(const std::string& text, const sf::Font& font, unsigne
 	buttonText.setString(text);
 	buttonText.setCharacterSize(characterSize);
 
-	//Centre Text
+	// Adjust text size to fit within the button's width
 	sf::FloatRect textBounds = buttonText.getLocalBounds();
-	buttonText.setOrigin(textBounds.left + textBounds.width / 2, textBounds.top + textBounds.height / 2);
-	buttonText.setPosition(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+	while (textBounds.width > bounds.width && characterSize > 5) {
+		characterSize--; // Reduce the font size
+		buttonText.setCharacterSize(characterSize);
+		textBounds = buttonText.getLocalBounds();
+	}
+
+	//Centre Text
+	centerText();
 }
 
 void SolidButton::setPosition(float x, float y) {
@@ -32,7 +40,7 @@ void SolidButton::setPosition(float x, float y) {
 	bounds = buttonBackground.getGlobalBounds();
 
 	//Update Text
-	buttonText.setPosition(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+	centerText();
 }
 
 void SolidButton::setPosition(sf::Vector2f size) {
@@ -40,7 +48,7 @@ void SolidButton::setPosition(sf::Vector2f size) {
 	bounds = buttonBackground.getGlobalBounds();
 
 	//Update Text
-	buttonText.setPosition(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
+	centerText();
 }
 
 void SolidButton::setTextColor(sf::Color color) {
@@ -98,4 +106,10 @@ void SolidButton::setAlpha(sf::Uint8 alpha) {
 	sf::Color textColor = buttonText.getFillColor();
 	textColor.a = alpha;
 	buttonText.setFillColor(textColor);
+}
+
+void SolidButton::centerText() {
+	sf::FloatRect textBounds = buttonText.getLocalBounds();
+	buttonText.setOrigin(textBounds.left + textBounds.width / 2, textBounds.top + textBounds.height / 2);
+	buttonText.setPosition(bounds.left + bounds.width / 2, bounds.top + bounds.height / 2);
 }

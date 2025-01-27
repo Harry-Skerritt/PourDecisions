@@ -40,6 +40,8 @@ public:
 
 	void setAlpha(sf::Uint8 alpha);
 
+	
+
 private:
 	sf::RectangleShape buttonBackground;
 	sf::Text buttonText;
@@ -47,6 +49,8 @@ private:
 
 	sf::Color normalColor;
 	sf::Color hoverColor;
+
+	void centerText(); // Helper Func
 };
 
 #endif //SOLIDBUTTON_H

@@ -87,6 +87,8 @@ private:
 
 	void adjustLayout(sf::Text& cardMessage, sf::RectangleShape& cardBackground, sf::Sprite& cardMotif, SolidButton& doneButton);
 
+	void fitToWidth(sf::Text& text, const sf::RectangleShape& rectangle);
+
 };
 
 

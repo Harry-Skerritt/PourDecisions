@@ -358,6 +358,9 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 								settings.setWinPoints(std::stoi(pointsToWinInput.getCurrentValue()));
 							}
 						}
+						else {
+							std::cout << "Points to win has no value" << std::endl;
+						}
 
 						// Save the updated settings back to the file
 						settings.saveToFile(settingLoc);
@@ -380,7 +383,7 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 
 			}
 			else {
-				//Graphics settings havent changed
+				//Graphics settings or nsfw havent changed
 				//Update Audio and game settings
 				try {
 					Settings settings = Settings::fromFile(settingLoc);
@@ -393,8 +396,20 @@ void OptionsScreen::handleMouse(sf::Event event, sf::Vector2f& windowClick)
 					settings.setSFXVolume(sfxVol);
 
 					// Modify game settings
-					settings.setNSFWEnabled(false); //Needs to be added
-					settings.setWinPoints(20);		//Needs to be added
+
+					if (pointsToWinInput.hasValue()) {
+						std::cout << "PTW HAS VALUE" << std::endl;
+						if (std::stoi(pointsToWinInput.getCurrentValue()) != pointsToWin) {
+							//The points have changed
+							std::cout << "PTW BEFORE CHANGING: " << std::to_string(pointsToWin) << std::endl;
+							std::cout << "PTW BEFORE WRITING TO SETTINGS: " << std::stoi(pointsToWinInput.getCurrentValue()) << std::endl;
+							settings.setWinPoints(std::stoi(pointsToWinInput.getCurrentValue()));
+						}
+					}
+					else {
+						std::cout << "Points to win has no value" << std::endl;
+					}
+
 
 					// Save the updated settings back to the file
 					settings.saveToFile(settingLoc);

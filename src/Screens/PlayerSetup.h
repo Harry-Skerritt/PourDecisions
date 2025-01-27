@@ -33,6 +33,8 @@ public:
 
 	void draw(sf::RenderWindow& window, ConfettiManager& confetti);
 
+	void repopulatePlayers(std::vector<std::string> i_playerNames);
+
 	void reset();
 
 private:

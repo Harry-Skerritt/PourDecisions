@@ -55,6 +55,7 @@ void ForfeitCard::initialise(sf::Font& font1, sf::Font& font2, std::string title
 	cardTitleText.setFillColor(borderColour);
 	cardTitleText.setString(titleText);
 	cardTitleText.setCharacterSize(cardHeader.getSize().y * 0.6f); //Make dyanmic to make it all fit
+	fitToWidth(cardTitleText, cardBackground);
 	cardTitleText.setOrigin(cardTitleText.getLocalBounds().width / 2, cardTitleText.getLocalBounds().height / 2);
 	cardTitleText.setPosition(cardHeader.getPosition().x + cardHeader.getSize().x / 2,
 		cardHeader.getPosition().y + cardHeader.getSize().y * 1.25f); //Place title
@@ -328,5 +329,24 @@ void ForfeitCard::adjustLayout(sf::Text& cardMessage, sf::RectangleShape& cardBa
 	cardMotif.setPosition(
 		cardBackground.getPosition().x + cardBackground.getGlobalBounds().width / 2 - cardMotif.getGlobalBounds().width / 2, // Center horizontally
 		cardMessage.getPosition().y + cardMessage.getGlobalBounds().height + padding // Below cardMessage
+	);
+}
+
+void ForfeitCard::fitToWidth(sf::Text& text, const sf::RectangleShape& rectangle) {
+	sf::FloatRect textBounds = text.getLocalBounds();
+	float rectangleWidth = rectangle.getGlobalBounds().width;
+
+	// Reduce the font size until the text fits within the rectangle's width
+	while (textBounds.width > rectangleWidth && text.getCharacterSize() > 5) {
+		unsigned int currentSize = text.getCharacterSize();
+		text.setCharacterSize(currentSize - 1);
+		textBounds = text.getLocalBounds();
+	}
+
+	// Re-center the text to account for updated size
+	text.setOrigin(textBounds.left + textBounds.width / 2, textBounds.top + textBounds.height / 2);
+	text.setPosition(
+		rectangle.getPosition().x + rectangle.getGlobalBounds().width / 2,
+		rectangle.getPosition().y + rectangle.getGlobalBounds().height / 2
 	);
 }

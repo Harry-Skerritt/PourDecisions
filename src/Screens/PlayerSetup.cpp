@@ -136,6 +136,15 @@ void PlayerSetup::increasePlayerCount(int valueBy) {
 	}
 }
 
+// Repopulate the players for a play again
+void PlayerSetup::repopulatePlayers(std::vector<std::string> i_playerNames) {
+	currentPlayerDisplay.clearTextFields();
+	currentPlayers = 0;
+	for (auto& name : i_playerNames) {
+		increasePlayerCount();
+		currentPlayerDisplay.setText(currentPlayers - 1, name); // Add the name to the display
+	}
+}
 
 // Update Loop
 void PlayerSetup::update(float dt, sf::Vector2f& windowClick) {
@@ -170,6 +179,10 @@ void PlayerSetup::handleMouse(sf::Event event, sf::Vector2f windowClick) {
 	//Handle Next Button
 	if (nextButton.isClicked(windowClick)) {
 		if (currentPlayers >= allowedThreshold) {
+			if (m_game->getSizeOfPlayerArray() != 0) {
+				//Already has values
+				m_game->clearPlayerArray();
+			}
 			//At least the allowed number of players
 			AudioManager::getInstance().playSoundEffect("buttonClick");
 			//Put the players names into an array in the order they were clicked
