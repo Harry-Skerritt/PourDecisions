@@ -1,0 +1,16 @@
+{
+  "content-name": "sfw",
+  "card-count": "8",
+  "card-color": "#FF0143",
+  "motif-loc": "sfw.png",
+  "cards": [
+    "What's the most embarrassing thing you've done in public?",
+    "If you could switch lives with anyone for a day, who would it be?",
+    "What's your most ridiculous fear?",
+    "What's the worst date you've ever been on?",
+    "Have you ever had a crush on someone here?",
+    "If you had to sing one song for the rest of your life, what would it be?",
+    "Have you ever pretended to be sick to get out of something?",
+    "What's the craziest thing you've done on vacation?"
+  ]
+}

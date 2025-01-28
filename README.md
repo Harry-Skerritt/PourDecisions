@@ -1,100 +1,130 @@
-# CMake SFML Project Template
+﻿﻿![Pour Decisions Banner](https://raw.githubusercontent.com/Harry-Skerritt/test/refs/heads/main/pd_github_banner.png)
 
-This repository template should allow for a fast and hassle-free kick start of your next SFML project using CMake.
-Thanks to [GitHub's nature of templates](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template), you can fork this repository without inheriting its Git history.
+![Static Badge](https://img.shields.io/badge/in_development-green)
+![SFML Badge](https://img.shields.io/badge/Built_with-SFML-%238CC445?style=flat&logo=SFML&logoColor=%238CC445)
+![C++ Version](https://img.shields.io/badge/C++-17-blue.svg?style=flat&logo=c%2B%2B)
+![GitHub Release](https://img.shields.io/badge/version-pre_1.0.1-yellow)
+![GitHub Downloads (all assets, all releases)](https://img.shields.io/github/downloads/Harry-Skerritt/PourDecisions/total)
 
-The template starts out very basic, but might receive additional features over time:
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-windows.yml?label=Windows)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-linux.yml?label=Linux)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/Harry-Skerritt/PourDecisions/ci-macos.yml?label=MacOS)
 
-- Basic CMake script to build your project and link SFML on any operating system
-- Basic [GitHub Actions](https://github.com/features/actions) script for all major platforms
 
-## How to Use
+# A Spinwheel based drinking game!
+***Spin, Sip and See what happens!***
+**Full Version Coming 2025**
 
-1. Install [Git](https://git-scm.com/downloads) and [CMake](https://cmake.org/download/). Use your system's package manager if available.
-2. Follow [GitHub's instructions](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template) for how to use their project template feature to create your own project. If you don't want to use GitHub, see the section below.
-3. Clone your new GitHub repo and open the repo in your text editor of choice.
-4. Open [CMakeLists.txt](CMakeLists.txt). Rename the project and the target name of the executable to whatever name you want. Make sure to change all occurrences.
-5. If you want to add or remove any .cpp files, change the source files listed in the `add_executable` call in CMakeLists.txt to match the source files your project requires. If you plan on keeping the default main.cpp file then no changes are required.
-6. If your code uses the Audio or Network modules then add `sfml-audio` or `sfml-network` to the `target_link_libraries` call alongside the existing `sfml-graphics` library that is being linked.
-7. If you use Linux, install SFML's dependencies using your system package manager. On Ubuntu and other Debian-based distributions you can use the following commands:
-   ```
-   sudo apt update
-   sudo apt install \
-       libxrandr-dev \
-       libxcursor-dev \
-       libudev-dev \
-       libfreetype-dev \
-       libflac-dev \
-       libvorbis-dev \
-       libgl1-mesa-dev \
-       libegl1-mesa-dev \
-       libfreetype-dev
-   ```
-8. Configure and build your project. Most popular IDEs support CMake projects with very little effort on your part.
+--- 
 
-   - [VS Code](https://code.visualstudio.com) via the [CMake extension](https://code.visualstudio.com/docs/cpp/cmake-linux)
-   - [Visual Studio](https://docs.microsoft.com/en-us/cpp/build/cmake-projects-in-visual-studio?view=msvc-170)
-   - [CLion](https://www.jetbrains.com/clion/features/cmake-support.html)
-   - [Qt Creator](https://doc.qt.io/qtcreator/creator-project-cmake.html)
+### **🔞 Please Note 🔞** 
 
-   Using CMake from the command line is straightforward as well.
-   Be sure to run these commands in the root directory of the project you just created.
+**By downloading and playing this game you are acknowledging that you are over the legal drinking age in your territory, and understand this is game is not for minors**
 
-   ```
-   cmake -B build
-   cmake --build build
-   ```
+**This game does not encourage excessive drinking, and you should drink responsibly**
 
-9. Enjoy!
+**This game also does not *require* the consumption of alcohol to play**
 
-## Upgrading SFML
+Contact Email: contact.pourdecisions.game@gmail.com
 
-SFML is found via CMake's [FetchContent](https://cmake.org/cmake/help/latest/module/FetchContent.html) module.
-FetchContent automatically downloads SFML from GitHub and builds it alongside your own code.
-Beyond the convenience of not having to install SFML yourself, this ensures ABI compatibility and simplifies things like specifying static versus shared libraries.
+---
 
-Modifying what version of SFML you want is as easy as changing the `GIT_TAG` argument.
-Currently it uses SFML 3 via the `3.0.0` tag.
+## About Pour Decisions
+Pour Decisions is a spinwheel based drinking game for 3-8 players. The idea of the game is players take it in turns to spin a wheel which will give them a card from a set of predefined categories, if they do the card they will be awarded points! If they cant, they must spin the forfeit wheel!
 
-## But I want to...
+***Note:*** This game is best played in 1920x1080 at fullscreen!
 
-Modify CMake options by adding them as configuration parameters (with a `-D` flag) or by modifying the contents of CMakeCache.txt and rebuilding.
+[Game Credits](https://harry-skerritt.github.io/PourDecisions/)
 
-### Not use GitHub
+### Features
+- Available for Windows. (MacOS and Linux coming later)
+- Support for 3-8 Players
+- Has 56 default cards across 7 categories and 15 default forfeits!
+	- Categories Include:
+		- Truth
+		- Dare
+		- Memory
+		- Challenges
+		- Group
+		- NSFW (Toggleable)
+		- Handicap
+- Supports the ability to import your own custom cards and forfeits (coming soon) please read [here](https://github.com/Harry-Skerritt/PourDecisions/tree/dev?tab=readme-ov-file#adding-custom-cardsforfeits) for how to do this
+- The amount of points needed to win is customisable within the settings page
 
-You can use this project without a GitHub account by [downloading the contents](https://github.com/SFML/cmake-sfml-project/archive/refs/heads/master.zip) of the repository as a ZIP archive and unpacking it locally.
-This approach also avoids using Git entirely if you would prefer to not do that.
+### Rules
+- The order you input players is the order of play
+- Everyone needs something to drink
+- Cards are worth 2 points, Group cards are worth 1. If you forfeit a card you get 1 point, unless its a group card then you get 0
+- First to X points wins
+- Regardless of how many people reach the winning point value, the first one to get it will be declared the winner
 
-### Change Compilers
+### Game Play Information
+- The game is for 3 - 8 people
+- Player names are inputted on the  player setup screen, you can click a name to remove them
+- Spin the wheel to get a card, if you 
+do the card, you click pass and are awarded points.  If you don’t, you click forfeit and spin for a forfeit card
+- If a card requires something to be done within 
+a time limit, you will need to use a stopwatch to keep time. - If you fail to complete within the time, its an automatic forfeit
 
-See the variety of [`CMAKE_<LANG>_COMPILER`](https://cmake.org/cmake/help/latest/variable/CMAKE_LANG_COMPILER.html) options.
-In particular you'll want to modify `CMAKE_CXX_COMPILER` to point to the C++ compiler you wish to use.
+⚠️***Currently in Pre-Release***⚠️
 
-### Change Compiler Optimizations
 
-CMake abstracts away specific optimizer flags through the [`CMAKE_BUILD_TYPE`](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html) option.
-By default this project recommends `Release` builds which enable optimizations.
-Other build types include `Debug` builds which enable debug symbols but disable optimizations.
-If you're using a multi-configuration generator (as is often the case on Windows), you can modify the [`CMAKE_CONFIGURATION_TYPES`](https://cmake.org/cmake/help/latest/variable/CMAKE_CONFIGURATION_TYPES.html#variable:CMAKE_CONFIGURATION_TYPES) option.
+## Screenshots of the Game
+![Home Screen](https://raw.githubusercontent.com/Harry-Skerritt/PourDecisions/refs/heads/dev/screenshots/pd-home-screenshot.png)
+This is the main screen of the game, which provides an options menu allowing for the adjustment of audio levels, aswell as game and video settings.
 
-### Change Generators
+![Player Setup](https://raw.githubusercontent.com/Harry-Skerritt/PourDecisions/refs/heads/dev/screenshots/pd-playerselect-screenshot.png)
+This is the player setup screen where all player information can be entered prior to the start of the game
 
-While CMake will attempt to pick a suitable default generator, some systems offer a number of generators to choose from.
-Ubuntu, for example, offers Makefiles and Ninja as two potential options.
-For a list of generators, click [here](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
-To modify the generator you're using you must reconfigure your project providing a `-G` flag with a value corresponding to the generator you want.
-You can't simply modify an entry in the CMakeCache.txt file unlike the above options.
-Then you may rebuild your project with this new generator.
+![Main Game](https://raw.githubusercontent.com/Harry-Skerritt/PourDecisions/refs/heads/dev/screenshots/pd-maingame-screenshot.png)
+This is the main game, featuring the spinwheel front and centre as well as a list of the players, their points and who's turn it currently is.
 
-## More Reading
+![Card](https://raw.githubusercontent.com/Harry-Skerritt/PourDecisions/refs/heads/dev/screenshots/pd-card-screenshot.png)
+This is an example of what the cards look like!
 
-Here are some useful resources if you want to learn more about CMake:
+![Forfeit Spinner](https://raw.githubusercontent.com/Harry-Skerritt/PourDecisions/refs/heads/dev/screenshots/pd-forfeitscreenshot.png)
+And finally the forfeit spinwheel!
 
-- [Official CMake Tutorial](https://cmake.org/cmake/help/latest/guide/tutorial/)
-- [How to Use CMake Without the Agonizing Pain - Part 1](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-1.html)
-- [How to Use CMake Without the Agonizing Pain - Part 2](https://alexreinking.com/blog/how-to-use-cmake-without-the-agonizing-pain-part-2.html)
-- [Better CMake YouTube series by Jefferon Amstutz](https://www.youtube.com/playlist?list=PL8i3OhJb4FNV10aIZ8oF0AA46HgA2ed8g)
 
-## License
+## How to download
+**Currently In Pre-Release. Full Release: 2025**
 
-The source code is dual licensed under Public Domain and MIT -- choose whichever you prefer.
+The game can either be directly downloaded [here](https://harry-skerritt.itch.io/pour-decisions) on Itch.io,
+or can be compiled into an installer from GitHub
+
+The game comes packaged with an installer so should install like any other window application
+
+## Update Roadmap
+### Before leaving pre-release 
+- All the cards and forfeits will be updated as the current ones are mostly placeholders
+- Bug Fixes
+
+### After Pre-Release
+- Custom card functionality
+- More platform releases
+
+
+## Adding custom cards/forfeits
+**This functionality is coming soon**
+
+To add your own cards/forfeits you need to create a **.json** file, it can be store anywhere but its content must follow the following format:
+
+![Custom JSON Format](https://raw.githubusercontent.com/Harry-Skerritt/PourDecisions/refs/heads/dev/screenshots/customjson.png)
+
+Some things to note:
+- The "content-name" **must** remain as "custom"
+- Whilst the "card-color" can be changed, for best visuals it is recommened that it is not
+- "card-info" **must not** be changed
+- On the "card-count" line "your card count" will need to be replaced with however many custom cards you have added
+- "cards" **must** remain as "cards", but everything within the [] (the array) can be changed, and is where the text for your cards can be added
+- "forfeit-info" **must not** be changed
+- On the "forfeit-count" line "your forfeit count" will need to be replaced with however many custom forfeits you have added
+- Similar to "cards", "forefeits" **must** remain as "forfeits", but everything within the [] (the array) can be changed, and is where your custom forfeits can be added
+
+### If you are unfamilliar with JSON then you can read about JSON arrays here: 
+[Json Arrays](https://www.microfocus.com/documentation/silk-performer/205/en/silkperformer-205-webhelp-en/GUID-0847DE13-2A2F-44F2-A6E7-214CD703BF84.html)
+
+### Alternativly a sample file is located here: [custom.json](https://github.com/Harry-Skerritt/PourDecisions/blob/dev/custom.json)
+ 
+
+

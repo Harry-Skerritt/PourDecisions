@@ -1,0 +1,18 @@
+{
+  "content-name": "custom",
+  "card-color": "#F10199",
+  "card-info": {
+    "card-count": "your card count",
+    "cards": [
+      "Your cards as text here",
+      ""
+    ]
+  },
+  "forfeit-info": {
+    "forfeit-count": "your forfeit count",
+    "forfeits": [
+      "Your forfeits as text here",
+      ""
+    ]
+  }
+}

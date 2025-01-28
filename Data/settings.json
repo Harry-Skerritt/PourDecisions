@@ -1,0 +1,15 @@
+{
+  "graphics-settings": {
+    "resolution-x": 1080,
+    "resolution-y": 720,
+    "fullscreen": false
+  },
+  "audio-settings": {
+    "music-volume": 0.0,
+    "sfx-volume": 100.0
+  },
+  "game-settings": {
+    "nsfw-enabled": true,
+    "win-points": 15
+  }
+}

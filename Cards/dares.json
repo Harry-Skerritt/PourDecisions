@@ -1,0 +1,16 @@
+{
+  "content-name": "dare",
+  "card-count": "8",
+  "card-color": "#FF5101",
+  "motif-loc": "dareMotif.png",
+  "cards": [
+    "Let the person to your right send one text from your phone",
+    "Try to drink a glass of water while standing on one leg",
+    "Speak in an accent of the group's choice until your next turn",
+    "Let someone draw on your face with a washable marker",
+    "Swap an item of clothing with the person to your left",
+    "Do your best impression of someone else in the room",
+    "Take an ice cube and hold it in your hand until it melts",
+    "Sing the chorus of a song chosen by the group as loudly as you can"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "content-name": "group",
+  "card-count": "8",
+  "card-color": "#05C0FD",
+  "motif-loc": "groupMotif.png",
+  "cards": [
+    "Cheers to That! Everyone raises their glasses and takes a sip. The last person to raise their glass drinks twice",
+    "Who's the Funniest? As a group, vote on who has the best sense of humor. The person with the most votes assigns 3 sips to anyone they choose",
+    "Dance-Off! Two players chosen by the group must have a 10-second dance battle. The group decides the winner, and the loser drinks",
+    "Round of Secrets! Everyone in the group shares a random fun fact about themselves. The most boring fact results in that person drinking",
+    "Spin the Story! Starting with the person who drew the card, everyone adds one sentence to create a group story. The person who messes it up drinks twice",
+    "Sing-Along! Someone starts singing a popular song. Each player must sing the next line in order. Whoever messes up drinks",
+    "Reverse Uno! The group decides someone else to take your turn instead. They must do a card in your place",
+    "All Drink! Everyone in the group takes a sip, but the drawer of this card takes a double sip for being so unlucky!"
+  ]
+}
