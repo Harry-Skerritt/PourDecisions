@@ -1,3 +1,8 @@
+//----------------------------------------------------------------------------------------------------------------
+//|                                      Written by Harry Skerritt - 2025                                        |
+//|  Available from: https://github.com/Harry-Skerritt/PourDecisions/blob/master/src/Managers/AudioManager.cpp   |
+//----------------------------------------------------------------------------------------------------------------
+
 #include "AudioManager.h"
 #include <iostream>
 
